@@ -50,3 +50,29 @@ For VS Code specifically, we will attempt to detect the `code` CLI, but fallback
 ## Consequences
 *   **Positive**: Fast implementation for MVP.
 *   **Negative**: Limited control over window positioning or specific arguments compared to direct execution.
+
+---
+
+# ADR-003: Task Runner Selection
+
+## Status
+*   **Status**: Accepted
+*   **Date**: 2025-11-23
+*   **Deciders**: Droid (AI Agent), User
+
+## Context
+The project uses multiple tools (Vite, Electron, TypeScript, ESLint, etc.) which require complex shell commands.
+Managing these via `npm scripts` alone can lead to verbose, hard-to-read `package.json` files and difficulties in chaining commands or adding arguments.
+We need a task runner that improves developer experience while maintaining cross-platform compatibility.
+
+## Decision
+We will use **Just** (https://github.com/casey/just) as the primary task runner.
+
+## Rationale
+*   **Cross-Platform**: Works well on macOS, Linux, and Windows, avoiding shell-specific syntax issues common with `Makefile`.
+*   **Readability**: Syntax is cleaner than JSON-based `npm scripts` and supports comments/variables naturally.
+*   **Flexibility**: Easy to pass arguments to commands and chain tasks.
+
+## Consequences
+*   **Positive**: Simplified command execution (e.g., `just dev`, `just build`). Centralized documentation of common tasks.
+*   **Negative**: Requires developers to install the `just` binary, adding a step to the onboarding process.
