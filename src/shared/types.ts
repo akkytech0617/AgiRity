@@ -8,11 +8,18 @@ export interface WorkspaceItem {
   dependsOn?: string; // preceding item name
 }
 
+export interface WorkspacePreset {
+  name: string;
+  description?: string;
+  itemNames: string[]; // references item.name
+}
+
 export interface Workspace {
   id: string; // UUID (v4)
   name: string;
   description?: string;
   items: WorkspaceItem[];
+  presets?: WorkspacePreset[];
   tags?: string[];
   createdAt: string; // ISO8601
   updatedAt: string; // ISO8601
