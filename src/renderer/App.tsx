@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceSettings } from './components/WorkspaceSettings';
+import { CreateWorkspace } from './components/CreateWorkspace';
 import { QuickLaunch } from './components/QuickLaunch';
 import { ToolsRegistry } from './components/ToolsRegistry';
 import { MCPServers } from './components/MCPServers';
@@ -74,6 +75,7 @@ type View =
   | { type: 'quick-launch' }
   | { type: 'workspace', id: string }
   | { type: 'workspace-settings', id: string }
+  | { type: 'create-workspace' }
   | { type: 'tools' }
   | { type: 'mcp' }
   | { type: 'settings' };
@@ -110,7 +112,13 @@ function App() {
   };
 
   const handleNew = () => {
-    console.log('Creating new workspace');
+    setActiveView({ type: 'create-workspace' });
+  };
+
+  const handleCreateWorkspace = (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => {
+    console.log('Creating workspace:', workspace);
+    // In real app, would create workspace and navigate to it
+    setActiveView({ type: 'quick-launch' });
   };
 
   const handleSelectWorkspace = (id: string | null) => {
@@ -129,6 +137,13 @@ function App() {
         return <MCPServers />;
       case 'settings':
         return <SettingsView />;
+      case 'create-workspace':
+        return (
+          <CreateWorkspace
+            onSave={handleCreateWorkspace}
+            onCancel={() => setActiveView({ type: 'quick-launch' })}
+          />
+        );
       case 'workspace-settings':
         return selectedWorkspace ? (
           <WorkspaceSettings 
@@ -169,6 +184,8 @@ function App() {
         return { title: 'MCP Servers', subtitle: 'Model Context Protocol configuration' };
       case 'settings':
         return { title: 'Settings', subtitle: 'Application preferences' };
+      case 'create-workspace':
+        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
       case 'workspace-settings':
         return selectedWorkspace ? {
           title: 'Edit Workspace',

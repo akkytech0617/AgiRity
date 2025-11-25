@@ -1,70 +1,70 @@
 import { useState } from 'react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
-import { Save, X, Plus, AlertCircle } from 'lucide-react';
+import { Save, X, Plus, AlertCircle, Sparkles } from 'lucide-react';
 import { ItemEditor } from './ItemEditor';
 import { AddItemModal } from './AddItemModal';
 
-interface WorkspaceSettingsProps {
-  workspace: Workspace;
-  onSave: (workspace: Workspace) => void;
+interface CreateWorkspaceProps {
+  onSave: (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onCancel: () => void;
 }
 
-export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSettingsProps) {
-  const [editedWorkspace, setEditedWorkspace] = useState<Workspace>({ ...workspace, items: [...workspace.items] });
+export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [items, setItems] = useState<WorkspaceItem[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const handleFieldChange = (field: keyof Workspace, value: string | string[]) => {
-    setEditedWorkspace((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleAddItem = (item: WorkspaceItem) => {
-    setEditedWorkspace((prev) => ({
-      ...prev,
-      items: [...prev.items, item],
-    }));
+    setItems((prev) => [...prev, item]);
     setShowAddModal(false);
   };
 
   const handleUpdateItem = (index: number, item: WorkspaceItem) => {
-    setEditedWorkspace((prev) => {
-      const newItems = [...prev.items];
+    setItems((prev) => {
+      const newItems = [...prev];
       newItems[index] = item;
-      return { ...prev, items: newItems };
+      return newItems;
     });
   };
 
   const handleDeleteItem = (index: number) => {
-    setEditedWorkspace((prev) => ({
-      ...prev,
-      items: prev.items.filter((_, i) => i !== index),
-    }));
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleMoveItem = (index: number, direction: 'up' | 'down') => {
-    setEditedWorkspace((prev) => {
-      const newItems = [...prev.items];
+    setItems((prev) => {
+      const newItems = [...prev];
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
       if (targetIndex < 0 || targetIndex >= newItems.length) return prev;
       [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
-      return { ...prev, items: newItems };
+      return newItems;
     });
   };
 
   const handleSave = () => {
+    if (!name.trim()) return;
     onSave({
-      ...editedWorkspace,
-      updatedAt: new Date().toISOString(),
+      name: name.trim(),
+      description: description.trim() || undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      items,
     });
   };
 
-  const existingItemNames = editedWorkspace.items.map((item) => item.name);
+  const existingItemNames = items.map((item) => item.name);
 
   return (
     <div className="max-w-4xl mx-auto p-8">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Workspace Settings</h2>
-        <p className="text-gray-500">Configure workspace details, items, and launch behavior.</p>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-blue-100 rounded-xl">
+            <Sparkles className="w-6 h-6 text-blue-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">Create New Workspace</h2>
+        </div>
+        <p className="text-gray-500">Set up a new workspace to launch your apps, URLs, and folders together.</p>
       </div>
 
       <div className="space-y-6">
@@ -76,11 +76,14 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
           <div className="p-6 space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Workspace Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Workspace Name <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
-                value={editedWorkspace.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Morning Routine, Client Project"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
             </div>
@@ -89,9 +92,10 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea
-                value={editedWorkspace.description || ''}
-                onChange={(e) => handleFieldChange('description', e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 rows={2}
+                placeholder="What is this workspace for?"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
               />
             </div>
@@ -101,20 +105,19 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
               <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
               <input
                 type="text"
-                value={editedWorkspace.tags?.join(', ') || ''}
+                value={tags.join(', ')}
                 onChange={(e) =>
-                  handleFieldChange(
-                    'tags',
+                  setTags(
                     e.target.value
                       .split(',')
                       .map((t) => t.trim())
                       .filter(Boolean)
                   )
                 }
-                placeholder="dev, frontend, react..."
+                placeholder="dev, frontend, daily..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
-              <p className="text-xs text-gray-500 mt-1">Comma separated values</p>
+              <p className="text-xs text-gray-500 mt-1">Comma separated values for organizing workspaces</p>
             </div>
           </div>
         </div>
@@ -136,7 +139,7 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
           </div>
 
           <div className="p-4">
-            {editedWorkspace.items.length === 0 ? (
+            {items.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <AlertCircle className="w-8 h-8 text-gray-400" />
@@ -153,12 +156,12 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
               </div>
             ) : (
               <div className="space-y-2">
-                {editedWorkspace.items.map((item, index) => (
+                {items.map((item, index) => (
                   <ItemEditor
                     key={`${item.name}-${index}`}
                     item={item}
                     index={index}
-                    totalItems={editedWorkspace.items.length}
+                    totalItems={items.length}
                     existingItemNames={existingItemNames}
                     onUpdate={(updatedItem) => handleUpdateItem(index, updatedItem)}
                     onDelete={() => handleDeleteItem(index)}
@@ -170,11 +173,10 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
             )}
           </div>
 
-          {editedWorkspace.items.length > 0 && (
+          {items.length > 0 && (
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
               <p className="text-xs text-gray-500">
                 <strong>Tip:</strong> Use the arrows to reorder items. Items launch in order from top to bottom.
-                Set "Depends On" to wait for a specific item before launching.
               </p>
             </div>
           )}
@@ -191,11 +193,11 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
           </button>
           <button
             onClick={handleSave}
-            disabled={!editedWorkspace.name.trim()}
+            disabled={!name.trim()}
             className="px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4" />
-            Save Changes
+            Create Workspace
           </button>
         </div>
       </div>
