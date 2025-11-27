@@ -26,10 +26,10 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
         onClick={() => onSelectWorkspace?.(null)}
         className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-gray-800 hover:bg-gray-800 transition-colors w-full"
       >
-        <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-bold text-lg">A</span>
+        <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-display font-bold text-lg">A</span>
         </div>
-        <span className="hidden lg:block ml-3 text-white font-bold text-lg tracking-tight">AgiRity</span>
+        <span className="hidden lg:block ml-3 text-white font-display font-bold text-lg tracking-tight">AgiRity</span>
       </button>
 
       {/* Navigation */}
@@ -48,7 +48,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
               placeholder="Filter..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-600"
+              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-gray-600"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
               onClick={() => onSelectWorkspace?.(ws.id)}
               className="flex items-center gap-3 px-3 py-2 text-sm hover:text-white hover:bg-gray-800 rounded-md transition-colors text-left truncate w-full group"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-blue-500 transition-colors flex-shrink-0"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-primary transition-colors flex-shrink-0"></span>
               <span className="truncate hidden lg:block">{ws.name}</span>
             </button>
           ))}
@@ -74,7 +74,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
         <div className="mt-4 px-2">
           <button
             onClick={onNewWorkspace}
-            className="flex items-center gap-3 px-3 py-2 w-full text-sm text-blue-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
+            className="flex items-center gap-3 px-3 py-2 w-full text-sm text-primary-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden lg:block">Add Workspace</span>
@@ -91,7 +91,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
             onClick={onOpenTools}
             className="flex items-center gap-3 px-3 py-2 text-sm hover:text-white hover:bg-gray-800 rounded-md transition-colors text-left truncate w-full group"
           >
-            <Box className="w-4 h-4 text-gray-500 group-hover:text-blue-400 transition-colors" />
+            <Box className="w-4 h-4 text-gray-500 group-hover:text-primary-400 transition-colors" />
             <span className="truncate hidden lg:block">Tools Registry</span>
           </button>
           <button
@@ -110,7 +110,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
           onClick={onOpenSettings}
           className="flex items-center gap-3 w-full p-2 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group"
         >
-          <Settings className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
+          <Settings className="w-5 h-5 group-hover:text-primary-400 transition-colors" />
           <span className="hidden lg:block font-medium">Settings</span>
         </button>
       </div>

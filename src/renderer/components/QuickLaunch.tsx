@@ -11,10 +11,10 @@ interface QuickLaunchProps {
 export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLaunchWorkspace }: QuickLaunchProps) {
   const getItemIcon = (type: string) => {
     switch (type) {
-      case 'app': return <Monitor className="w-4 h-4 text-blue-500" />;
-      case 'browser': return <Globe className="w-4 h-4 text-green-500" />;
-      case 'folder': return <Folder className="w-4 h-4 text-yellow-500" />;
-      default: return <Code className="w-4 h-4 text-gray-500" />;
+      case 'app': return <Monitor className="w-4 h-4 text-primary" />;
+      case 'browser': return <Globe className="w-4 h-4 text-success" />;
+      case 'folder': return <Folder className="w-4 h-4 text-warning" />;
+      default: return <Code className="w-4 h-4 text-text-secondary" />;
     }
   };
 
@@ -24,7 +24,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
         {workspaces.map((workspace) => (
           <div 
             key={workspace.id} 
-            className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden"
+            className="bg-white rounded-card border border-border shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden"
           >
             {/* Card Header */}
             <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex items-start justify-between">
@@ -32,7 +32,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
                 className="cursor-pointer"
                 onClick={() => onSelectWorkspace(workspace.id)}
               >
-                <h3 className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors mb-1">
+                <h3 className="font-display font-bold text-lg text-text-primary hover:text-primary transition-colors mb-1">
                   {workspace.name}
                 </h3>
                 <p className="text-xs text-gray-500 line-clamp-1">
@@ -41,7 +41,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
               </div>
               <button
                 onClick={() => onLaunchWorkspace(workspace.id)}
-                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm"
+                className="p-2 bg-primary hover:bg-primary-600 text-white rounded-button transition-colors shadow-sm"
                 title="Launch Workspace"
               >
                 <Play className="w-4 h-4 fill-current" />
@@ -68,7 +68,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
                         {item.name}
                       </span>
                     </div>
-                    <Play className="w-3 h-3 text-gray-300 group-hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 fill-current" />
+                    <Play className="w-3 h-3 text-gray-300 group-hover:text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 fill-current" />
                   </div>
                 ))}
                 {workspace.items.length > 5 && (
@@ -76,7 +76,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
                     className="text-center pt-1"
                     onClick={() => onSelectWorkspace(workspace.id)}
                   >
-                    <span className="text-xs text-blue-600 hover:underline cursor-pointer">
+                    <span className="text-xs text-primary hover:underline cursor-pointer">
                       + {workspace.items.length - 5} more items
                     </span>
                   </div>

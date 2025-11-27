@@ -5,6 +5,7 @@
 ### コアコンセプト
 - **Workspace (ワークスペース)**: 特定の作業（例: "A社案件開発", "月次レポート作成"）に必要なアプリケーション、URL、フォルダ設定の集合体。
 - **Workspace Item (アイテム)**: ワークスペースを構成する個々の要素。アプリ、ブラウザURL、フォルダパスなどが含まれる。
+- **Workspace Preset (プリセット)**: ワークスペース内のアイテムをグループ化した起動設定。用途別（開発のみ、レビューのみ等）の部分起動を可能にする。
 - **Tag (タグ)**: ワークスペースを分類・検索するためのラベル（例: "frontend", "design", "urgent"）。
 
 ### システムコンポーネント
@@ -27,6 +28,7 @@
 | `description` | string | | 概要説明 |
 | `items` | WorkspaceItem[] | ✅ | 含まれるアイテムのリスト |
 | `tags` | string[] | | 検索用タグ |
+| `presets` | WorkspacePreset[] | | 起動プリセットのリスト |
 | `createdAt` | ISO8601 | ✅ | 作成日時 |
 | `updatedAt` | ISO8601 | ✅ | 最終更新日時 |
 
@@ -42,6 +44,15 @@
 | `folder` | string | | `app` (VSCode等) で開く対象のフォルダパス。 |
 | `waitTime` | number | | 起動後の待機時間（秒）。依存関係がある場合に利用。 |
 | `dependsOn` | string | | 先に起動すべきアイテムの `name`。 |
+
+### WorkspacePreset
+ワークスペース内のアイテムをグループ化した起動プリセット。部分的な起動やシナリオ別の起動を可能にする。
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | ✅ | プリセットの表示名（例: "Full Development", "Code Only"） |
+| `description` | string | | プリセットの説明 |
+| `itemNames` | string[] | ✅ | 起動対象のアイテム名リスト（`WorkspaceItem.name` を参照） |
 
 ---
 
@@ -72,4 +83,16 @@
       urls:
         - "https://github.com/client-a/repo"
         - "https://figma.com/file/xyz"
+  
+  # Launch Presets (optional)
+  presets:
+    - name: "Full Development"
+      description: "Start everything for full stack dev"
+      itemNames: ["Docker Desktop", "VS Code", "Reference Links"]
+    - name: "Code Only"
+      description: "Just the editor without Docker"
+      itemNames: ["VS Code"]
+    - name: "Review Mode"
+      description: "Browser tools for PR review"
+      itemNames: ["Reference Links"]
 ```

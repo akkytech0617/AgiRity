@@ -7,6 +7,10 @@
 **Target Users**: Developers and Engineers (Phase 1)  
 **Core Value**: Reduce morning routine friction from 3 minutes to 3 seconds  
 
+### Project status
+- **Current Phase**: MVP Development (v0.1.0)
+UI Prototyping has been completed. From here, implement core features for workspace management and app launching.
+
 ### Key Problem Solving
 - **Morning Routine Automation**: Eliminates manual app launching sequence  
 - **Project Context Switching**: Instant workspace switching with proper tool setup  

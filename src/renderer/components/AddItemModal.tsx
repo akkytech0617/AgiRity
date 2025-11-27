@@ -56,10 +56,10 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+      <div className="bg-white rounded-card shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h3 className="text-lg font-bold text-gray-900">Add Item</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
+          <h3 className="text-lg font-display font-bold text-text-primary">Add Item</h3>
           <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
@@ -78,19 +78,19 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 <button
                   key={opt.type}
                   onClick={() => setItemType(opt.type)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  className={`p-4 rounded-button border-2 transition-all text-left ${
                     itemType === opt.type
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                      ? 'border-primary bg-primary-50'
+                      : 'border-border hover:border-gray-300 bg-white'
                   }`}
                 >
-                  <div className={`mb-2 ${itemType === opt.type ? 'text-blue-600' : 'text-gray-500'}`}>
+                  <div className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}>
                     {opt.icon}
                   </div>
-                  <div className={`text-sm font-medium ${itemType === opt.type ? 'text-blue-900' : 'text-gray-900'}`}>
+                  <div className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}>
                     {opt.label}
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">{opt.description}</div>
+                  <div className="text-xs text-text-secondary mt-0.5">{opt.description}</div>
                 </button>
               ))}
             </div>
@@ -104,7 +104,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., VS Code, GitHub Repo"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
           </div>
 
@@ -119,7 +119,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 value={path}
                 onChange={(e) => setPath(e.target.value)}
                 placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {itemType === 'app' ? 'Full path to the application' : 'Path to the folder to open'}
@@ -136,7 +136,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 onChange={(e) => setUrls(e.target.value)}
                 placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono text-sm resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm resize-none"
               />
               <p className="text-xs text-gray-500 mt-1">One URL per line</p>
             </div>
@@ -155,7 +155,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                   value={waitTime ?? ''}
                   onChange={(e) => setWaitTime(e.target.value ? Number(e.target.value) : undefined)}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm"
                 />
               </div>
 
@@ -165,7 +165,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 <select
                   value={dependsOn}
                   onChange={(e) => setDependsOn(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm bg-white"
                 >
                   <option value="">None</option>
                   {existingItemNames.map((itemName) => (
@@ -180,17 +180,17 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-3">
+        <div className="px-6 py-4 bg-surface border-t border-border flex items-center justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-200 rounded-lg transition-colors"
+            className="px-4 py-2 text-text-primary font-medium hover:bg-gray-200 rounded-button transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!name.trim() || (itemType !== 'browser' && !path.trim()) || (itemType === 'browser' && !urls.trim())}
-            className="px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
             Add Item

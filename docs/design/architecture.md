@@ -57,11 +57,12 @@ graph TD
 
 3.  **LauncherService**
     - **Responsibility**: Execute external applications.
-    - **Strategy**:
-        - **App**: `open -a "App Name"` (macOS)
+    - **Strategy** (macOS `open` command):
+        - **App**: `open -a "App.app"` or `open -a "App.app" "folder"` (with project folder)
         - **Browser**: `open "url"`
-        - **Folder**: `code "path"` (for VSCode) or `open "path"` (Finder)
-    - **Security**: Path validation (prevent command injection).
+        - **Folder**: `open "path"` (opens in Finder)
+    - **Path Handling**: Tilde (`~`) expansion via `os.homedir()`
+    - **Security**: Path validation (prevent command injection), uses `spawn` instead of `exec`.
 
 ---
 
@@ -116,11 +117,74 @@ src/
 │   └── utils/
 │       └── logger.ts
 ├── renderer/
-│   ├── App.tsx
-│   ├── main.tsx
+│   ├── App.tsx             # Main app + routing logic
+│   ├── index.tsx           # Entry point
 │   ├── components/
-│   └── hooks/
+│   │   ├── Sidebar.tsx         # Navigation sidebar
+│   │   ├── Header.tsx          # Top header bar
+│   │   ├── QuickLaunch.tsx     # Dashboard / home view
+│   │   ├── WorkspaceDetail.tsx # Workspace detail with presets
+│   │   ├── WorkspaceSettings.tsx # Workspace edit form
+│   │   ├── CreateWorkspace.tsx # New workspace creation
+│   │   ├── ItemEditor.tsx      # Individual item editor
+│   │   ├── AddItemModal.tsx    # Modal for adding items
+│   │   ├── ToolsRegistry.tsx   # Tools registry view (Phase 2)
+│   │   ├── MCPServers.tsx      # MCP servers config (Phase 2)
+│   │   └── Settings.tsx        # Global settings view
+│   ├── hooks/              # Custom React hooks
+│   └── api/                # IPC abstraction layer
 └── shared/
     ├── types.ts            # Shared Interfaces
     └── schemas.ts          # Zod Schemas
 ```
+
+---
+
+## 7. UI Architecture
+
+### 7.1 View Structure
+The application follows a sidebar + main content layout pattern.
+
+```
+┌────────────────────────────────────────────────────────┐
+│  Sidebar (w-64)    │  Main Content                     │
+│  ┌──────────────┐  │  ┌──────────────────────────────┐ │
+│  │ Logo/Home    │  │  │ Header (title, actions)      │ │
+│  ├──────────────┤  │  ├──────────────────────────────┤ │
+│  │ Workspaces   │  │  │                              │ │
+│  │  - AgiRity   │  │  │ Content Area                 │ │
+│  │  - Morning   │  │  │ (scrollable)                 │ │
+│  │  + Add       │  │  │                              │ │
+│  ├──────────────┤  │  │                              │ │
+│  │ Library      │  │  │                              │ │
+│  │  - Tools     │  │  │                              │ │
+│  │  - MCP       │  │  │                              │ │
+│  ├──────────────┤  │  │                              │ │
+│  │ Settings     │  │  │                              │ │
+│  └──────────────┘  │  └──────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+```
+
+### 7.2 View Types
+Navigation is handled via a discriminated union `View` type:
+
+| View Type | Description |
+|---|---|
+| `quick-launch` | Dashboard showing all workspaces as cards |
+| `workspace` | Workspace detail view with presets and items |
+| `workspace-settings` | Edit form for workspace configuration |
+| `create-workspace` | New workspace creation wizard |
+| `tools` | Tools Registry (Phase 2 placeholder) |
+| `mcp` | MCP Servers configuration (Phase 2 placeholder) |
+| `settings` | Global application settings |
+
+### 7.3 Component Responsibilities
+
+| Component | Responsibility |
+|---|---|
+| `App.tsx` | View state management, routing, layout composition |
+| `Sidebar` | Navigation, workspace list, search/filter |
+| `QuickLaunch` | Workspace cards grid, quick item launch |
+| `WorkspaceDetail` | Preset cards, item grid, launch actions |
+| `CreateWorkspace` / `WorkspaceSettings` | Form handling, item management |
+| `ItemEditor` | Individual item configuration with drag/reorder |
