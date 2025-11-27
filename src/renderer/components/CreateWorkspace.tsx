@@ -59,19 +59,19 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
     <div className="max-w-4xl mx-auto p-8">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-blue-100 rounded-xl">
-            <Sparkles className="w-6 h-6 text-blue-600" />
+          <div className="p-2 bg-primary-100 rounded-xl">
+            <Sparkles className="w-6 h-6 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Create New Workspace</h2>
+          <h2 className="text-2xl font-display font-bold text-text-primary">Create New Workspace</h2>
         </div>
-        <p className="text-gray-500">Set up a new workspace to launch your apps, URLs, and folders together.</p>
+        <p className="text-text-secondary">Set up a new workspace to launch your apps, URLs, and folders together.</p>
       </div>
 
       <div className="space-y-6">
         {/* Basic Info Section */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h3 className="font-semibold text-gray-900">Basic Information</h3>
+        <div className="bg-white rounded-card border border-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-surface">
+            <h3 className="font-semibold text-text-primary">Basic Information</h3>
           </div>
           <div className="p-6 space-y-4">
             {/* Name */}
@@ -84,7 +84,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Morning Routine, Client Project"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
               />
             </div>
 
@@ -96,7 +96,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
                 placeholder="What is this workspace for?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none"
               />
             </div>
 
@@ -115,7 +115,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                   )
                 }
                 placeholder="dev, frontend, daily..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
               />
               <p className="text-xs text-gray-500 mt-1">Comma separated values for organizing workspaces</p>
             </div>
@@ -123,15 +123,15 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
         </div>
 
         {/* Items Section */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+        <div className="bg-white rounded-card border border-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-surface flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-gray-900">Workspace Items</h3>
-              <p className="text-sm text-gray-500 mt-0.5">Apps, URLs, and folders to launch</p>
+              <h3 className="font-semibold text-text-primary">Workspace Items</h3>
+              <p className="text-sm text-text-secondary mt-0.5">Apps, URLs, and folders to launch</p>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white text-sm font-medium rounded-button hover:bg-primary-600 transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
               Add Item
@@ -148,7 +148,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                 <p className="text-gray-500 text-sm mb-4">Add apps, URLs, or folders to launch with this workspace</p>
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-button hover:bg-primary-600 transition-colors shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                   Add First Item
@@ -194,7 +194,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
           <button
             onClick={handleSave}
             disabled={!name.trim()}
-            className="px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4" />
             Create Workspace

@@ -27,9 +27,9 @@ export function ItemEditor({
 
   const getItemIcon = () => {
     switch (item.type) {
-      case 'app': return <Monitor className="w-4 h-4 text-blue-500" />;
-      case 'browser': return <Globe className="w-4 h-4 text-green-500" />;
-      case 'folder': return <Folder className="w-4 h-4 text-yellow-500" />;
+      case 'app': return <Monitor className="w-4 h-4 text-primary" />;
+      case 'browser': return <Globe className="w-4 h-4 text-success" />;
+      case 'folder': return <Folder className="w-4 h-4 text-warning" />;
     }
   };
 
@@ -111,14 +111,14 @@ export function ItemEditor({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded transition-colors"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
           </button>
           <button
             onClick={onDelete}
-            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+            className="p-1.5 text-gray-400 hover:text-error hover:bg-red-50 rounded transition-colors"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />
@@ -203,7 +203,7 @@ export function ItemEditor({
           <div className="flex justify-end">
             <button
               onClick={() => setIsExpanded(false)}
-              className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+              className="px-3 py-1.5 text-sm text-primary hover:bg-primary-50 rounded-button transition-colors font-medium"
             >
               Done
             </button>

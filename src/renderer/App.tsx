@@ -7,7 +7,7 @@ import { QuickLaunch } from './components/QuickLaunch';
 import { ToolsRegistry } from './components/ToolsRegistry';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
-import { Workspace } from '../shared/types';
+import { Workspace, WorkspaceItem } from '../shared/types';
 import { Settings, Pencil, Trash2 } from 'lucide-react';
 
 // Mock Data
@@ -19,6 +19,8 @@ const MOCK_WORKSPACES: Workspace[] = [
     items: [
       { type: 'folder', name: 'Project Root', path: '~/workspace/AgiRity' },
       { type: 'app', name: 'VS Code', path: '/Applications/Visual Studio Code.app' },
+      { type: 'app', name: 'Zed (Project)', path: '/Applications/Zed.app', folder: '~/workspace/tmp' },
+      { type: 'app', name: 'Terminal', path: '/System/Applications/Utilities/Terminal.app', folder: '~/workspace/AgiRity' },
       { type: 'browser', name: 'Linear Board', urls: ['https://linear.app/'] },
       { type: 'app', name: 'Docker', path: '/Applications/Docker.app' },
       { type: 'browser', name: 'GitHub Repo', urls: ['https://github.com/agirity/agirity'] },
@@ -108,7 +110,23 @@ function App() {
   };
 
   const handleLaunchItem = (workspaceId: string, itemName: string) => {
-    console.log(`Launching item ${itemName} from workspace ${workspaceId}`);
+    const workspace = MOCK_WORKSPACES.find(w => w.id === workspaceId);
+    const item = workspace?.items.find(i => i.name === itemName);
+    if (item) {
+      launchItem(item);
+    }
+  };
+
+  const launchItem = async (item: WorkspaceItem) => {
+    console.log('Launching item:', item.name);
+    try {
+      const result = await window.ipcRenderer.invoke('launcher:launchItem', item) as { success: boolean; error?: string };
+      if (!result.success) {
+        console.error('Launch failed:', result.error);
+      }
+    } catch (error) {
+      console.error('IPC error:', error);
+    }
   };
 
   const handleNew = () => {
@@ -159,6 +177,7 @@ function App() {
           <WorkspaceDetail 
             workspace={selectedWorkspace} 
             onLaunch={handleLaunch}
+            onLaunchItem={launchItem}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
@@ -206,7 +225,7 @@ function App() {
   const header = getHeaderContent();
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans text-gray-900 overflow-hidden">
+    <div className="flex h-screen bg-surface font-body text-text-primary overflow-hidden">
       {/* Left Sidebar */}
       <Sidebar 
         workspaces={MOCK_WORKSPACES} 
@@ -240,27 +259,27 @@ function App() {
               <>
                 <button 
                   onClick={() => handleEditWorkspace(selectedWorkspace.id)}
-                  className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                  className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"
                   title="Edit Workspace"
                 >
                   <Pencil className="w-5 h-5" />
                 </button>
                 <button 
                   onClick={() => handleDeleteWorkspace(selectedWorkspace.id)}
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                  className="p-2 text-text-secondary hover:text-error hover:bg-red-50 rounded-full transition-colors"
                   title="Delete Workspace"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
-                <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                <div className="w-px h-6 bg-border mx-1"></div>
               </>
             )}
             <button 
               onClick={() => setActiveView({ type: 'settings' })}
               className={`p-2 rounded-full transition-colors ${
                 activeView.type === 'settings'
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+                  ? 'text-primary bg-primary-50' 
+                  : 'text-text-secondary hover:text-text-primary hover:bg-gray-100'
               }`}
               title="Global Settings"
             >
