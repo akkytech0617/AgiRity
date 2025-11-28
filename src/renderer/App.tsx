@@ -263,14 +263,14 @@ function App() {
                   className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"
                   title="Edit Workspace"
                 >
-                  <Pencil className="w-5 h-5" />
+                  <Pencil className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={() => handleDeleteWorkspace(selectedWorkspace.id)}
                   className="p-2 text-text-secondary hover:text-error hover:bg-red-50 rounded-full transition-colors"
                   title="Delete Workspace"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash2 className="w-4 h-4" />
                 </button>
                 <div className="w-px h-6 bg-border mx-1"></div>
               </>
@@ -284,7 +284,7 @@ function App() {
               }`}
               title="Global Settings"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4" />
             </button>
           </div>
         </header>

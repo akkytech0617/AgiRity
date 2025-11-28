@@ -35,7 +35,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
       {/* Navigation */}
       <nav className="flex-1 py-6 flex flex-col px-2 overflow-y-auto">
         <div className="px-3 py-2 flex items-center gap-3 text-gray-400 mb-2">
-          <LayoutGrid className="w-5 h-5" />
+          <LayoutGrid className="w-4 h-4" />
           <span className="hidden lg:block text-sm font-bold uppercase tracking-wider">Workspaces</span>
         </div>
 
@@ -83,7 +83,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
 
         {/* Library Section */}
         <div className="mt-8 px-3 py-2 flex items-center gap-3 text-gray-400 mb-1">
-          <Library className="w-5 h-5" />
+          <Library className="w-4 h-4" />
           <span className="hidden lg:block text-sm font-bold uppercase tracking-wider">Library</span>
         </div>
         <div className="flex flex-col space-y-1">
@@ -110,7 +110,7 @@ export function Sidebar({ workspaces, onSelectWorkspace, onNewWorkspace, onOpenS
           onClick={onOpenSettings}
           className="flex items-center gap-3 w-full p-2 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group"
         >
-          <Settings className="w-5 h-5 group-hover:text-primary-400 transition-colors" />
+          <Settings className="w-4 h-4 group-hover:text-primary-400 transition-colors" />
           <span className="hidden lg:block font-medium">Settings</span>
         </button>
       </div>

@@ -10,10 +10,10 @@ interface WorkspaceDetailProps {
 export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: WorkspaceDetailProps) {
   const getItemIcon = (type: string) => {
     switch (type) {
-      case 'app': return <Monitor className="w-5 h-5 text-primary" />;
-      case 'browser': return <Globe className="w-5 h-5 text-success" />;
-      case 'folder': return <Folder className="w-5 h-5 text-warning" />;
-      default: return <Code className="w-5 h-5 text-text-secondary" />;
+      case 'app': return <Monitor className="w-4 h-4 text-primary" />;
+      case 'browser': return <Globe className="w-4 h-4 text-success" />;
+      case 'folder': return <Folder className="w-4 h-4 text-warning" />;
+      default: return <Code className="w-4 h-4 text-text-secondary" />;
     }
   };
 
@@ -50,7 +50,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                 className="bg-white rounded-card border border-border p-5 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-                   <Play className="w-24 h-24 -mr-6 -mt-6" />
+                   <Play className="w-16 h-16 -mr-4 -mt-4" />
                 </div>
 
                 <div className="relative z-10">
