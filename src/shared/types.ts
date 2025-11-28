@@ -24,3 +24,15 @@ export interface Workspace {
   createdAt: string; // ISO8601
   updatedAt: string; // ISO8601
 }
+
+// IPC Types
+export interface LaunchResult {
+  success: boolean;
+  error?: string;
+}
+
+export const IPC_CHANNELS = {
+  LAUNCHER_LAUNCH_ITEM: 'launcher:launchItem',
+} as const;
+
+export type IpcChannels = typeof IPC_CHANNELS[keyof typeof IPC_CHANNELS];

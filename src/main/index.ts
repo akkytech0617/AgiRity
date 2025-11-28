@@ -1,7 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
-import { launcherService } from './services/LauncherService';
-import { WorkspaceItem } from '../shared/types';
+import { setupIpcHandlers } from './ipc';
 
 // The built directory structure
 //
@@ -57,17 +56,8 @@ async function createWindow() {
   }
 }
 
-// IPC Handlers
-ipcMain.handle('launcher:launchItem', async (_event, item: WorkspaceItem) => {
-  try {
-    await launcherService.launchItem(item);
-    return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Launch failed:', message);
-    return { success: false, error: message };
-  }
-});
+// Setup IPC handlers
+setupIpcHandlers();
 
 app.whenReady().then(createWindow);
 

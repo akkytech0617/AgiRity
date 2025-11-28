@@ -9,6 +9,7 @@ import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { Settings, Pencil, Trash2 } from 'lucide-react';
+import { launcherApi } from './api';
 
 // Mock Data
 const MOCK_WORKSPACES: Workspace[] = [
@@ -120,7 +121,7 @@ function App() {
   const launchItem = async (item: WorkspaceItem) => {
     console.log('Launching item:', item.name);
     try {
-      const result = await window.ipcRenderer.invoke('launcher:launchItem', item) as { success: boolean; error?: string };
+      const result = await launcherApi.launchItem(item);
       if (!result.success) {
         console.error('Launch failed:', result.error);
       }
