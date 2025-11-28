@@ -1,40 +1,46 @@
-import { Plus, Search, Settings } from 'lucide-react';
+import { Pencil } from "lucide-react";
 
 interface HeaderProps {
-  onNewWorkspace: () => void;
+  title: string;
+  subtitle?: string;
+  tags?: string[];
+  showEditButton?: boolean;
+  onEdit?: () => void;
 }
 
-export function Header({ onNewWorkspace }: HeaderProps) {
+export function Header({
+  title,
+  subtitle,
+  tags,
+  showEditButton,
+  onEdit,
+}: HeaderProps) {
   return (
-    <header className="h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center gap-2">
-        <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-lg">A</span>
+    <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
+      <div>
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-bold text-gray-800">{title}</h1>
+          {tags?.map((tag, idx) => (
+            <span
+              key={idx}
+              className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full border border-gray-200"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-        <span className="text-xl font-bold text-gray-900 tracking-tight">AgiRity</span>
+        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
       </div>
 
-      <div className="flex-1 max-w-md mx-8 relative">
-        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        <input 
-          type="text" 
-          placeholder="Search workspaces..." 
-          className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all text-sm"
-        />
-      </div>
-
-      <div className="flex items-center gap-3">
-        <button 
-          onClick={onNewWorkspace}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+      {showEditButton && onEdit && (
+        <button
+          onClick={onEdit}
+          className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"
+          title="Edit"
         >
-          <Plus className="w-4 h-4" />
-          <span>New Workspace</span>
+          <Pencil className="w-2 h-2" />
         </button>
-        <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-          <Settings className="w-5 h-5" />
-        </button>
-      </div>
+      )}
     </header>
   );
 }

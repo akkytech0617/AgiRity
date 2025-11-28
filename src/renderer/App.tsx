@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sidebar } from './components/Sidebar';
+import { Layout } from './components/Layout';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceSettings } from './components/WorkspaceSettings';
 import { CreateWorkspace } from './components/CreateWorkspace';
@@ -8,7 +8,6 @@ import { ToolsRegistry } from './components/ToolsRegistry';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { Workspace, WorkspaceItem } from '../shared/types';
-import { Settings, Pencil, Trash2 } from 'lucide-react';
 import { launcherApi } from './api';
 
 // Mock Data
@@ -102,12 +101,6 @@ function App() {
     console.log('Saving workspace:', workspace);
     // Here we would update the state, but for now we just go back to detail view
     setActiveView({ type: 'workspace', id: workspace.id });
-  };
-
-  const handleDeleteWorkspace = (id: string) => {
-    if (confirm('Are you sure you want to delete this workspace?')) {
-      console.log('Deleting workspace:', id);
-    }
   };
 
   const handleLaunchItem = (workspaceId: string, itemName: string) => {
@@ -215,88 +208,33 @@ function App() {
         return selectedWorkspace ? {
           title: selectedWorkspace.name,
           subtitle: selectedWorkspace.description,
-          tags: selectedWorkspace.tags
+          tags: selectedWorkspace.tags,
+          showEditButton: true,
+          onEdit: () => handleEditWorkspace(selectedWorkspace.id),
         } : { title: 'Workspace', subtitle: '' };
       case 'quick-launch':
       default:
-        return { title: 'Quick Launch', subtitle: 'Start your work in seconds' };
+        return { 
+          title: 'Quick Launch', 
+          subtitle: 'Start your work in seconds',
+          showEditButton: true,
+          onEdit: () => console.log('Edit Quick Launch settings'),
+        };
     }
   };
 
-  const header = getHeaderContent();
-
   return (
-    <div className="flex h-screen bg-surface font-body text-text-primary overflow-hidden">
-      {/* Left Sidebar */}
-      <Sidebar 
-        workspaces={MOCK_WORKSPACES} 
-        onSelectWorkspace={handleSelectWorkspace}
-        onNewWorkspace={handleNew}
-        onOpenSettings={() => setActiveView({ type: 'settings' })}
-        onOpenTools={() => setActiveView({ type: 'tools' })}
-        onOpenMCP={() => setActiveView({ type: 'mcp' })}
-      />
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 bg-white h-full">
-        {/* Header */}
-        <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-gray-800">
-                {header.title}
-              </h1>
-              {header.tags?.map((tag, idx) => (
-                <span key={idx} className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full border border-gray-200">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <p className="text-sm text-gray-500 mt-1">{header.subtitle}</p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {activeView.type === 'workspace' && selectedWorkspace && (
-              <>
-                <button 
-                  onClick={() => handleEditWorkspace(selectedWorkspace.id)}
-                  className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"
-                  title="Edit Workspace"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={() => handleDeleteWorkspace(selectedWorkspace.id)}
-                  className="p-2 text-text-secondary hover:text-error hover:bg-red-50 rounded-full transition-colors"
-                  title="Delete Workspace"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-                <div className="w-px h-6 bg-border mx-1"></div>
-              </>
-            )}
-            <button 
-              onClick={() => setActiveView({ type: 'settings' })}
-              className={`p-2 rounded-full transition-colors ${
-                activeView.type === 'settings'
-                  ? 'text-primary bg-primary-50' 
-                  : 'text-text-secondary hover:text-text-primary hover:bg-gray-100'
-              }`}
-              title="Global Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
-        </header>
-
-        {/* Detail Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="min-h-full">
-            {renderMainContent()}
-          </div>
-        </div>
-      </main>
-    </div>
+    <Layout
+      workspaces={MOCK_WORKSPACES}
+      header={getHeaderContent()}
+      onSelectWorkspace={handleSelectWorkspace}
+      onNewWorkspace={handleNew}
+      onOpenSettings={() => setActiveView({ type: 'settings' })}
+      onOpenTools={() => setActiveView({ type: 'tools' })}
+      onOpenMCP={() => setActiveView({ type: 'mcp' })}
+    >
+      {renderMainContent()}
+    </Layout>
   );
 }
 
