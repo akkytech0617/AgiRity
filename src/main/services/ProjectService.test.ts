@@ -75,6 +75,30 @@ describe('ProjectService', () => {
       const service = new ProjectService();
       await expect(service.loadWorkspaces()).rejects.toThrow('Invalid workspace file format');
     });
+
+    it('should throw error for empty YAML file', async () => {
+      vi.mocked(fs.readFile).mockResolvedValue('');
+      const service = new ProjectService();
+      await expect(service.loadWorkspaces()).rejects.toThrow();
+    });
+
+    it('should handle multiple workspaces correctly', async () => {
+      const secondWorkspace: Workspace = {
+        ...mockWorkspace,
+        id: '660e8400-e29b-41d4-a716-446655440001',
+        name: 'Second Workspace',
+      };
+      const multipleWorkspaces = {
+        schemaVersion: 1,
+        workspaces: [mockWorkspace, secondWorkspace],
+      };
+      vi.mocked(fs.readFile).mockResolvedValue(yaml.dump(multipleWorkspaces));
+      const service = new ProjectService();
+      const workspaces = await service.loadWorkspaces();
+      expect(workspaces).toHaveLength(2);
+      expect(workspaces[0].name).toBe('Test Workspace');
+      expect(workspaces[1].name).toBe('Second Workspace');
+    });
   });
 
   describe('getWorkspace', () => {
@@ -113,6 +137,22 @@ describe('ProjectService', () => {
       const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
       expect(parsed.workspaces).toHaveLength(1);
       expect(parsed.workspaces[0].name).toBe('Updated Workspace');
+    });
+
+    it('should update updatedAt when saving existing workspace', async () => {
+      vi.mocked(fs.readFile).mockResolvedValue(yaml.dump(mockWorkspacesFile));
+      const service = new ProjectService();
+      await service.saveWorkspace(mockWorkspace);
+      const writtenContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+      const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
+      expect(parsed.workspaces[0].updatedAt).not.toBe('2024-01-01T00:00:00.000Z');
+    });
+
+    it('should throw error when writeFile fails', async () => {
+      vi.mocked(fs.readFile).mockResolvedValue(yaml.dump({ schemaVersion: 1, workspaces: [] }));
+      vi.mocked(fs.writeFile).mockRejectedValue(new Error('Permission denied'));
+      const service = new ProjectService();
+      await expect(service.saveWorkspace(mockWorkspace)).rejects.toThrow('Permission denied');
     });
   });
 

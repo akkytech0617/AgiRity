@@ -36,6 +36,12 @@ describe('ConfigService', () => {
       await service.ensureConfigDir();
       expect(fs.mkdir).toHaveBeenCalledWith(service.getConfigDir(), { recursive: true });
     });
+
+    it('should throw error when mkdir fails', async () => {
+      vi.mocked(fs.mkdir).mockRejectedValue(new Error('Permission denied'));
+      const service = new ConfigService();
+      await expect(service.ensureConfigDir()).rejects.toThrow('Permission denied');
+    });
   });
 
   describe('expandTilde', () => {

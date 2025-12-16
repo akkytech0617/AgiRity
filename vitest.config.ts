@@ -8,8 +8,10 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     exclude: ['node_modules', 'dist', 'dist-electron'],
     mockReset: true,
-    deps: {
-      inline: [/vite-electron-renderer/],
+    server: {
+      deps: {
+        inline: [/vite-electron-renderer/],
+      },
     },
   },
   resolve: {

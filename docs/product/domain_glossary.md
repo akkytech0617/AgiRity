@@ -9,10 +9,12 @@
 - **Tag (タグ)**: ワークスペースを分類・検索するためのラベル（例: "frontend", "design", "urgent"）。
 
 ### システムコンポーネント
-- **App Launcher**: ローカルアプリケーションを起動する機能。OSごとの差異（macOS `.app`, Windows `.exe`）を吸収する。
-- **Config Service**: ワークスペース設定（YAML）の読み書きを担当するサービス。
+- **App Launcher (LauncherService)**: ローカルアプリケーションを起動する機能。OSごとの差異（macOS `.app`, Windows `.exe`）を吸収する。`src/main/services/LauncherService.ts` に実装。
+- **Config Service**: 設定ファイルのパス管理（`~/.agirity/`）とディレクトリ作成を担当。`src/main/services/ConfigService.ts` に実装。
+- **Project Service**: ワークスペース設定（YAML）のCRUD操作を担当。Zodによるスキーマバリデーション付き。`src/main/services/ProjectService.ts` に実装。
 - **Main Process**: Electronのメインプロセス。システム操作（アプリ起動、ファイルアクセス）を担当。
 - **Renderer Process**: Reactで構築されたUI層。ユーザー操作を受け付ける。
+- **IPC Handlers**: Main ProcessとRenderer Process間の通信を仲介。`src/main/ipc/index.ts` に実装。
 
 ---
 
@@ -57,7 +59,30 @@
 
 ---
 
-## 3. 設定ファイル例 (workspaces.yaml)
+## 3. 設定ファイル仕様 (workspaces.yaml)
+
+### ファイル構造
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `schemaVersion` | number | ✅ | スキーマバージョン（現在: 1）。将来のマイグレーション用。 |
+| `workspaces` | Workspace[] | ✅ | ワークスペース定義の配列 |
+
+### バリデーション
+- **Zodスキーマ**: `src/main/services/ProjectService.ts` で定義
+- **UUID形式**: `id` フィールドはUUID v4形式で検証
+- **必須フィールド**: `type`, `name`, `items`, `createdAt`, `updatedAt`
+- **条件付き必須**: `path`（app/folder時）、`urls`（browser時）
+
+### エラーハンドリング
+| ケース | 挙動 |
+|--------|------|
+| ファイル不在 (ENOENT) | 空配列を返す（初回起動時の正常動作） |
+| 空ファイル | エラー: "Invalid workspace file format" |
+| 不正なYAML構文 | エラー: YAMLパースエラー |
+| スキーマ不一致 | エラー: "Invalid workspace file format" + 詳細 |
+
+### 設定ファイル例
 
 ```yaml
 schemaVersion: 1
@@ -101,4 +126,33 @@ workspaces:
       - name: "Review Mode"
         description: "Browser tools for PR review"
         itemNames: ["Reference Links"]
+    
+    createdAt: "2024-01-01T00:00:00.000Z"
+    updatedAt: "2024-01-15T00:00:00.000Z"
+```
+
+---
+
+## 4. IPC通信チャンネル
+
+Main ProcessとRenderer Process間の通信に使用するチャンネル定義。
+
+| チャンネル | 方向 | 説明 |
+|-----------|------|------|
+| `launcher:launchItem` | Renderer → Main | アイテムを起動 |
+| `workspace:load` | Renderer → Main | 全ワークスペースを読み込み |
+| `workspace:get` | Renderer → Main | IDで単一ワークスペースを取得 |
+| `workspace:save` | Renderer → Main | ワークスペースを保存（追加/更新） |
+| `workspace:delete` | Renderer → Main | ワークスペースを削除 |
+
+### 型定義
+```typescript
+// src/shared/types.ts
+export const IPC_CHANNELS = {
+  LAUNCHER_LAUNCH_ITEM: 'launcher:launchItem',
+  WORKSPACE_LOAD: 'workspace:load',
+  WORKSPACE_GET: 'workspace:get',
+  WORKSPACE_SAVE: 'workspace:save',
+  WORKSPACE_DELETE: 'workspace:delete',
+} as const;
 ```
