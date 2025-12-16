@@ -1,6 +1,7 @@
 export interface WorkspaceItem {
   type: 'app' | 'browser' | 'folder';
   name: string;
+  category?: string; // classification/grouping label
   path?: string; // required for app, folder
   urls?: string[]; // required for browser
   folder?: string; // VS Code project folder
@@ -33,6 +34,10 @@ export interface LaunchResult {
 
 export const IPC_CHANNELS = {
   LAUNCHER_LAUNCH_ITEM: 'launcher:launchItem',
+  WORKSPACE_LOAD: 'workspace:load',
+  WORKSPACE_GET: 'workspace:get',
+  WORKSPACE_SAVE: 'workspace:save',
+  WORKSPACE_DELETE: 'workspace:delete',
 } as const;
 
 export type IpcChannels = typeof IPC_CHANNELS[keyof typeof IPC_CHANNELS];

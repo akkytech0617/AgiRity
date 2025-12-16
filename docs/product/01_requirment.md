@@ -299,6 +299,7 @@ Warning:       #FBBF24
 ### プロジェクト定義 (YAML)
 ```yaml
 # ~/.agirity/workspaces.yaml
+schemaVersion: 1
 workspaces:
   - id: "uuid-1"
     name: "クライアントA開発"
@@ -307,13 +308,15 @@ workspaces:
       - type: "app"
         name: "Rancher Desktop"
         path: "/Applications/Rancher Desktop.app"
-        wait_time: 30
+        waitTime: 30
+        category: "development"
         
       - type: "app"
         name: "VS Code"
         path: "/Applications/Visual Studio Code.app"
         folder: "~/projects/client-a"
-        depends_on: "Rancher Desktop"
+        dependsOn: "Rancher Desktop"
+        category: "development"
         
       - type: "browser"
         name: "Reference Links"
@@ -321,22 +324,23 @@ workspaces:
           - "https://github.com/client-a/frontend"
           - "https://dev.azure.com/client-a"
           - "http://localhost:3000"
+        category: "reference"
     
     # 起動プリセット (オプション)
     presets:
       - name: "Full Development"
         description: "フルセットで開発開始"
-        item_names: ["Rancher Desktop", "VS Code", "Reference Links"]
+        itemNames: ["Rancher Desktop", "VS Code", "Reference Links"]
       - name: "Code Only"
         description: "コーディングのみ"
-        item_names: ["VS Code"]
+        itemNames: ["VS Code"]
       - name: "Review Mode"
         description: "PRレビュー時"
-        item_names: ["Reference Links"]
+        itemNames: ["Reference Links"]
     
     tags: ["frontend", "react", "client-work"]
-    created_at: "2025-01-01T00:00:00Z"
-    updated_at: "2025-01-15T00:00:00Z"
+    createdAt: "2025-01-01T00:00:00Z"
+    updatedAt: "2025-01-15T00:00:00Z"
 ```
 
 ---

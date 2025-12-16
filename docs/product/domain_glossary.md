@@ -44,6 +44,7 @@
 | `folder` | string | | `app` (VSCode等) で開く対象のフォルダパス。 |
 | `waitTime` | number | | 起動後の待機時間（秒）。依存関係がある場合に利用。 |
 | `dependsOn` | string | | 先に起動すべきアイテムの `name`。 |
+| `category` | string | | 分類・グルーピング用ラベル。 |
 
 ### WorkspacePreset
 ワークスペース内のアイテムをグループ化した起動プリセット。部分的な起動やシナリオ別の起動を可能にする。
@@ -59,40 +60,45 @@
 ## 3. 設定ファイル例 (workspaces.yaml)
 
 ```yaml
-- id: "550e8400-e29b-41d4-a716-446655440000"
-  name: "Client A Development"
-  description: "Frontend development environment for Client A"
-  tags: ["work", "frontend"]
-  items:
-    # 1. Docker (DB) start
-    - type: "app"
-      name: "Docker Desktop"
-      path: "/Applications/Docker.app"
-      waitTime: 30
+schemaVersion: 1
+workspaces:
+  - id: "550e8400-e29b-41d4-a716-446655440000"
+    name: "Client A Development"
+    description: "Frontend development environment for Client A"
+    tags: ["work", "frontend"]
+    items:
+      # 1. Docker (DB) start
+      - type: "app"
+        name: "Docker Desktop"
+        path: "/Applications/Docker.app"
+        waitTime: 30
+        category: "development"
 
-    # 2. VS Code with project folder (depends on Docker)
-    - type: "app"
-      name: "VS Code"
-      path: "/Applications/Visual Studio Code.app"
-      folder: "~/workspace/client-a-frontend"
-      dependsOn: "Docker Desktop"
+      # 2. VS Code with project folder (depends on Docker)
+      - type: "app"
+        name: "VS Code"
+        path: "/Applications/Visual Studio Code.app"
+        folder: "~/workspace/client-a-frontend"
+        dependsOn: "Docker Desktop"
+        category: "development"
 
-    # 3. References
-    - type: "browser"
-      name: "Reference Links"
-      urls:
-        - "https://github.com/client-a/repo"
-        - "https://figma.com/file/xyz"
-  
-  # Launch Presets (optional)
-  presets:
-    - name: "Full Development"
-      description: "Start everything for full stack dev"
-      itemNames: ["Docker Desktop", "VS Code", "Reference Links"]
-    - name: "Code Only"
-      description: "Just the editor without Docker"
-      itemNames: ["VS Code"]
-    - name: "Review Mode"
-      description: "Browser tools for PR review"
-      itemNames: ["Reference Links"]
+      # 3. References
+      - type: "browser"
+        name: "Reference Links"
+        urls:
+          - "https://github.com/client-a/repo"
+          - "https://figma.com/file/xyz"
+        category: "reference"
+    
+    # Launch Presets (optional)
+    presets:
+      - name: "Full Development"
+        description: "Start everything for full stack dev"
+        itemNames: ["Docker Desktop", "VS Code", "Reference Links"]
+      - name: "Code Only"
+        description: "Just the editor without Docker"
+        itemNames: ["VS Code"]
+      - name: "Review Mode"
+        description: "Browser tools for PR review"
+        itemNames: ["Reference Links"]
 ```

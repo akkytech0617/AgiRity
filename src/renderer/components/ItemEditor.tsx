@@ -84,6 +84,11 @@ export function ItemEditor({
             <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
               {getTypeLabel()}
             </span>
+            {item.category && (
+              <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded truncate" title={item.category}>
+                {item.category}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-3 mt-0.5">
             {item.waitTime && (
@@ -136,6 +141,18 @@ export function ItemEditor({
               type="text"
               value={item.name}
               onChange={(e) => handleFieldChange('name', e.target.value)}
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+            <input
+              type="text"
+              value={item.category || ''}
+              onChange={(e) => handleFieldChange('category', e.target.value || undefined)}
+              placeholder="e.g., development"
               className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
             />
           </div>

@@ -13,6 +13,7 @@ type ItemType = 'app' | 'browser' | 'folder';
 export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModalProps) {
   const [itemType, setItemType] = useState<ItemType>('app');
   const [name, setName] = useState('');
+  const [category, setCategory] = useState('');
   const [path, setPath] = useState('');
   const [urls, setUrls] = useState('');
   const [waitTime, setWaitTime] = useState<number | undefined>(undefined);
@@ -25,6 +26,10 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
       type: itemType,
       name: name.trim(),
     };
+
+    if (category.trim()) {
+      item.category = category.trim();
+    }
 
     if (itemType === 'app' || itemType === 'folder') {
       if (!path.trim()) return;
@@ -106,6 +111,19 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               placeholder="e.g., VS Code, GitHub Repo"
               className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
+          </div>
+
+          {/* Category (optional) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="e.g., development, reference, communication"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+            />
+            <p className="text-xs text-gray-500 mt-1">Optional label for grouping and filtering</p>
           </div>
 
           {/* Path (for app/folder) */}
