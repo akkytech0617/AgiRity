@@ -4,9 +4,10 @@ import path from 'node:path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    environment: 'jsdom',
+    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     exclude: ['node_modules', 'dist', 'dist-electron'],
+    setupFiles: ['./tests/setup.ts'],
     mockReset: true,
     server: {
       deps: {

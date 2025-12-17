@@ -22,41 +22,41 @@ check: type-check format-check lint
 
 # Run TypeScript type checking
 type-check:
-    npm run type-check
+    npm run --silent type-check --no-color
 
 # Run ESLint
 lint:
-    npm run lint
+    npm run --silent lint --no-color
 
 # Fix ESLint issues automatically
 fix:
-    npm run lint:fix
+    npm run --silent lint:fix --no-color
 
 # Check code formatting with Prettier
 format-check:
-    npm run format:check
+    npx prettier --check --no-color . 2>&1 | grep -v "^Checking formatting" | grep -v "^\[" || test $? = 1
 
 # Format code with Prettier
 format:
-    npm run format
+    npm run --silent format --no-color
 
 # --- Testing ---
 
 # Run all unit tests
 test:
-    npm run test
+    npm run test --no-color
 
 # Run unit tests in watch mode
 test-watch:
-    npm run test:watch
+    npm run test:watch --no-color
 
 # Run unit tests with coverage report
 coverage:
-    npm run test:coverage
+    npm run test:coverage --no-color
 
 # Run End-to-End tests with Playwright
 e2e:
-    npm run test:e2e
+    npm run test:e2e --no-color
 
 # --- Build & Release ---
 
@@ -66,11 +66,11 @@ clean:
 
 # Build the application for production
 build: clean
-    npm run build
+    npm run build --no-color
 
 # Package the application (create installers)
 package: build
-    npm run package
+    npm run package --no-color
 
 # Create a new release (tag and push)
 release: build

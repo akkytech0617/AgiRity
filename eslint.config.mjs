@@ -77,7 +77,7 @@ export default tseslint.config(
 
   // Test files - allow some patterns common in testing
   {
-    files: ['tests/**/*.ts'],
+    files: ['tests/**/*.ts', 'tests/**/*.tsx'],
     rules: {
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
