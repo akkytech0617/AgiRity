@@ -18,3 +18,5 @@ pre-push:
   commands:
     test:
       run: just test
+    scan:
+      run: just security-all
