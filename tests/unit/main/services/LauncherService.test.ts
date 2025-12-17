@@ -49,9 +49,7 @@ describe('LauncherService', () => {
         name: 'No URLs',
       };
 
-      await expect(service.launchItem(item)).rejects.toThrow(
-        'Browser item "No URLs" has no URLs'
-      );
+      await expect(service.launchItem(item)).rejects.toThrow('Browser item "No URLs" has no URLs');
     });
   });
 
@@ -80,9 +78,7 @@ describe('LauncherService', () => {
 
       await service.launchItem(item);
 
-      expect(mockShellAdapter.openPath).toHaveBeenCalledWith(
-        `${TEST_HOME_DIR}/workspace/project`
-      );
+      expect(mockShellAdapter.openPath).toHaveBeenCalledWith(`${TEST_HOME_DIR}/workspace/project`);
     });
 
     it('should throw error for app item without path', async () => {
@@ -91,9 +87,7 @@ describe('LauncherService', () => {
         name: 'No Path App',
       };
 
-      await expect(service.launchItem(item)).rejects.toThrow(
-        'App item "No Path App" has no path'
-      );
+      await expect(service.launchItem(item)).rejects.toThrow('App item "No Path App" has no path');
     });
 
     it('should throw error when openPath fails for app', async () => {
@@ -104,7 +98,9 @@ describe('LauncherService', () => {
         path: '/Applications/Visual Studio Code.app',
       };
 
-      await expect(service.launchItem(item)).rejects.toThrow('Failed to launch app: Failed to open');
+      await expect(service.launchItem(item)).rejects.toThrow(
+        'Failed to launch app: Failed to open'
+      );
     });
 
     it('should throw error when openPath fails for folder with app', async () => {
@@ -144,9 +140,7 @@ describe('LauncherService', () => {
 
       await service.launchItem(item);
 
-      expect(mockShellAdapter.openPath).toHaveBeenCalledWith(
-        `${TEST_HOME_DIR}/projects/myapp`
-      );
+      expect(mockShellAdapter.openPath).toHaveBeenCalledWith(`${TEST_HOME_DIR}/projects/myapp`);
     });
 
     it('should throw error for folder item without path', async () => {

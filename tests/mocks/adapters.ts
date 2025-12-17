@@ -1,14 +1,6 @@
 import { vi } from 'vitest';
-import type {
-  IFileSystemAdapter,
-  IOSAdapter,
-  IShellAdapter,
-} from '@/main/adapters/interfaces';
-import type {
-  IConfigService,
-  IProjectService,
-  ILauncherService,
-} from '@/main/services/interfaces';
+import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from '@/main/adapters/interfaces';
+import type { IConfigService, IProjectService, ILauncherService } from '@/main/services/interfaces';
 
 /**
  * Create a mock FileSystemAdapter

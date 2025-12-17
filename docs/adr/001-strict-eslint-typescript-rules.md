@@ -31,19 +31,19 @@ ESLintに`typescript-eslint`の厳格なルールセットを導入し、全て�
 
 ### 明示的に`error`として設定したルール
 
-| ルール | 目的 |
-|--------|------|
-| `no-explicit-any` | 型安全性の強制 |
-| `no-unsafe-assignment` | 暗黙のany伝播防止 |
-| `no-unsafe-call` | 暗黙のany伝播防止 |
-| `no-unsafe-member-access` | 暗黙のany伝播防止 |
-| `no-unsafe-return` | 暗黙のany伝播防止 |
-| `no-floating-promises` | 未処理のPromise検出 |
-| `await-thenable` | 不要なawait検出 |
-| `no-misused-promises` | Promise誤用検出 |
-| `require-await` | 不要なasync検出 |
-| `strict-boolean-expressions` | 曖昧な条件式の禁止 |
-| `no-unnecessary-condition` | 到達不能コード検出 |
+| ルール                          | 目的                           |
+| ------------------------------- | ------------------------------ |
+| `no-explicit-any`               | 型安全性の強制                 |
+| `no-unsafe-assignment`          | 暗黙のany伝播防止              |
+| `no-unsafe-call`                | 暗黙のany伝播防止              |
+| `no-unsafe-member-access`       | 暗黙のany伝播防止              |
+| `no-unsafe-return`              | 暗黙のany伝播防止              |
+| `no-floating-promises`          | 未処理のPromise検出            |
+| `await-thenable`                | 不要なawait検出                |
+| `no-misused-promises`           | Promise誤用検出                |
+| `require-await`                 | 不要なasync検出                |
+| `strict-boolean-expressions`    | 曖昧な条件式の禁止             |
+| `no-unnecessary-condition`      | 到達不能コード検出             |
 | `restrict-template-expressions` | テンプレートリテラルの型安全性 |
 
 ### 緩和したルール（テストファイルのみ）
