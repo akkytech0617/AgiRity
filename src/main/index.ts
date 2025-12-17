@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 
 // The built directory structure
@@ -56,8 +57,9 @@ async function createWindow() {
   }
 }
 
-// Setup IPC handlers
-setupIpcHandlers();
+// Create service container and setup IPC handlers
+const container = createContainer();
+setupIpcHandlers(container);
 
 app.whenReady().then(createWindow);
 

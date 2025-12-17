@@ -1,16 +1,19 @@
-import { homedir } from 'os';
 import { join } from 'path';
-import { promises as fs } from 'fs';
+import type { IFileSystemAdapter, IOSAdapter } from '../adapters/interfaces';
+import type { IConfigService } from './interfaces';
 
 const CONFIG_DIR_NAME = '.agirity';
 const WORKSPACES_FILE_NAME = 'workspaces.yaml';
 
-export class ConfigService {
-  private configDir: string;
-  private workspacesFilePath: string;
+export class ConfigService implements IConfigService {
+  private readonly configDir: string;
+  private readonly workspacesFilePath: string;
 
-  constructor() {
-    this.configDir = join(homedir(), CONFIG_DIR_NAME);
+  constructor(
+    private readonly osAdapter: IOSAdapter,
+    private readonly fsAdapter: IFileSystemAdapter
+  ) {
+    this.configDir = join(this.osAdapter.homedir(), CONFIG_DIR_NAME);
     this.workspacesFilePath = join(this.configDir, WORKSPACES_FILE_NAME);
   }
 
@@ -23,15 +26,13 @@ export class ConfigService {
   }
 
   async ensureConfigDir(): Promise<void> {
-    await fs.mkdir(this.configDir, { recursive: true });
+    await this.fsAdapter.mkdir(this.configDir, { recursive: true });
   }
 
   expandTilde(filePath: string): string {
     if (filePath.startsWith('~/')) {
-      return filePath.replace('~', homedir());
+      return filePath.replace('~', this.osAdapter.homedir());
     }
     return filePath;
   }
 }
-
-export const configService = new ConfigService();

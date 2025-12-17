@@ -1,62 +1,58 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { homedir } from 'os';
-import { promises as fs } from 'fs';
 import { ConfigService } from '@/main/services/ConfigService';
-
-vi.mock('fs', () => ({
-  promises: {
-    mkdir: vi.fn().mockResolvedValue(undefined),
-  },
-}));
+import { createMockFileSystemAdapter, createMockOSAdapter } from '../../../mocks/adapters';
 
 describe('ConfigService', () => {
+  const TEST_HOME_DIR = '/test/home';
+  let mockOsAdapter: ReturnType<typeof createMockOSAdapter>;
+  let mockFsAdapter: ReturnType<typeof createMockFileSystemAdapter>;
+  let service: ConfigService;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    mockOsAdapter = createMockOSAdapter(TEST_HOME_DIR);
+    mockFsAdapter = createMockFileSystemAdapter();
+    service = new ConfigService(mockOsAdapter, mockFsAdapter);
   });
 
   describe('getConfigDir', () => {
     it('should return the correct config directory path', () => {
-      const service = new ConfigService();
-      const expected = `${homedir()}/.agirity`;
+      const expected = `${TEST_HOME_DIR}/.agirity`;
       expect(service.getConfigDir()).toBe(expected);
     });
   });
 
   describe('getWorkspacesFilePath', () => {
     it('should return the correct workspaces file path', () => {
-      const service = new ConfigService();
-      const expected = `${homedir()}/.agirity/workspaces.yaml`;
+      const expected = `${TEST_HOME_DIR}/.agirity/workspaces.yaml`;
       expect(service.getWorkspacesFilePath()).toBe(expected);
     });
   });
 
   describe('ensureConfigDir', () => {
     it('should create config directory with recursive option', async () => {
-      const service = new ConfigService();
       await service.ensureConfigDir();
-      expect(fs.mkdir).toHaveBeenCalledWith(service.getConfigDir(), { recursive: true });
+      expect(mockFsAdapter.mkdir).toHaveBeenCalledWith(`${TEST_HOME_DIR}/.agirity`, {
+        recursive: true,
+      });
     });
 
     it('should throw error when mkdir fails', async () => {
-      vi.mocked(fs.mkdir).mockRejectedValue(new Error('Permission denied'));
-      const service = new ConfigService();
+      vi.mocked(mockFsAdapter.mkdir).mockRejectedValue(new Error('Permission denied'));
       await expect(service.ensureConfigDir()).rejects.toThrow('Permission denied');
     });
   });
 
   describe('expandTilde', () => {
     it('should expand tilde to home directory', () => {
-      const service = new ConfigService();
-      expect(service.expandTilde('~/workspace')).toBe(`${homedir()}/workspace`);
+      expect(service.expandTilde('~/workspace')).toBe(`${TEST_HOME_DIR}/workspace`);
     });
 
     it('should not modify paths without tilde', () => {
-      const service = new ConfigService();
       expect(service.expandTilde('/absolute/path')).toBe('/absolute/path');
     });
 
     it('should not expand tilde in the middle of path', () => {
-      const service = new ConfigService();
       expect(service.expandTilde('/some/~/path')).toBe('/some/~/path');
     });
   });
