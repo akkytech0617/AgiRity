@@ -6,17 +6,17 @@ pre-commit:
   commands:
     lint:
       glob: '*.{ts,tsx}'
-      run: just lint
+      run: NPM_CONFIG_PROGRESS=false just lint
     format-check:
       glob: '*.{ts,tsx,json,md,yml,yaml}'
-      run: just format-check
+      run: NPM_CONFIG_PROGRESS=false just format-check
     typecheck:
-      run: just type-check
+      run: NPM_CONFIG_PROGRESS=false just type-check
 
 pre-push:
   parallel: true
   commands:
     test:
-      run: just test
+      run: NPM_CONFIG_PROGRESS=false just test
     scan:
-      run: just security-all
+      run: NPM_CONFIG_PROGRESS=false just security-all

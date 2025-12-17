@@ -53,7 +53,8 @@ export class ProjectService implements IProjectService {
 
     try {
       const content = await this.fsAdapter.readFile(filePath, 'utf8');
-      const parsed = yaml.load(content);
+      const contentString = Buffer.isBuffer(content) ? content.toString('utf8') : content;
+      const parsed = yaml.load(contentString);
       const validated = WorkspacesFileSchema.parse(parsed);
       return validated.workspaces;
     } catch (error) {
@@ -77,6 +78,7 @@ export class ProjectService implements IProjectService {
     const existingIndex = workspaces.findIndex((w) => w.id === workspace.id);
 
     if (existingIndex >= 0) {
+      // eslint-disable-next-line security/detect-object-injection
       workspaces[existingIndex] = {
         ...workspace,
         updatedAt: new Date().toISOString(),

@@ -8,9 +8,9 @@
  * Wraps Node.js fs.promises API
  */
 export interface IFileSystemAdapter {
-  mkdir(path: string, options?: { recursive?: boolean }): Promise<void>;
-  readFile(path: string, encoding: BufferEncoding): Promise<string>;
-  writeFile(path: string, content: string, encoding: BufferEncoding): Promise<void>;
+  mkdir(path: string, options?: { recursive?: boolean }): Promise<undefined | string>;
+  readFile(path: string, encoding?: BufferEncoding): Promise<string | Buffer>;
+  writeFile(path: string, content: string, encoding?: BufferEncoding): Promise<void>;
 }
 
 /**

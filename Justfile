@@ -80,11 +80,11 @@ release: build
 
 # Run Snyk security scan (SCA - dependencies)
 security:
-    snyk test
+    snyk test --no-color
 
 # Run Snyk SAST scan (source code)
 security-code:
-    snyk code test
+    snyk code test --no-color
 
 # Run all security scans
 security-all: security security-code

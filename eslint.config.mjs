@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import reactHooks from 'eslint-plugin-react-hooks';
+import security from 'eslint-plugin-security';
 import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
@@ -21,6 +22,8 @@ export default tseslint.config(
 
   // Base JavaScript recommended rules
   js.configs.recommended,
+  // Security recommended rules
+  security.configs.recommended,
 
   // TypeScript strict type-checking rules
   ...tseslint.configs.strictTypeChecked,

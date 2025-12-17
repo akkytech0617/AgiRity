@@ -37,7 +37,7 @@ export function createContainer(overrides?: Partial<AppContainer>): AppContainer
   // Create adapters (or use overrides)
   const fileSystem = overrides?.fileSystem ?? new FileSystemAdapter();
   const os = overrides?.os ?? new OSAdapter();
-  const shell = overrides?.shell ?? new ShellAdapter();
+  const shell = overrides?.shell ?? new ShellAdapter(os);
 
   // Create services with dependency injection (or use overrides)
   const config = overrides?.config ?? new ConfigService(os, fileSystem);

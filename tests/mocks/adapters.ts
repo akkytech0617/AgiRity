@@ -3,13 +3,18 @@ import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from '@/main/adapt
 import type { IConfigService, IProjectService, ILauncherService } from '@/main/services/interfaces';
 
 /**
+
  * Create a mock FileSystemAdapter
+
  */
+
 export function createMockFileSystemAdapter(): IFileSystemAdapter {
   return {
-    mkdir: vi.fn().mockResolvedValue(undefined),
-    readFile: vi.fn().mockResolvedValue(''),
-    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn<IFileSystemAdapter['mkdir']>(),
+
+    readFile: vi.fn<IFileSystemAdapter['readFile']>(),
+
+    writeFile: vi.fn<IFileSystemAdapter['writeFile']>(),
   };
 }
 

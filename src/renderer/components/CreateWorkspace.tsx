@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { useState } from 'react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
 import { Save, X, Plus, AlertCircle, Sparkles } from 'lucide-react';
