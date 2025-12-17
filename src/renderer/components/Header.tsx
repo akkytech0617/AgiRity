@@ -23,10 +23,10 @@ export function Header({ title, subtitle, tags, showEditButton, onEdit }: Header
             </span>
           ))}
         </div>
-        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        {subtitle != null && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
       </div>
 
-      {showEditButton && onEdit && (
+      {showEditButton === true && onEdit != null && (
         <button
           onClick={onEdit}
           className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"

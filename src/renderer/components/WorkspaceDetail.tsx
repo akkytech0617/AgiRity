@@ -22,7 +22,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
   };
 
   // Fallback if no presets defined
-  const presets = workspace.presets || [
+  const presets = workspace.presets ?? [
     {
       name: 'Launch All',
       description: 'Start all items in this workspace',
@@ -90,7 +90,9 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                       {browserCount > 0 && <span>{browserCount} tabs</span>}
                     </div>
                     <button
-                      onClick={() => onLaunch(workspace.id)}
+                      onClick={() => {
+                        onLaunch(workspace.id);
+                      }}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-600 text-white rounded-button text-xs font-bold shadow-sm transition-colors"
                     >
                       <Play className="w-3 h-3 fill-current" />
@@ -144,7 +146,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                 </h4>
                 <p
                   className="text-[10px] text-gray-400 truncate"
-                  title={item.path || item.folder || item.urls?.join(', ')}
+                  title={item.path ?? item.folder ?? item.urls?.join(', ')}
                 >
                   {item.type}
                 </p>
@@ -152,7 +154,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
 
               {/* Config Badges */}
               <div className="flex items-center gap-1 mt-auto pt-2 border-t border-gray-50">
-                {item.waitTime ? (
+                {item.waitTime != null ? (
                   <div
                     className="flex items-center gap-1 text-[10px] text-amber-600"
                     title={`Wait ${item.waitTime}s`}
@@ -169,7 +171,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                   </div>
                 )}
 
-                {item.dependsOn && (
+                {item.dependsOn != null && (
                   <div
                     className="flex items-center gap-1 text-[10px] text-purple-600 ml-auto"
                     title={`After ${item.dependsOn}`}

@@ -86,7 +86,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); }}
                 placeholder="e.g., Morning Routine, Client Project"
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
               />
@@ -97,7 +97,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => { setDescription(e.target.value); }}
                 rows={2}
                 placeholder="What is this workspace for?"
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none"
@@ -111,12 +111,12 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                 type="text"
                 value={tags.join(', ')}
                 onChange={(e) =>
-                  setTags(
+                  { setTags(
                     e.target.value
                       .split(',')
                       .map((t) => t.trim())
                       .filter(Boolean)
-                  )
+                  ); }
                 }
                 placeholder="dev, frontend, daily..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
@@ -138,7 +138,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
               </p>
             </div>
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => { setShowAddModal(true); }}
               className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white text-sm font-medium rounded-button hover:bg-primary-600 transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
@@ -157,7 +157,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                   Add apps, URLs, or folders to launch with this workspace
                 </p>
                 <button
-                  onClick={() => setShowAddModal(true)}
+                  onClick={() => { setShowAddModal(true); }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-button hover:bg-primary-600 transition-colors shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
@@ -173,10 +173,10 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                     index={index}
                     totalItems={items.length}
                     existingItemNames={existingItemNames}
-                    onUpdate={(updatedItem) => handleUpdateItem(index, updatedItem)}
-                    onDelete={() => handleDeleteItem(index)}
-                    onMoveUp={() => handleMoveItem(index, 'up')}
-                    onMoveDown={() => handleMoveItem(index, 'down')}
+                    onUpdate={(updatedItem) => { handleUpdateItem(index, updatedItem); }}
+                    onDelete={() => { handleDeleteItem(index); }}
+                    onMoveUp={() => { handleMoveItem(index, 'up'); }}
+                    onMoveDown={() => { handleMoveItem(index, 'down'); }}
                   />
                 ))}
               </div>
@@ -217,7 +217,7 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
       {showAddModal && (
         <AddItemModal
           onAdd={handleAddItem}
-          onClose={() => setShowAddModal(false)}
+          onClose={() => { setShowAddModal(false); }}
           existingItemNames={existingItemNames}
         />
       )}

@@ -24,7 +24,7 @@ export function Sidebar({
   const filteredWorkspaces = workspaces.filter(
     (ws) =>
       ws.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ws.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      (ws.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())) ?? false)
   );
 
   return (
@@ -59,7 +59,9 @@ export function Sidebar({
               type="text"
               placeholder="Filter..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+              }}
               className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-gray-600"
             />
           </div>

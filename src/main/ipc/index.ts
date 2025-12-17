@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import type { WorkspaceItem, Workspace, IPC_CHANNELS, LaunchResult } from '../../shared/types';
+import type { WorkspaceItem, Workspace, LaunchResult } from '../../shared/types';
 import type { ServiceContainer } from '../container';
 
 interface WorkspaceResult {

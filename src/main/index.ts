@@ -15,9 +15,10 @@ import { setupIpcHandlers } from './ipc';
 
 process.env.DIST_ELECTRON = path.join(__dirname, '../..');
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist');
-process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
-  ? path.join(process.env.DIST_ELECTRON, '../public')
-  : process.env.DIST;
+process.env.PUBLIC =
+  process.env.VITE_DEV_SERVER_URL != null
+    ? path.join(process.env.DIST_ELECTRON, '../public')
+    : process.env.DIST;
 
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
@@ -49,7 +50,7 @@ async function createWindow() {
     },
   });
 
-  if (url) {
+  if (url != null) {
     await win.loadURL(url);
     // win.webContents.openDevTools();
   } else {
@@ -61,7 +62,7 @@ async function createWindow() {
 const container = createContainer();
 setupIpcHandlers(container);
 
-app.whenReady().then(createWindow);
+void app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -71,6 +72,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    void createWindow();
   }
 });

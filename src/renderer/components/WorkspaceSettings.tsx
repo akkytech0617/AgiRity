@@ -83,7 +83,9 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
               <input
                 type="text"
                 value={editedWorkspace.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
+                onChange={(e) => {
+                  handleFieldChange('name', e.target.value);
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
             </div>
@@ -92,8 +94,10 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea
-                value={editedWorkspace.description || ''}
-                onChange={(e) => handleFieldChange('description', e.target.value)}
+                value={editedWorkspace.description ?? ''}
+                onChange={(e) => {
+                  handleFieldChange('description', e.target.value);
+                }}
                 rows={2}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
               />
@@ -104,16 +108,16 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
               <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
               <input
                 type="text"
-                value={editedWorkspace.tags?.join(', ') || ''}
-                onChange={(e) =>
+                value={editedWorkspace.tags?.join(', ') ?? ''}
+                onChange={(e) => {
                   handleFieldChange(
                     'tags',
                     e.target.value
                       .split(',')
                       .map((t) => t.trim())
                       .filter(Boolean)
-                  )
-                }
+                  );
+                }}
                 placeholder="dev, frontend, react..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
               />
@@ -130,7 +134,9 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
               <p className="text-sm text-gray-500 mt-0.5">Apps, URLs, and folders to launch</p>
             </div>
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => {
+                setShowAddModal(true);
+              }}
               className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
@@ -149,7 +155,9 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
                   Add apps, URLs, or folders to launch with this workspace
                 </p>
                 <button
-                  onClick={() => setShowAddModal(true)}
+                  onClick={() => {
+                    setShowAddModal(true);
+                  }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
@@ -165,10 +173,18 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
                     index={index}
                     totalItems={editedWorkspace.items.length}
                     existingItemNames={existingItemNames}
-                    onUpdate={(updatedItem) => handleUpdateItem(index, updatedItem)}
-                    onDelete={() => handleDeleteItem(index)}
-                    onMoveUp={() => handleMoveItem(index, 'up')}
-                    onMoveDown={() => handleMoveItem(index, 'down')}
+                    onUpdate={(updatedItem) => {
+                      handleUpdateItem(index, updatedItem);
+                    }}
+                    onDelete={() => {
+                      handleDeleteItem(index);
+                    }}
+                    onMoveUp={() => {
+                      handleMoveItem(index, 'up');
+                    }}
+                    onMoveDown={() => {
+                      handleMoveItem(index, 'down');
+                    }}
                   />
                 ))}
               </div>
@@ -209,7 +225,9 @@ export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSett
       {showAddModal && (
         <AddItemModal
           onAdd={handleAddItem}
-          onClose={() => setShowAddModal(false)}
+          onClose={() => {
+            setShowAddModal(false);
+          }}
           existingItemNames={existingItemNames}
         />
       )}

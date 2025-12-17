@@ -112,7 +112,7 @@ describe('ProjectService', () => {
       );
       await service.saveWorkspace(mockWorkspace);
       expect(mockFsAdapter.writeFile).toHaveBeenCalled();
-      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1] as string;
+      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1];
       const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
       expect(parsed.workspaces).toHaveLength(1);
     });
@@ -121,7 +121,7 @@ describe('ProjectService', () => {
       vi.mocked(mockFsAdapter.readFile).mockResolvedValue(yaml.dump(mockWorkspacesFile));
       const updatedWorkspace = { ...mockWorkspace, name: 'Updated Workspace' };
       await service.saveWorkspace(updatedWorkspace);
-      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1] as string;
+      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1];
       const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
       expect(parsed.workspaces).toHaveLength(1);
       expect(parsed.workspaces[0].name).toBe('Updated Workspace');
@@ -130,7 +130,7 @@ describe('ProjectService', () => {
     it('should update updatedAt when saving existing workspace', async () => {
       vi.mocked(mockFsAdapter.readFile).mockResolvedValue(yaml.dump(mockWorkspacesFile));
       await service.saveWorkspace(mockWorkspace);
-      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1] as string;
+      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1];
       const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
       expect(parsed.workspaces[0].updatedAt).not.toBe('2024-01-01T00:00:00.000Z');
     });
@@ -149,7 +149,7 @@ describe('ProjectService', () => {
       vi.mocked(mockFsAdapter.readFile).mockResolvedValue(yaml.dump(mockWorkspacesFile));
       const result = await service.deleteWorkspace('550e8400-e29b-41d4-a716-446655440000');
       expect(result).toBe(true);
-      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1] as string;
+      const writtenContent = vi.mocked(mockFsAdapter.writeFile).mock.calls[0][1];
       const parsed = yaml.load(writtenContent) as typeof mockWorkspacesFile;
       expect(parsed.workspaces).toHaveLength(0);
     });

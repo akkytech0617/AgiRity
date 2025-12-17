@@ -45,7 +45,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
       item.urls = urlList;
     }
 
-    if (waitTime && waitTime > 0) {
+    if (waitTime != null && waitTime > 0) {
       item.waitTime = waitTime;
     }
 
@@ -105,7 +105,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               {typeOptions.map((opt) => (
                 <button
                   key={opt.type}
-                  onClick={() => setItemType(opt.type)}
+                  onClick={() => {
+                    setItemType(opt.type);
+                  }}
                   className={`p-4 rounded-button border-2 transition-all text-left ${
                     itemType === opt.type
                       ? 'border-primary bg-primary-50'
@@ -134,7 +136,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
               placeholder="e.g., VS Code, GitHub Repo"
               className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
@@ -146,7 +150,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <input
               type="text"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
               placeholder="e.g., development, reference, communication"
               className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
@@ -162,7 +168,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               <input
                 type="text"
                 value={path}
-                onChange={(e) => setPath(e.target.value)}
+                onChange={(e) => {
+                  setPath(e.target.value);
+                }}
                 placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm"
               />
@@ -178,7 +186,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               <label className="block text-sm font-medium text-gray-700 mb-1">URLs</label>
               <textarea
                 value={urls}
-                onChange={(e) => setUrls(e.target.value)}
+                onChange={(e) => {
+                  setUrls(e.target.value);
+                }}
                 placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm resize-none"
@@ -200,7 +210,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                   type="number"
                   min={0}
                   value={waitTime ?? ''}
-                  onChange={(e) => setWaitTime(e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) => {
+                    setWaitTime(e.target.value ? Number(e.target.value) : undefined);
+                  }}
                   placeholder="0"
                   className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm"
                 />
@@ -211,7 +223,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 <label className="block text-xs font-medium text-gray-600 mb-1">Depends On</label>
                 <select
                   value={dependsOn}
-                  onChange={(e) => setDependsOn(e.target.value)}
+                  onChange={(e) => {
+                    setDependsOn(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm bg-white"
                 >
                   <option value="">None</option>

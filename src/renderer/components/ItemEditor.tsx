@@ -103,7 +103,7 @@ export function ItemEditor({
             <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
               {getTypeLabel()}
             </span>
-            {item.category && (
+            {item.category != null && (
               <span
                 className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded truncate"
                 title={item.category}
@@ -113,19 +113,19 @@ export function ItemEditor({
             )}
           </div>
           <div className="flex items-center gap-3 mt-0.5">
-            {item.waitTime && (
+            {item.waitTime != null && (
               <span className="flex items-center gap-1 text-xs text-amber-600">
                 <Clock className="w-3 h-3" />
                 {item.waitTime}s
               </span>
             )}
-            {item.dependsOn && (
+            {item.dependsOn != null && (
               <span className="flex items-center gap-1 text-xs text-purple-600">
                 <ArrowRight className="w-3 h-3" />
                 after {item.dependsOn}
               </span>
             )}
-            {item.path && (
+            {item.path != null && (
               <span className="text-xs text-gray-400 truncate font-mono">{item.path}</span>
             )}
             {item.urls && <span className="text-xs text-gray-400">{item.urls.length} URL(s)</span>}
@@ -135,7 +135,9 @@ export function ItemEditor({
         {/* Actions */}
         <div className="flex items-center gap-1">
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+            }}
             className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded transition-colors"
             title="Edit"
           >
@@ -160,7 +162,9 @@ export function ItemEditor({
             <input
               type="text"
               value={item.name}
-              onChange={(e) => handleFieldChange('name', e.target.value)}
+              onChange={(e) => {
+                handleFieldChange('name', e.target.value);
+              }}
               className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
             />
           </div>
@@ -170,8 +174,10 @@ export function ItemEditor({
             <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
             <input
               type="text"
-              value={item.category || ''}
-              onChange={(e) => handleFieldChange('category', e.target.value || undefined)}
+              value={item.category ?? ''}
+              onChange={(e) => {
+                handleFieldChange('category', e.target.value || undefined);
+              }}
               placeholder="e.g., development"
               className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
             />
@@ -185,8 +191,10 @@ export function ItemEditor({
               </label>
               <input
                 type="text"
-                value={item.path || ''}
-                onChange={(e) => handleFieldChange('path', e.target.value)}
+                value={item.path ?? ''}
+                onChange={(e) => {
+                  handleFieldChange('path', e.target.value);
+                }}
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono"
               />
             </div>
@@ -199,10 +207,10 @@ export function ItemEditor({
                 URLs (one per line)
               </label>
               <textarea
-                value={item.urls?.join('\n') || ''}
-                onChange={(e) =>
-                  handleFieldChange('urls', e.target.value.split('\n').filter(Boolean))
-                }
+                value={item.urls?.join('\n') ?? ''}
+                onChange={(e) => {
+                  handleFieldChange('urls', e.target.value.split('\n').filter(Boolean));
+                }}
                 rows={3}
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono resize-none"
               />
@@ -219,9 +227,12 @@ export function ItemEditor({
                 type="number"
                 min={0}
                 value={item.waitTime ?? ''}
-                onChange={(e) =>
-                  handleFieldChange('waitTime', e.target.value ? Number(e.target.value) : undefined)
-                }
+                onChange={(e) => {
+                  handleFieldChange(
+                    'waitTime',
+                    e.target.value ? Number(e.target.value) : undefined
+                  );
+                }}
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
               />
@@ -229,8 +240,10 @@ export function ItemEditor({
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Depends On</label>
               <select
-                value={item.dependsOn || ''}
-                onChange={(e) => handleFieldChange('dependsOn', e.target.value || undefined)}
+                value={item.dependsOn ?? ''}
+                onChange={(e) => {
+                  handleFieldChange('dependsOn', e.target.value || undefined);
+                }}
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm bg-white"
               >
                 <option value="">None</option>
@@ -247,7 +260,9 @@ export function ItemEditor({
 
           <div className="flex justify-end">
             <button
-              onClick={() => setIsExpanded(false)}
+              onClick={() => {
+                setIsExpanded(false);
+              }}
               className="px-3 py-1.5 text-sm text-primary hover:bg-primary-50 rounded-button transition-colors font-medium"
             >
               Done

@@ -37,16 +37,23 @@ export function QuickLaunch({
           >
             {/* Card Header */}
             <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex items-start justify-between">
-              <div className="cursor-pointer" onClick={() => onSelectWorkspace(workspace.id)}>
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  onSelectWorkspace(workspace.id);
+                }}
+              >
                 <h3 className="font-display font-bold text-lg text-text-primary hover:text-primary transition-colors mb-1">
                   {workspace.name}
                 </h3>
                 <p className="text-xs text-gray-500 line-clamp-1">
-                  {workspace.description || 'No description'}
+                  {workspace.description ?? 'No description'}
                 </p>
               </div>
               <button
-                onClick={() => onLaunchWorkspace(workspace.id)}
+                onClick={() => {
+                  onLaunchWorkspace(workspace.id);
+                }}
                 className="p-2 bg-primary hover:bg-primary-600 text-white rounded-button transition-colors shadow-sm"
                 title="Launch Workspace"
               >
@@ -64,7 +71,9 @@ export function QuickLaunch({
                   <div
                     key={idx}
                     className="flex items-center justify-between group p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-100"
-                    onClick={() => onLaunchItem(workspace.id, item.name)}
+                    onClick={() => {
+                      onLaunchItem(workspace.id, item.name);
+                    }}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="p-1.5 bg-gray-50 rounded-md border border-gray-100 group-hover:bg-white group-hover:shadow-sm transition-all">
@@ -78,7 +87,12 @@ export function QuickLaunch({
                   </div>
                 ))}
                 {workspace.items.length > 5 && (
-                  <div className="text-center pt-1" onClick={() => onSelectWorkspace(workspace.id)}>
+                  <div
+                    className="text-center pt-1"
+                    onClick={() => {
+                      onSelectWorkspace(workspace.id);
+                    }}
+                  >
                     <span className="text-xs text-primary hover:underline cursor-pointer">
                       + {workspace.items.length - 5} more items
                     </span>

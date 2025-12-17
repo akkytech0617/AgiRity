@@ -19,8 +19,10 @@ export class LauncherService implements ILauncherService {
       case 'folder':
         await this.launchFolder(item);
         break;
-      default:
-        throw new Error(`Unknown item type: ${(item as WorkspaceItem).type}`);
+      default: {
+        const unknownItem = item as { type: string };
+        throw new Error(`Unknown item type: ${unknownItem.type}`);
+      }
     }
   }
 
@@ -35,17 +37,19 @@ export class LauncherService implements ILauncherService {
   }
 
   private async launchApp(item: WorkspaceItem): Promise<void> {
-    if (!item.path) {
+    if (item.path == null || item.path === '') {
       throw new Error(`App item "${item.name}" has no path`);
     }
 
     // If folder is specified, open the folder with the app
     // Otherwise, just open the app
-    const targetPath = item.folder ? this.expandTilde(item.folder) : item.path;
+    const folder = item.folder;
+    const hasFolder = folder != null && folder !== '';
+    const targetPath = hasFolder ? this.expandTilde(folder) : item.path;
 
     // For apps, we use openExternal with file:// protocol for the app bundle
     // or openPath for opening a folder with the default app
-    if (item.folder) {
+    if (hasFolder) {
       // Open folder - this will use the OS default or the app associated with folders
       const error = await this.shellAdapter.openPath(targetPath);
       if (error) {
@@ -61,7 +65,7 @@ export class LauncherService implements ILauncherService {
   }
 
   private async launchFolder(item: WorkspaceItem): Promise<void> {
-    if (!item.path) {
+    if (item.path == null || item.path === '') {
       throw new Error(`Folder item "${item.name}" has no path`);
     }
 

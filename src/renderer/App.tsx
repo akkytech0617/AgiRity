@@ -118,7 +118,7 @@ function App() {
     const workspace = MOCK_WORKSPACES.find((w) => w.id === workspaceId);
     const item = workspace?.items.find((i) => i.name === itemName);
     if (item) {
-      launchItem(item);
+      void launchItem(item);
     }
   };
 
@@ -145,7 +145,7 @@ function App() {
   };
 
   const handleSelectWorkspace = (id: string | null) => {
-    if (id) {
+    if (id != null) {
       setActiveView({ type: 'workspace', id });
     } else {
       setActiveView({ type: 'quick-launch' });
@@ -164,7 +164,9 @@ function App() {
         return (
           <CreateWorkspace
             onSave={handleCreateWorkspace}
-            onCancel={() => setActiveView({ type: 'quick-launch' })}
+            onCancel={() => {
+              setActiveView({ type: 'quick-launch' });
+            }}
           />
         );
       case 'workspace-settings':
@@ -172,7 +174,9 @@ function App() {
           <WorkspaceSettings
             workspace={selectedWorkspace}
             onSave={handleSaveWorkspace}
-            onCancel={() => setActiveView({ type: 'workspace', id: selectedWorkspace.id })}
+            onCancel={() => {
+              setActiveView({ type: 'workspace', id: selectedWorkspace.id });
+            }}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
@@ -182,7 +186,7 @@ function App() {
           <WorkspaceDetail
             workspace={selectedWorkspace}
             onLaunch={handleLaunch}
-            onLaunchItem={launchItem}
+            onLaunchItem={(item) => void launchItem(item)}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
@@ -192,7 +196,9 @@ function App() {
         return (
           <QuickLaunch
             workspaces={MOCK_WORKSPACES}
-            onSelectWorkspace={(id) => handleSelectWorkspace(id)}
+            onSelectWorkspace={(id) => {
+              handleSelectWorkspace(id);
+            }}
             onLaunchItem={handleLaunchItem}
             onLaunchWorkspace={handleLaunch}
           />
@@ -224,7 +230,9 @@ function App() {
               subtitle: selectedWorkspace.description,
               tags: selectedWorkspace.tags,
               showEditButton: true,
-              onEdit: () => handleEditWorkspace(selectedWorkspace.id),
+              onEdit: () => {
+                handleEditWorkspace(selectedWorkspace.id);
+              },
             }
           : { title: 'Workspace', subtitle: '' };
       case 'quick-launch':
@@ -233,7 +241,9 @@ function App() {
           title: 'Quick Launch',
           subtitle: 'Start your work in seconds',
           showEditButton: true,
-          onEdit: () => console.log('Edit Quick Launch settings'),
+          onEdit: () => {
+            console.log('Edit Quick Launch settings');
+          },
         };
     }
   };
@@ -244,9 +254,15 @@ function App() {
       header={getHeaderContent()}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
-      onOpenSettings={() => setActiveView({ type: 'settings' })}
-      onOpenTools={() => setActiveView({ type: 'tools' })}
-      onOpenMCP={() => setActiveView({ type: 'mcp' })}
+      onOpenSettings={() => {
+        setActiveView({ type: 'settings' });
+      }}
+      onOpenTools={() => {
+        setActiveView({ type: 'tools' });
+      }}
+      onOpenMCP={() => {
+        setActiveView({ type: 'mcp' });
+      }}
     >
       {renderMainContent()}
     </Layout>
