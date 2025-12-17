@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as yaml from 'js-yaml';
 import { promises as fs } from 'fs';
-import type { Workspace } from '../../shared/types';
+import type { Workspace } from '@/shared/types';
 
 vi.mock('fs', () => ({
   promises: {
@@ -10,14 +10,14 @@ vi.mock('fs', () => ({
   },
 }));
 
-vi.mock('./ConfigService', () => ({
+vi.mock('@/main/services/ConfigService', () => ({
   configService: {
     ensureConfigDir: vi.fn().mockResolvedValue(undefined),
     getWorkspacesFilePath: vi.fn(() => '/mock/home/.agirity/workspaces.yaml'),
   },
 }));
 
-import { ProjectService } from './ProjectService';
+import { ProjectService } from '@/main/services/ProjectService';
 
 describe('ProjectService', () => {
   const mockWorkspace: Workspace = {

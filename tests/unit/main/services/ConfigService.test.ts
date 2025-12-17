@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { homedir } from 'os';
 import { promises as fs } from 'fs';
-import { ConfigService } from './ConfigService';
+import { ConfigService } from '@/main/services/ConfigService';
 
 vi.mock('fs', () => ({
   promises: {
