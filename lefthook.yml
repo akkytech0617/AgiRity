@@ -6,16 +6,15 @@ pre-commit:
   commands:
     lint:
       glob: '*.{ts,tsx}'
-      run: npx eslint {staged_files}
-      stage_fixed: true
+      run: just lint
     format-check:
       glob: '*.{ts,tsx,json,md,yml,yaml}'
-      run: npx prettier --check {staged_files}
+      run: just format-check
     typecheck:
-      run: npm run type-check
+      run: just type-check
 
 pre-push:
   parallel: true
   commands:
     test:
-      run: npm test
+      run: just test
