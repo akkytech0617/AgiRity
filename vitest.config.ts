@@ -13,6 +13,19 @@ export default defineConfig({
         inline: [/vite-electron-renderer/],
       },
     },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.ts', 'src/**/*.tsx'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.d.ts',
+        'src/vite-env.d.ts',
+        'src/main/index.ts',
+        'src/preload/index.ts',
+      ],
+    },
   },
   resolve: {
     alias: {
