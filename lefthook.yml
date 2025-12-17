@@ -1,22 +1,24 @@
 # lefthook.yml - Git hooks configuration
 # https://github.com/evilmartians/lefthook
 
+colors: false
+
 pre-commit:
   parallel: true
   commands:
     lint:
       glob: '*.{ts,tsx}'
-      run: NPM_CONFIG_PROGRESS=false just lint
+      run: just lint
     format-check:
       glob: '*.{ts,tsx,json,md,yml,yaml}'
-      run: NPM_CONFIG_PROGRESS=false just format-check
+      run: just format-check
     typecheck:
-      run: NPM_CONFIG_PROGRESS=false just type-check
+      run: just type-check
 
 pre-push:
   parallel: true
   commands:
     test:
-      run: NPM_CONFIG_PROGRESS=false just test
+      run: just test
     scan:
-      run: NPM_CONFIG_PROGRESS=false just security-all
+      run: just security-all
