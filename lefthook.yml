@@ -1,0 +1,21 @@
+# lefthook.yml - Git hooks configuration
+# https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{ts,tsx}'
+      run: npx eslint {staged_files}
+      stage_fixed: true
+    format-check:
+      glob: '*.{ts,tsx,json,md,yml,yaml}'
+      run: npx prettier --check {staged_files}
+    typecheck:
+      run: npm run type-check
+
+pre-push:
+  parallel: true
+  commands:
+    test:
+      run: npm test
