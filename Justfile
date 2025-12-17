@@ -17,8 +17,8 @@ default:
 dev:
     npm run dev
 
-# Run type checking and linting
-check: type-check lint
+# Run all checks (type-check, format, lint)
+check: type-check format-check lint
 
 # Run TypeScript type checking
 type-check:
@@ -31,6 +31,14 @@ lint:
 # Fix ESLint issues automatically
 fix:
     npm run lint:fix
+
+# Check code formatting with Prettier
+format-check:
+    npm run format:check
+
+# Format code with Prettier
+format:
+    npm run format
 
 # --- Testing ---
 
@@ -67,6 +75,19 @@ package: build
 # Create a new release (tag and push)
 release: build
     npm run release
+
+# --- Security ---
+
+# Run Snyk security scan (SCA - dependencies)
+security:
+    snyk test
+
+# Run Snyk SAST scan (source code)
+security-code:
+    snyk code test
+
+# Run all security scans
+security-all: security security-code
 
 # --- Utility ---
 

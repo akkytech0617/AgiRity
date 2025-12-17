@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Monitor, Globe, Folder, Clock, ArrowRight, Trash2, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
+import {
+  Monitor,
+  Globe,
+  Folder,
+  Clock,
+  ArrowRight,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+} from 'lucide-react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface ItemEditorProps {
@@ -27,21 +37,30 @@ export function ItemEditor({
 
   const getItemIcon = () => {
     switch (item.type) {
-      case 'app': return <Monitor className="w-4 h-4 text-primary" />;
-      case 'browser': return <Globe className="w-4 h-4 text-success" />;
-      case 'folder': return <Folder className="w-4 h-4 text-warning" />;
+      case 'app':
+        return <Monitor className="w-4 h-4 text-primary" />;
+      case 'browser':
+        return <Globe className="w-4 h-4 text-success" />;
+      case 'folder':
+        return <Folder className="w-4 h-4 text-warning" />;
     }
   };
 
   const getTypeLabel = () => {
     switch (item.type) {
-      case 'app': return 'Application';
-      case 'browser': return 'Browser';
-      case 'folder': return 'Folder';
+      case 'app':
+        return 'Application';
+      case 'browser':
+        return 'Browser';
+      case 'folder':
+        return 'Folder';
     }
   };
 
-  const handleFieldChange = (field: keyof WorkspaceItem, value: string | number | string[] | undefined) => {
+  const handleFieldChange = (
+    field: keyof WorkspaceItem,
+    value: string | number | string[] | undefined
+  ) => {
     onUpdate({ ...item, [field]: value });
   };
 
@@ -85,7 +104,10 @@ export function ItemEditor({
               {getTypeLabel()}
             </span>
             {item.category && (
-              <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded truncate" title={item.category}>
+              <span
+                className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded truncate"
+                title={item.category}
+              >
                 {item.category}
               </span>
             )}
@@ -106,9 +128,7 @@ export function ItemEditor({
             {item.path && (
               <span className="text-xs text-gray-400 truncate font-mono">{item.path}</span>
             )}
-            {item.urls && (
-              <span className="text-xs text-gray-400">{item.urls.length} URL(s)</span>
-            )}
+            {item.urls && <span className="text-xs text-gray-400">{item.urls.length} URL(s)</span>}
           </div>
         </div>
 
@@ -175,10 +195,14 @@ export function ItemEditor({
           {/* URLs (for browser) */}
           {item.type === 'browser' && (
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">URLs (one per line)</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                URLs (one per line)
+              </label>
               <textarea
                 value={item.urls?.join('\n') || ''}
-                onChange={(e) => handleFieldChange('urls', e.target.value.split('\n').filter(Boolean))}
+                onChange={(e) =>
+                  handleFieldChange('urls', e.target.value.split('\n').filter(Boolean))
+                }
                 rows={3}
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono resize-none"
               />
@@ -188,12 +212,16 @@ export function ItemEditor({
           {/* Launch Settings */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Wait Time (seconds)</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Wait Time (seconds)
+              </label>
               <input
                 type="number"
                 min={0}
                 value={item.waitTime ?? ''}
-                onChange={(e) => handleFieldChange('waitTime', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  handleFieldChange('waitTime', e.target.value ? Number(e.target.value) : undefined)
+                }
                 placeholder="0"
                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
               />

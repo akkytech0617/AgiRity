@@ -3,11 +3,12 @@ import tseslint from 'typescript-eslint';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default tseslint.config(
   // Ignore patterns
   {
-    ignores: ['dist/**', 'dist-electron/**', '*.config.js']
+    ignores: ['dist/**', 'dist-electron/**', '*.config.js'],
   },
 
   // Base JavaScript recommended rules
@@ -40,10 +41,7 @@ export default tseslint.config(
 
     rules: {
       // React Refresh rules
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true }
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
       // TypeScript rules
       '@typescript-eslint/no-explicit-any': 'error',
@@ -51,5 +49,8 @@ export default tseslint.config(
       // React Hooks rules
       ...reactHooks.configs.recommended.rules,
     },
-  }
+  },
+
+  // Prettier config - must be last to override other formatting rules
+  eslintConfigPrettier
 );

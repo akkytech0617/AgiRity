@@ -37,7 +37,10 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
     }
 
     if (itemType === 'browser') {
-      const urlList = urls.split('\n').map(u => u.trim()).filter(Boolean);
+      const urlList = urls
+        .split('\n')
+        .map((u) => u.trim())
+        .filter(Boolean);
       if (urlList.length === 0) return;
       item.urls = urlList;
     }
@@ -53,10 +56,30 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
     onAdd(item);
   };
 
-  const typeOptions: { type: ItemType; label: string; icon: React.ReactNode; description: string }[] = [
-    { type: 'app', label: 'Application', icon: <Monitor className="w-5 h-5" />, description: 'Launch a desktop app' },
-    { type: 'browser', label: 'Browser URLs', icon: <Globe className="w-5 h-5" />, description: 'Open URLs in browser' },
-    { type: 'folder', label: 'Folder', icon: <Folder className="w-5 h-5" />, description: 'Open a folder' },
+  const typeOptions: {
+    type: ItemType;
+    label: string;
+    icon: React.ReactNode;
+    description: string;
+  }[] = [
+    {
+      type: 'app',
+      label: 'Application',
+      icon: <Monitor className="w-5 h-5" />,
+      description: 'Launch a desktop app',
+    },
+    {
+      type: 'browser',
+      label: 'Browser URLs',
+      icon: <Globe className="w-5 h-5" />,
+      description: 'Open URLs in browser',
+    },
+    {
+      type: 'folder',
+      label: 'Folder',
+      icon: <Folder className="w-5 h-5" />,
+      description: 'Open a folder',
+    },
   ];
 
   return (
@@ -89,10 +112,14 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                       : 'border-border hover:border-gray-300 bg-white'
                   }`}
                 >
-                  <div className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}>
+                  <div
+                    className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}
+                  >
                     {opt.icon}
                   </div>
-                  <div className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}>
+                  <div
+                    className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}
+                  >
                     {opt.label}
                   </div>
                   <div className="text-xs text-text-secondary mt-0.5">{opt.description}</div>
@@ -166,7 +193,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <div className="grid grid-cols-2 gap-4">
               {/* Wait Time */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Wait Time (seconds)</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Wait Time (seconds)
+                </label>
                 <input
                   type="number"
                   min={0}
@@ -207,7 +236,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!name.trim() || (itemType !== 'browser' && !path.trim()) || (itemType === 'browser' && !urls.trim())}
+            disabled={
+              !name.trim() ||
+              (itemType !== 'browser' && !path.trim()) ||
+              (itemType === 'browser' && !urls.trim())
+            }
             className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />

@@ -23,15 +23,15 @@ const preload = path.join(__dirname, '../preload/preload.js');
 const publicDir = process.env.PUBLIC || '';
 // Note: vite-plugin-electron builds preload to dist-electron/preload/preload.js based on our config
 // But wait, our config output is 'dist-electron/preload'. The input is 'src/main/preload.ts'.
-// So it will be 'dist-electron/preload/preload.js' if the input filename is preserved, 
-// or index.js depending on rollup options. 
-// Let's check vite.config.ts again. 
+// So it will be 'dist-electron/preload/preload.js' if the input filename is preserved,
+// or index.js depending on rollup options.
+// Let's check vite.config.ts again.
 // We didn't specify entry file names, so it defaults.
-// Usually vite-plugin-electron/simple handles this. 
+// Usually vite-plugin-electron/simple handles this.
 // Let's assume the standard output path for now, and if it fails, we'll debug.
-// Actually, let's look at standard vite-plugin-electron templates. 
+// Actually, let's look at standard vite-plugin-electron templates.
 // Usually: path.join(__dirname, '../preload/index.js') if we didn't name it preload.js explicitly.
-// In vite.config.ts, input is 'src/main/preload.ts'. 
+// In vite.config.ts, input is 'src/main/preload.ts'.
 // Let's point to '../preload/preload.js' assuming the file name is preserved or mapped.
 
 const url = process.env.VITE_DEV_SERVER_URL;

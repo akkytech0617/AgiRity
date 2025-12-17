@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react";
+import { Pencil } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -8,13 +8,7 @@ interface HeaderProps {
   onEdit?: () => void;
 }
 
-export function Header({
-  title,
-  subtitle,
-  tags,
-  showEditButton,
-  onEdit,
-}: HeaderProps) {
+export function Header({ title, subtitle, tags, showEditButton, onEdit }: HeaderProps) {
   return (
     <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
       <div>

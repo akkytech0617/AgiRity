@@ -62,9 +62,13 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
           <div className="p-2 bg-primary-100 rounded-xl">
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
-          <h2 className="text-2xl font-display font-bold text-text-primary">Create New Workspace</h2>
+          <h2 className="text-2xl font-display font-bold text-text-primary">
+            Create New Workspace
+          </h2>
         </div>
-        <p className="text-text-secondary">Set up a new workspace to launch your apps, URLs, and folders together.</p>
+        <p className="text-text-secondary">
+          Set up a new workspace to launch your apps, URLs, and folders together.
+        </p>
       </div>
 
       <div className="space-y-6">
@@ -117,7 +121,9 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                 placeholder="dev, frontend, daily..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
               />
-              <p className="text-xs text-gray-500 mt-1">Comma separated values for organizing workspaces</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Comma separated values for organizing workspaces
+              </p>
             </div>
           </div>
         </div>
@@ -127,7 +133,9 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
           <div className="px-6 py-4 border-b border-border bg-surface flex items-center justify-between">
             <div>
               <h3 className="font-semibold text-text-primary">Workspace Items</h3>
-              <p className="text-sm text-text-secondary mt-0.5">Apps, URLs, and folders to launch</p>
+              <p className="text-sm text-text-secondary mt-0.5">
+                Apps, URLs, and folders to launch
+              </p>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
@@ -145,7 +153,9 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
                   <AlertCircle className="w-8 h-8 text-gray-400" />
                 </div>
                 <h4 className="text-gray-900 font-medium mb-1">No items yet</h4>
-                <p className="text-gray-500 text-sm mb-4">Add apps, URLs, or folders to launch with this workspace</p>
+                <p className="text-gray-500 text-sm mb-4">
+                  Add apps, URLs, or folders to launch with this workspace
+                </p>
                 <button
                   onClick={() => setShowAddModal(true)}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-button hover:bg-primary-600 transition-colors shadow-sm"
@@ -176,7 +186,8 @@ export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
           {items.length > 0 && (
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
               <p className="text-xs text-gray-500">
-                <strong>Tip:</strong> Use the arrows to reorder items. Items launch in order from top to bottom.
+                <strong>Tip:</strong> Use the arrows to reorder items. Items launch in order from
+                top to bottom.
               </p>
             </div>
           )}

@@ -32,7 +32,7 @@ export class LauncherService {
   private async openUrl(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const child = spawn('open', [url], { detached: true, stdio: 'ignore' });
-      
+
       child.on('error', (err) => {
         reject(new Error(`Failed to open URL: ${err.message}`));
       });
@@ -49,14 +49,14 @@ export class LauncherService {
 
     return new Promise((resolve, reject) => {
       const args = ['-a', item.path!];
-      
+
       // If folder is specified, open that folder with the app
       if (item.folder) {
         args.push(this.expandTilde(item.folder));
       }
 
       const child = spawn('open', args, { detached: true, stdio: 'ignore' });
-      
+
       child.on('error', (err) => {
         reject(new Error(`Failed to launch app: ${err.message}`));
       });
@@ -81,7 +81,7 @@ export class LauncherService {
     return new Promise((resolve, reject) => {
       const folderPath = this.expandTilde(item.path!);
       const child = spawn('open', [folderPath], { detached: true, stdio: 'ignore' });
-      
+
       child.on('error', (err) => {
         reject(new Error(`Failed to open folder: ${err.message}`));
       });

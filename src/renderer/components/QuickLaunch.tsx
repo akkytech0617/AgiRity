@@ -8,13 +8,22 @@ interface QuickLaunchProps {
   onLaunchWorkspace: (workspaceId: string) => void;
 }
 
-export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLaunchWorkspace }: QuickLaunchProps) {
+export function QuickLaunch({
+  workspaces,
+  onSelectWorkspace,
+  onLaunchItem,
+  onLaunchWorkspace,
+}: QuickLaunchProps) {
   const getItemIcon = (type: string) => {
     switch (type) {
-      case 'app': return <Monitor className="w-4 h-4 text-primary" />;
-      case 'browser': return <Globe className="w-4 h-4 text-success" />;
-      case 'folder': return <Folder className="w-4 h-4 text-warning" />;
-      default: return <Code className="w-4 h-4 text-text-secondary" />;
+      case 'app':
+        return <Monitor className="w-4 h-4 text-primary" />;
+      case 'browser':
+        return <Globe className="w-4 h-4 text-success" />;
+      case 'folder':
+        return <Folder className="w-4 h-4 text-warning" />;
+      default:
+        return <Code className="w-4 h-4 text-text-secondary" />;
     }
   };
 
@@ -22,16 +31,13 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
     <div className="p-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {workspaces.map((workspace) => (
-          <div 
-            key={workspace.id} 
+          <div
+            key={workspace.id}
             className="bg-white rounded-card border border-border shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden"
           >
             {/* Card Header */}
             <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex items-start justify-between">
-              <div 
-                className="cursor-pointer"
-                onClick={() => onSelectWorkspace(workspace.id)}
-              >
+              <div className="cursor-pointer" onClick={() => onSelectWorkspace(workspace.id)}>
                 <h3 className="font-display font-bold text-lg text-text-primary hover:text-primary transition-colors mb-1">
                   {workspace.name}
                 </h3>
@@ -55,7 +61,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
               </h4>
               <div className="space-y-2">
                 {workspace.items.slice(0, 5).map((item, idx) => (
-                  <div 
+                  <div
                     key={idx}
                     className="flex items-center justify-between group p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-gray-100"
                     onClick={() => onLaunchItem(workspace.id, item.name)}
@@ -72,10 +78,7 @@ export function QuickLaunch({ workspaces, onSelectWorkspace, onLaunchItem, onLau
                   </div>
                 ))}
                 {workspace.items.length > 5 && (
-                  <div 
-                    className="text-center pt-1"
-                    onClick={() => onSelectWorkspace(workspace.id)}
-                  >
+                  <div className="text-center pt-1" onClick={() => onSelectWorkspace(workspace.id)}>
                     <span className="text-xs text-primary hover:underline cursor-pointer">
                       + {workspace.items.length - 5} more items
                     </span>

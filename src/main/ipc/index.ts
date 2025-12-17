@@ -24,19 +24,16 @@ export function setupIpcHandlers(): void {
     }
   );
 
-  ipcMain.handle(
-    IPC_CHANNELS.WORKSPACE_LOAD,
-    async (): Promise<WorkspaceResult> => {
-      try {
-        const workspaces = await projectService.loadWorkspaces();
-        return { success: true, data: workspaces };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Load workspaces failed:', message);
-        return { success: false, error: message };
-      }
+  ipcMain.handle(IPC_CHANNELS.WORKSPACE_LOAD, async (): Promise<WorkspaceResult> => {
+    try {
+      const workspaces = await projectService.loadWorkspaces();
+      return { success: true, data: workspaces };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Load workspaces failed:', message);
+      return { success: false, error: message };
     }
-  );
+  });
 
   ipcMain.handle(
     IPC_CHANNELS.WORKSPACE_GET,

@@ -34,3 +34,4 @@ src/
 - `AGENTS.md`: AI agent context and instructions
 - `docs/`: Detailed project documentation
   - design/, planning/, management/, product/, implementation/
+```
