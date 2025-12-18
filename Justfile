@@ -17,6 +17,10 @@ default:
 dev:
     npm run dev
 
+# Run checks, test, scan and build as local CI
+ci: check test security-all build
+
+
 # Run all checks (type-check, format, lint)
 check: type-check format-check lint
 
