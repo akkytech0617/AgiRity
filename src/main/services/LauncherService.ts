@@ -1,11 +1,11 @@
 import type { WorkspaceItem } from '../../shared/types';
-import type { IOSAdapter, IShellAdapter } from '../adapters/interfaces';
-import type { ILauncherService } from './interfaces';
+import type { IShellAdapter } from '../adapters/interfaces';
+import type { ILauncherService, IConfigService } from './interfaces';
 
 export class LauncherService implements ILauncherService {
   constructor(
-    private readonly osAdapter: IOSAdapter,
-    private readonly shellAdapter: IShellAdapter
+    private readonly shellAdapter: IShellAdapter,
+    private readonly configService: IConfigService
   ) {}
 
   async launchItem(item: WorkspaceItem): Promise<void> {
@@ -45,7 +45,7 @@ export class LauncherService implements ILauncherService {
     // Otherwise, just open the app
     const folder = item.folder;
     const hasFolder = folder != null && folder !== '';
-    const targetPath = hasFolder ? this.expandTilde(folder) : item.path;
+    const targetPath = hasFolder ? this.configService.expandTilde(folder) : item.path;
 
     // For apps, we use openExternal with file:// protocol for the app bundle
     // or openPath for opening a folder with the default app
@@ -69,17 +69,10 @@ export class LauncherService implements ILauncherService {
       throw new Error(`Folder item "${item.name}" has no path`);
     }
 
-    const folderPath = this.expandTilde(item.path);
+    const folderPath = this.configService.expandTilde(item.path);
     const error = await this.shellAdapter.openPath(folderPath);
     if (error) {
       throw new Error(`Failed to open folder: ${error}`);
     }
-  }
-
-  private expandTilde(filePath: string): string {
-    if (filePath.startsWith('~/')) {
-      return filePath.replace('~', this.osAdapter.homedir());
-    }
-    return filePath;
   }
 }

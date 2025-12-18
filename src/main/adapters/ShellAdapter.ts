@@ -37,10 +37,11 @@ export class ShellAdapter implements IShellAdapter {
     const homeDir = this.osAdapter.homedir();
 
     // For security, enforce that paths must resolve to within the user's home directory.
-    // This is a restrictive policy but prevents path traversal attacks.
-    // A more sophisticated mechanism may be needed if access to files/apps
-    // outside the home directory (e.g., in /Applications) is required.
-    if (!resolvedPath.startsWith(homeDir)) {
+    // This uses path.relative to prevent prefix-collision bypasses.
+    const relative = path.relative(homeDir, resolvedPath);
+    const isInsideHome = !relative.startsWith('..') && !path.isAbsolute(relative);
+
+    if (!isInsideHome && resolvedPath !== homeDir) {
       throw new Error(`Path is outside the allowed directory: ${resolvedPath}`);
     }
 

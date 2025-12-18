@@ -12,7 +12,7 @@ export function createMockFileSystemAdapter(): IFileSystemAdapter {
   return {
     mkdir: vi.fn<IFileSystemAdapter['mkdir']>(),
 
-    readFile: vi.fn<IFileSystemAdapter['readFile']>(),
+    readFile: vi.fn() as unknown as IFileSystemAdapter['readFile'],
 
     writeFile: vi.fn<IFileSystemAdapter['writeFile']>(),
   };

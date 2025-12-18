@@ -1,10 +1,11 @@
-import { WorkspaceItem, LaunchResult, IPC_CHANNELS } from '../../shared/types';
+import { WorkspaceItem, LaunchResult, LaunchResultSchema, IPC_CHANNELS } from '../../shared/types';
 
 export const launcherApi = {
   launchItem: async (item: WorkspaceItem): Promise<LaunchResult> => {
-    return window.ipcRenderer.invoke(
+    const result = await window.ipcRenderer.invoke(
       IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM,
       item
-    ) as Promise<LaunchResult>;
+    );
+    return LaunchResultSchema.parse(result);
   },
 };

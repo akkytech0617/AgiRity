@@ -1,19 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { WorkspaceItem } from '@/shared/types';
+import type { IConfigService } from '@/main/services/interfaces';
 import { LauncherService } from '@/main/services/LauncherService';
-import { createMockOSAdapter, createMockShellAdapter } from '../../../mocks/adapters';
+import { createMockShellAdapter } from '../../../mocks/adapters';
 
 describe('LauncherService', () => {
   const TEST_HOME_DIR = '/test/home';
-  let mockOsAdapter: ReturnType<typeof createMockOSAdapter>;
   let mockShellAdapter: ReturnType<typeof createMockShellAdapter>;
+  let mockConfigService: IConfigService;
   let service: LauncherService;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOsAdapter = createMockOSAdapter(TEST_HOME_DIR);
     mockShellAdapter = createMockShellAdapter();
-    service = new LauncherService(mockOsAdapter, mockShellAdapter);
+    
+    // Mock ConfigService
+    mockConfigService = {
+      getConfigDir: vi.fn(),
+      getWorkspacesFilePath: vi.fn(),
+      ensureConfigDir: vi.fn(),
+      expandTilde: vi.fn().mockImplementation((path: string) => {
+        if (path.startsWith('~/')) {
+          return path.replace('~', TEST_HOME_DIR);
+        }
+        return path;
+      }),
+    };
+
+    service = new LauncherService(mockShellAdapter, mockConfigService);
   });
 
   describe('launchItem - browser type', () => {

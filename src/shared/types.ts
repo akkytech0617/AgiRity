@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface WorkspaceItem {
   type: 'app' | 'browser' | 'folder';
   name: string;
@@ -31,6 +33,11 @@ export interface LaunchResult {
   success: boolean;
   error?: string;
 }
+
+export const LaunchResultSchema = z.object({
+  success: z.boolean(),
+  error: z.string().optional(),
+});
 
 export const IPC_CHANNELS = {
   LAUNCHER_LAUNCH_ITEM: 'launcher:launchItem',

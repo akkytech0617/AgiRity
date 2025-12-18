@@ -42,7 +42,7 @@ export function createContainer(overrides?: Partial<AppContainer>): AppContainer
   // Create services with dependency injection (or use overrides)
   const config = overrides?.config ?? new ConfigService(os, fileSystem);
   const project = overrides?.project ?? new ProjectService(config, fileSystem);
-  const launcher = overrides?.launcher ?? new LauncherService(os, shell);
+  const launcher = overrides?.launcher ?? new LauncherService(shell, config);
 
   return {
     fileSystem,

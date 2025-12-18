@@ -53,8 +53,7 @@ export class ProjectService implements IProjectService {
 
     try {
       const content = await this.fsAdapter.readFile(filePath, 'utf8');
-      const contentString = Buffer.isBuffer(content) ? content.toString('utf8') : content;
-      const parsed = yaml.load(contentString);
+      const parsed = yaml.load(content);
       const validated = WorkspacesFileSchema.parse(parsed);
       return validated.workspaces;
     } catch (error) {
@@ -74,6 +73,9 @@ export class ProjectService implements IProjectService {
   }
 
   async saveWorkspace(workspace: Workspace): Promise<void> {
+    // Validate workspace before saving
+    WorkspaceSchema.parse(workspace);
+
     const workspaces = await this.loadWorkspaces();
     const existingIndex = workspaces.findIndex((w) => w.id === workspace.id);
 

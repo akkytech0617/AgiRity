@@ -9,7 +9,9 @@
  */
 export interface IFileSystemAdapter {
   mkdir(path: string, options?: { recursive?: boolean }): Promise<undefined | string>;
-  readFile(path: string, encoding?: BufferEncoding): Promise<string | Buffer>;
+  readFile(path: string, encoding: BufferEncoding): Promise<string>;
+  readFile(path: string, encoding?: null): Promise<Buffer>;
+  readFile(path: string, encoding?: BufferEncoding | null): Promise<string | Buffer>;
   writeFile(path: string, content: string, encoding?: BufferEncoding): Promise<void>;
 }
 

@@ -32,7 +32,7 @@ export function Header({ title, subtitle, tags, showEditButton, onEdit }: Header
           className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"
           title="Edit"
         >
-          <Pencil className="w-2 h-2" />
+          <Pencil className="w-5 h-5" />
         </button>
       )}
     </header>
