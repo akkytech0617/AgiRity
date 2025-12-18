@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import {
   Monitor,
   Globe,
@@ -34,6 +34,14 @@ export function ItemEditor({
   onMoveDown,
 }: ItemEditorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const baseId = useId();
+  const nameId = `${baseId}-name`;
+  const categoryId = `${baseId}-category`;
+  const pathId = `${baseId}-path`;
+  const urlsId = `${baseId}-urls`;
+  const waitTimeId = `${baseId}-wait-time`;
+  const dependsOnId = `${baseId}-depends-on`;
 
   const getItemIcon = () => {
     switch (item.type) {
@@ -158,8 +166,11 @@ export function ItemEditor({
         <div className="px-4 pb-4 pt-2 border-t border-gray-100 bg-gray-50 space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Name</label>
+            <label htmlFor={nameId} className="block text-xs font-medium text-gray-600 mb-1">
+              Name
+            </label>
             <input
+              id={nameId}
               type="text"
               value={item.name}
               onChange={(e) => {
@@ -171,8 +182,11 @@ export function ItemEditor({
 
           {/* Category */}
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+            <label htmlFor={categoryId} className="block text-xs font-medium text-gray-600 mb-1">
+              Category
+            </label>
             <input
+              id={categoryId}
               type="text"
               value={item.category ?? ''}
               onChange={(e) => {
@@ -186,10 +200,11 @@ export function ItemEditor({
           {/* Path (for app/folder) */}
           {(item.type === 'app' || item.type === 'folder') && (
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label htmlFor={pathId} className="block text-xs font-medium text-gray-600 mb-1">
                 {item.type === 'app' ? 'Application Path' : 'Folder Path'}
               </label>
               <input
+                id={pathId}
                 type="text"
                 value={item.path ?? ''}
                 onChange={(e) => {
@@ -203,10 +218,11 @@ export function ItemEditor({
           {/* URLs (for browser) */}
           {item.type === 'browser' && (
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label htmlFor={urlsId} className="block text-xs font-medium text-gray-600 mb-1">
                 URLs (one per line)
               </label>
               <textarea
+                id={urlsId}
                 value={item.urls?.join('\n') ?? ''}
                 onChange={(e) => {
                   handleFieldChange('urls', e.target.value.split('\n').filter(Boolean));
@@ -220,10 +236,11 @@ export function ItemEditor({
           {/* Launch Settings */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
+              <label htmlFor={waitTimeId} className="block text-xs font-medium text-gray-600 mb-1">
                 Wait Time (seconds)
               </label>
               <input
+                id={waitTimeId}
                 type="number"
                 min={0}
                 value={item.waitTime ?? ''}
@@ -238,8 +255,11 @@ export function ItemEditor({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Depends On</label>
+              <label htmlFor={dependsOnId} className="block text-xs font-medium text-gray-600 mb-1">
+                Depends On
+              </label>
               <select
+                id={dependsOnId}
                 value={item.dependsOn ?? ''}
                 onChange={(e) => {
                   handleFieldChange('dependsOn', e.target.value || undefined);

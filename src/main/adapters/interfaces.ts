@@ -38,4 +38,11 @@ export interface IShellAdapter {
    * @returns Error message if failed, empty string if successful
    */
   openPath(path: string): Promise<string>;
+
+  /**
+   * Launch an application with optional arguments
+   * @param appPath Path to the application
+   * @param args Arguments to pass to the application
+   */
+  launchApp(appPath: string, args?: string[]): Promise<void>;
 }

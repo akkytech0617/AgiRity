@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import type { IFileSystemAdapter, IOSAdapter } from '../adapters/interfaces';
 import type { IConfigService } from './interfaces';
 

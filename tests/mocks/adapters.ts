@@ -35,6 +35,7 @@ export function createMockShellAdapter(): IShellAdapter {
   return {
     openExternal: vi.fn().mockResolvedValue(undefined),
     openPath: vi.fn().mockResolvedValue(''),
+    launchApp: vi.fn().mockResolvedValue(undefined),
   };
 }
 

@@ -1,5 +1,6 @@
 import { shell } from 'electron';
-import * as path from 'path';
+import * as path from 'node:path';
+import { spawn } from 'node:child_process';
 import type { IShellAdapter, IOSAdapter } from './interfaces';
 
 /**
@@ -15,9 +16,8 @@ export class ShellAdapter implements IShellAdapter {
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(url);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_error) {
-      throw new Error(`Invalid URL: ${url}`);
+    } catch (error) {
+      throw new Error(`Invalid URL: ${url}`, { cause: error });
     }
 
     if (!this.whitelistedProtocols.includes(parsedUrl.protocol)) {
@@ -28,6 +28,25 @@ export class ShellAdapter implements IShellAdapter {
   }
 
   async openPath(pathValue: string): Promise<string> {
+    const validatedPath = this.validatePath(pathValue);
+    return shell.openPath(validatedPath);
+  }
+
+  async launchApp(appPath: string, args: string[] = []): Promise<void> {
+    const validatedAppPath = this.validatePath(appPath);
+    const validatedArgs = args.map((arg) => this.validatePath(arg));
+
+    const child = spawn(validatedAppPath, validatedArgs, {
+      detached: true,
+      stdio: 'ignore',
+    });
+
+    child.unref();
+    // Satisfy @typescript-eslint/require-await
+    await Promise.resolve();
+  }
+
+  private validatePath(pathValue: string): string {
     // Basic check for shell metacharacters.
     if (/[;&$`<>|!]/.test(pathValue)) {
       throw new Error('Path contains invalid shell metacharacters.');
@@ -45,6 +64,6 @@ export class ShellAdapter implements IShellAdapter {
       throw new Error(`Path is outside the allowed directory: ${resolvedPath}`);
     }
 
-    return shell.openPath(resolvedPath);
+    return resolvedPath;
   }
 }

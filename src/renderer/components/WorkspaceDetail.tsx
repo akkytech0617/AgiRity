@@ -43,14 +43,14 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
           Launch Presets
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {presets.map((preset, idx) => {
+          {presets.map((preset) => {
             const presetItems = getItemsForPreset(preset.itemNames);
             const appCount = presetItems.filter((i) => i.type === 'app').length;
             const browserCount = presetItems.filter((i) => i.type === 'browser').length;
 
             return (
               <div
-                key={idx}
+                key={preset.name}
                 className="bg-white rounded-card border border-border p-5 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -122,9 +122,9 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          {workspace.items.map((item, idx) => (
+          {workspace.items.map((item) => (
             <div
-              key={idx}
+              key={item.name}
               className="bg-white p-3 rounded-lg border border-border shadow-sm hover:shadow-md hover:border-primary-200 transition-all group flex flex-col h-full"
             >
               <div className="flex items-start justify-between mb-2">

@@ -2,7 +2,7 @@ import { WorkspaceItem, LaunchResult, LaunchResultSchema, IPC_CHANNELS } from '.
 
 export const launcherApi = {
   launchItem: async (item: WorkspaceItem): Promise<LaunchResult> => {
-    const result = await window.ipcRenderer.invoke(
+    const result = await globalThis.ipcRenderer.invoke(
       IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM,
       item
     );

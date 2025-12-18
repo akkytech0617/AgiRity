@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { X, Monitor, Globe, Folder, Plus } from 'lucide-react';
 import { WorkspaceItem } from '../../shared/types';
 
@@ -18,6 +18,14 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
   const [urls, setUrls] = useState('');
   const [waitTime, setWaitTime] = useState<number | undefined>(undefined);
   const [dependsOn, setDependsOn] = useState('');
+
+  const baseId = useId();
+  const nameId = `${baseId}-name`;
+  const categoryId = `${baseId}-category`;
+  const pathId = `${baseId}-path`;
+  const urlsId = `${baseId}-urls`;
+  const waitTimeId = `${baseId}-wait-time`;
+  const dependsOnId = `${baseId}-depends-on`;
 
   const handleSubmit = () => {
     if (!name.trim()) return;
@@ -132,8 +140,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label htmlFor={nameId} className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
             <input
+              id={nameId}
               type="text"
               value={name}
               onChange={(e) => {
@@ -146,8 +157,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
 
           {/* Category (optional) */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label htmlFor={categoryId} className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
             <input
+              id={categoryId}
               type="text"
               value={category}
               onChange={(e) => {
@@ -162,10 +176,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
           {/* Path (for app/folder) */}
           {(itemType === 'app' || itemType === 'folder') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor={pathId} className="block text-sm font-medium text-gray-700 mb-1">
                 {itemType === 'app' ? 'Application Path' : 'Folder Path'}
               </label>
               <input
+                id={pathId}
                 type="text"
                 value={path}
                 onChange={(e) => {
@@ -183,8 +198,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
           {/* URLs (for browser) */}
           {itemType === 'browser' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URLs</label>
+              <label htmlFor={urlsId} className="block text-sm font-medium text-gray-700 mb-1">
+                URLs
+              </label>
               <textarea
+                id={urlsId}
                 value={urls}
                 onChange={(e) => {
                   setUrls(e.target.value);
@@ -203,10 +221,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <div className="grid grid-cols-2 gap-4">
               {/* Wait Time */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label htmlFor={waitTimeId} className="block text-xs font-medium text-gray-600 mb-1">
                   Wait Time (seconds)
                 </label>
                 <input
+                  id={waitTimeId}
                   type="number"
                   min={0}
                   value={waitTime ?? ''}
@@ -220,8 +239,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
 
               {/* Depends On */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Depends On</label>
+                <label htmlFor={dependsOnId} className="block text-xs font-medium text-gray-600 mb-1">
+                  Depends On
+                </label>
                 <select
+                  id={dependsOnId}
                   value={dependsOn}
                   onChange={(e) => {
                     setDependsOn(e.target.value);

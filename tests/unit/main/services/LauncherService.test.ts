@@ -92,7 +92,10 @@ describe('LauncherService', () => {
 
       await service.launchItem(item);
 
-      expect(mockShellAdapter.openPath).toHaveBeenCalledWith(`${TEST_HOME_DIR}/workspace/project`);
+      expect(mockShellAdapter.launchApp).toHaveBeenCalledWith(
+        '/Applications/Visual Studio Code.app',
+        [`${TEST_HOME_DIR}/workspace/project`]
+      );
     });
 
     it('should throw error for app item without path', async () => {
@@ -117,8 +120,8 @@ describe('LauncherService', () => {
       );
     });
 
-    it('should throw error when openPath fails for folder with app', async () => {
-      vi.mocked(mockShellAdapter.openPath).mockResolvedValue('Permission denied');
+    it('should throw error when launchApp fails for folder with app', async () => {
+      vi.mocked(mockShellAdapter.launchApp).mockRejectedValue(new Error('Spawn failed'));
       const item: WorkspaceItem = {
         type: 'app',
         name: 'VS Code',
@@ -126,9 +129,7 @@ describe('LauncherService', () => {
         folder: '~/workspace/project',
       };
 
-      await expect(service.launchItem(item)).rejects.toThrow(
-        'Failed to open folder with app: Permission denied'
-      );
+      await expect(service.launchItem(item)).rejects.toThrow('Spawn failed');
     });
   });
 

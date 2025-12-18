@@ -41,23 +41,17 @@ export class LauncherService implements ILauncherService {
       throw new Error(`App item "${item.name}" has no path`);
     }
 
-    // If folder is specified, open the folder with the app
-    // Otherwise, just open the app
+    const appPath = this.configService.expandTilde(item.path);
     const folder = item.folder;
     const hasFolder = folder != null && folder !== '';
-    const targetPath = hasFolder ? this.configService.expandTilde(folder) : item.path;
 
-    // For apps, we use openExternal with file:// protocol for the app bundle
-    // or openPath for opening a folder with the default app
     if (hasFolder) {
-      // Open folder - this will use the OS default or the app associated with folders
-      const error = await this.shellAdapter.openPath(targetPath);
-      if (error) {
-        throw new Error(`Failed to open folder with app: ${error}`);
-      }
+      const folderPath = this.configService.expandTilde(folder);
+      // Launch the specified app with the folder as an argument
+      await this.shellAdapter.launchApp(appPath, [folderPath]);
     } else {
       // Open the app itself
-      const error = await this.shellAdapter.openPath(item.path);
+      const error = await this.shellAdapter.openPath(appPath);
       if (error) {
         throw new Error(`Failed to launch app: ${error}`);
       }

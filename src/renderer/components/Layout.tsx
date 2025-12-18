@@ -29,7 +29,7 @@ export function Layout({
   onOpenSettings,
   onOpenTools,
   onOpenMCP,
-}: LayoutProps) {
+}: Readonly<LayoutProps>) {
   return (
     <div className="flex h-screen bg-surface font-body text-text-primary overflow-hidden">
       <Sidebar

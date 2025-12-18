@@ -8,15 +8,21 @@ interface HeaderProps {
   onEdit?: () => void;
 }
 
-export function Header({ title, subtitle, tags, showEditButton, onEdit }: HeaderProps) {
+export function Header({
+  title,
+  subtitle,
+  tags,
+  showEditButton,
+  onEdit,
+}: Readonly<HeaderProps>) {
   return (
     <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
       <div>
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-bold text-gray-800">{title}</h1>
-          {tags?.map((tag, idx) => (
+          {tags?.map((tag) => (
             <span
-              key={idx}
+              key={tag}
               className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full border border-gray-200"
             >
               {tag}
