@@ -51,9 +51,7 @@ export function Layout({
         />
 
         <div className="flex-1 overflow-y-auto">
-          <div className="min-h-full">
-            {children}
-          </div>
+          <div className="min-h-full">{children}</div>
         </div>
       </main>
     </div>

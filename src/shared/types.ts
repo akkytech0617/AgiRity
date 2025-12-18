@@ -40,4 +40,4 @@ export const IPC_CHANNELS = {
   WORKSPACE_DELETE: 'workspace:delete',
 } as const;
 
-export type IpcChannels = typeof IPC_CHANNELS[keyof typeof IPC_CHANNELS];
+export type IpcChannels = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

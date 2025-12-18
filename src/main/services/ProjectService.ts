@@ -1,8 +1,8 @@
-import { promises as fs } from 'fs';
 import * as yaml from 'js-yaml';
 import { z } from 'zod';
-import { Workspace } from '../../shared/types';
-import { configService } from './ConfigService';
+import type { Workspace } from '../../shared/types';
+import type { IFileSystemAdapter } from '../adapters/interfaces';
+import type { IConfigService, IProjectService } from './interfaces';
 
 const SCHEMA_VERSION = 1;
 
@@ -41,14 +41,20 @@ const WorkspacesFileSchema = z.object({
 
 type WorkspacesFile = z.infer<typeof WorkspacesFileSchema>;
 
-export class ProjectService {
+export class ProjectService implements IProjectService {
+  constructor(
+    private readonly configService: IConfigService,
+    private readonly fsAdapter: IFileSystemAdapter
+  ) {}
+
   async loadWorkspaces(): Promise<Workspace[]> {
-    await configService.ensureConfigDir();
-    const filePath = configService.getWorkspacesFilePath();
+    await this.configService.ensureConfigDir();
+    const filePath = this.configService.getWorkspacesFilePath();
 
     try {
-      const content = await fs.readFile(filePath, 'utf8');
-      const parsed = yaml.load(content);
+      const content = await this.fsAdapter.readFile(filePath, 'utf8');
+      const contentString = Buffer.isBuffer(content) ? content.toString('utf8') : content;
+      const parsed = yaml.load(contentString);
       const validated = WorkspacesFileSchema.parse(parsed);
       return validated.workspaces;
     } catch (error) {
@@ -72,6 +78,7 @@ export class ProjectService {
     const existingIndex = workspaces.findIndex((w) => w.id === workspace.id);
 
     if (existingIndex >= 0) {
+      // eslint-disable-next-line security/detect-object-injection
       workspaces[existingIndex] = {
         ...workspace,
         updatedAt: new Date().toISOString(),
@@ -100,8 +107,8 @@ export class ProjectService {
   }
 
   private async writeWorkspaces(workspaces: Workspace[]): Promise<void> {
-    await configService.ensureConfigDir();
-    const filePath = configService.getWorkspacesFilePath();
+    await this.configService.ensureConfigDir();
+    const filePath = this.configService.getWorkspacesFilePath();
 
     const data: WorkspacesFile = {
       schemaVersion: SCHEMA_VERSION,
@@ -114,8 +121,6 @@ export class ProjectService {
       noRefs: true,
     });
 
-    await fs.writeFile(filePath, content, 'utf8');
+    await this.fsAdapter.writeFile(filePath, content, 'utf8');
   }
 }
-
-export const projectService = new ProjectService();

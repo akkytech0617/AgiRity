@@ -1,0 +1,25 @@
+# lefthook.yml - Git hooks configuration
+# https://github.com/evilmartians/lefthook
+
+colors: false
+no_tty: true
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{ts,tsx}'
+      run: just --color never lint
+    format-check:
+      glob: '*.{ts,tsx,json,md,yml,yaml}'
+      run: just --color never format-check
+    typecheck:
+      run: just --color never type-check
+
+pre-push:
+  parallel: true
+  commands:
+    test:
+      run: just --color never test
+    scan:
+      run: just --color never security-all

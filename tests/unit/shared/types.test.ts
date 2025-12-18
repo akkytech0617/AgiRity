@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { WorkspaceItem } from './types';
+import type { WorkspaceItem } from '@/shared/types';
 
 describe('WorkspaceItem', () => {
   it('supports optional category field', () => {

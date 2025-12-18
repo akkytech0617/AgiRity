@@ -37,12 +37,15 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
     }
 
     if (itemType === 'browser') {
-      const urlList = urls.split('\n').map(u => u.trim()).filter(Boolean);
+      const urlList = urls
+        .split('\n')
+        .map((u) => u.trim())
+        .filter(Boolean);
       if (urlList.length === 0) return;
       item.urls = urlList;
     }
 
-    if (waitTime && waitTime > 0) {
+    if (waitTime != null && waitTime > 0) {
       item.waitTime = waitTime;
     }
 
@@ -53,10 +56,30 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
     onAdd(item);
   };
 
-  const typeOptions: { type: ItemType; label: string; icon: React.ReactNode; description: string }[] = [
-    { type: 'app', label: 'Application', icon: <Monitor className="w-5 h-5" />, description: 'Launch a desktop app' },
-    { type: 'browser', label: 'Browser URLs', icon: <Globe className="w-5 h-5" />, description: 'Open URLs in browser' },
-    { type: 'folder', label: 'Folder', icon: <Folder className="w-5 h-5" />, description: 'Open a folder' },
+  const typeOptions: {
+    type: ItemType;
+    label: string;
+    icon: React.ReactNode;
+    description: string;
+  }[] = [
+    {
+      type: 'app',
+      label: 'Application',
+      icon: <Monitor className="w-5 h-5" />,
+      description: 'Launch a desktop app',
+    },
+    {
+      type: 'browser',
+      label: 'Browser URLs',
+      icon: <Globe className="w-5 h-5" />,
+      description: 'Open URLs in browser',
+    },
+    {
+      type: 'folder',
+      label: 'Folder',
+      icon: <Folder className="w-5 h-5" />,
+      description: 'Open a folder',
+    },
   ];
 
   return (
@@ -82,17 +105,23 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               {typeOptions.map((opt) => (
                 <button
                   key={opt.type}
-                  onClick={() => setItemType(opt.type)}
+                  onClick={() => {
+                    setItemType(opt.type);
+                  }}
                   className={`p-4 rounded-button border-2 transition-all text-left ${
                     itemType === opt.type
                       ? 'border-primary bg-primary-50'
                       : 'border-border hover:border-gray-300 bg-white'
                   }`}
                 >
-                  <div className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}>
+                  <div
+                    className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}
+                  >
                     {opt.icon}
                   </div>
-                  <div className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}>
+                  <div
+                    className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}
+                  >
                     {opt.label}
                   </div>
                   <div className="text-xs text-text-secondary mt-0.5">{opt.description}</div>
@@ -107,7 +136,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
               placeholder="e.g., VS Code, GitHub Repo"
               className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
@@ -119,7 +150,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <input
               type="text"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+              }}
               placeholder="e.g., development, reference, communication"
               className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
@@ -135,7 +168,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               <input
                 type="text"
                 value={path}
-                onChange={(e) => setPath(e.target.value)}
+                onChange={(e) => {
+                  setPath(e.target.value);
+                }}
                 placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm"
               />
@@ -151,7 +186,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
               <label className="block text-sm font-medium text-gray-700 mb-1">URLs</label>
               <textarea
                 value={urls}
-                onChange={(e) => setUrls(e.target.value)}
+                onChange={(e) => {
+                  setUrls(e.target.value);
+                }}
                 placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm resize-none"
@@ -166,12 +203,16 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <div className="grid grid-cols-2 gap-4">
               {/* Wait Time */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Wait Time (seconds)</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Wait Time (seconds)
+                </label>
                 <input
                   type="number"
                   min={0}
                   value={waitTime ?? ''}
-                  onChange={(e) => setWaitTime(e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) => {
+                    setWaitTime(e.target.value ? Number(e.target.value) : undefined);
+                  }}
                   placeholder="0"
                   className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm"
                 />
@@ -182,7 +223,9 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
                 <label className="block text-xs font-medium text-gray-600 mb-1">Depends On</label>
                 <select
                   value={dependsOn}
-                  onChange={(e) => setDependsOn(e.target.value)}
+                  onChange={(e) => {
+                    setDependsOn(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm bg-white"
                 >
                   <option value="">None</option>
@@ -207,7 +250,11 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!name.trim() || (itemType !== 'browser' && !path.trim()) || (itemType === 'browser' && !urls.trim())}
+            disabled={
+              !name.trim() ||
+              (itemType !== 'browser' && !path.trim()) ||
+              (itemType === 'browser' && !urls.trim())
+            }
             className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />

@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react";
+import { Pencil } from 'lucide-react';
 
 interface HeaderProps {
   title: string;
@@ -8,13 +8,7 @@ interface HeaderProps {
   onEdit?: () => void;
 }
 
-export function Header({
-  title,
-  subtitle,
-  tags,
-  showEditButton,
-  onEdit,
-}: HeaderProps) {
+export function Header({ title, subtitle, tags, showEditButton, onEdit }: HeaderProps) {
   return (
     <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
       <div>
@@ -29,10 +23,10 @@ export function Header({
             </span>
           ))}
         </div>
-        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        {subtitle != null && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
       </div>
 
-      {showEditButton && onEdit && (
+      {showEditButton === true && onEdit != null && (
         <button
           onClick={onEdit}
           className="p-2 text-text-secondary hover:text-primary hover:bg-primary-50 rounded-full transition-colors"

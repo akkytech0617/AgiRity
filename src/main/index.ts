@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 
 // The built directory structure
@@ -14,24 +15,25 @@ import { setupIpcHandlers } from './ipc';
 
 process.env.DIST_ELECTRON = path.join(__dirname, '../..');
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist');
-process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
-  ? path.join(process.env.DIST_ELECTRON, '../public')
-  : process.env.DIST;
+process.env.PUBLIC =
+  process.env.VITE_DEV_SERVER_URL != null
+    ? path.join(process.env.DIST_ELECTRON, '../public')
+    : process.env.DIST;
 
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
 const publicDir = process.env.PUBLIC || '';
 // Note: vite-plugin-electron builds preload to dist-electron/preload/preload.js based on our config
 // But wait, our config output is 'dist-electron/preload'. The input is 'src/main/preload.ts'.
-// So it will be 'dist-electron/preload/preload.js' if the input filename is preserved, 
-// or index.js depending on rollup options. 
-// Let's check vite.config.ts again. 
+// So it will be 'dist-electron/preload/preload.js' if the input filename is preserved,
+// or index.js depending on rollup options.
+// Let's check vite.config.ts again.
 // We didn't specify entry file names, so it defaults.
-// Usually vite-plugin-electron/simple handles this. 
+// Usually vite-plugin-electron/simple handles this.
 // Let's assume the standard output path for now, and if it fails, we'll debug.
-// Actually, let's look at standard vite-plugin-electron templates. 
+// Actually, let's look at standard vite-plugin-electron templates.
 // Usually: path.join(__dirname, '../preload/index.js') if we didn't name it preload.js explicitly.
-// In vite.config.ts, input is 'src/main/preload.ts'. 
+// In vite.config.ts, input is 'src/main/preload.ts'.
 // Let's point to '../preload/preload.js' assuming the file name is preserved or mapped.
 
 const url = process.env.VITE_DEV_SERVER_URL;
@@ -48,7 +50,7 @@ async function createWindow() {
     },
   });
 
-  if (url) {
+  if (url != null) {
     await win.loadURL(url);
     // win.webContents.openDevTools();
   } else {
@@ -56,10 +58,11 @@ async function createWindow() {
   }
 }
 
-// Setup IPC handlers
-setupIpcHandlers();
+// Create service container and setup IPC handlers
+const container = createContainer();
+setupIpcHandlers(container);
 
-app.whenReady().then(createWindow);
+void app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -69,6 +72,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    void createWindow();
   }
 });

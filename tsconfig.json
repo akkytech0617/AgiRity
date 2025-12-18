@@ -17,12 +17,14 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
-    }
+      "@/*": ["src/*"],
+    },
   },
   "include": [
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
-    "src/shared/**/*.ts"
-  ]
+    "src/shared/**/*.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+  ],
 }

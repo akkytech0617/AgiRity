@@ -20,7 +20,8 @@ export function MCPServers() {
         </div>
         <h3 className="text-lg font-bold text-gray-900 mb-2">Coming in Phase 3</h3>
         <p className="text-gray-500 max-w-md mx-auto">
-          Connect and manage MCP servers to extend AgiRity's capabilities. This feature will allow you to integrate with external data sources and AI models.
+          Connect and manage MCP servers to extend AgiRity's capabilities. This feature will allow
+          you to integrate with external data sources and AI models.
         </p>
       </div>
     </div>

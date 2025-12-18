@@ -8,6 +8,7 @@
 **Packaging**: electron-builder ^24.13.3
 
 **Development Tools**:
+
 - **Linting**: ESLint ^9.39.1 (flat config format)
   - @typescript-eslint/eslint-plugin ^8.48.0
   - @typescript-eslint/parser ^8.48.0
@@ -20,12 +21,14 @@
 - **Utilities**: clsx ^2.1.1, tailwind-merge ^2.6.0, zod ^3.22.4
 
 **Architecture**:
+
 - **Multi-Process**: Main Process (Node.js) + Renderer Process (React)
 - **IPC Communication**: Two-way invoke/handle pattern with strict type safety
 - **Data Storage**: YAML format in `~/.agirity/workspaces.yaml` (planned)
 - **Security**: Context isolation, no remote content loading
 
 **Known Issues**:
+
 - Test files not implemented (0 test coverage)
 - Mock data hardcoded in App.tsx (MOCK_WORKSPACES)
 - No production data persistence layer yet
