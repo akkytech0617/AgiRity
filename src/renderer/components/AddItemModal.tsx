@@ -221,7 +221,10 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
             <div className="grid grid-cols-2 gap-4">
               {/* Wait Time */}
               <div>
-                <label htmlFor={waitTimeId} className="block text-xs font-medium text-gray-600 mb-1">
+                <label
+                  htmlFor={waitTimeId}
+                  className="block text-xs font-medium text-gray-600 mb-1"
+                >
                   Wait Time (seconds)
                 </label>
                 <input
@@ -239,7 +242,10 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModal
 
               {/* Depends On */}
               <div>
-                <label htmlFor={dependsOnId} className="block text-xs font-medium text-gray-600 mb-1">
+                <label
+                  htmlFor={dependsOnId}
+                  className="block text-xs font-medium text-gray-600 mb-1"
+                >
                   Depends On
                 </label>
                 <select

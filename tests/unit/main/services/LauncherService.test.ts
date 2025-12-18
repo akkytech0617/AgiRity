@@ -13,7 +13,7 @@ describe('LauncherService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockShellAdapter = createMockShellAdapter();
-    
+
     // Mock ConfigService
     mockConfigService = {
       getConfigDir: vi.fn(),

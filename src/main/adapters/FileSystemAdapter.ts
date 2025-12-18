@@ -18,7 +18,7 @@ export class FileSystemAdapter implements IFileSystemAdapter {
     // Since we don't have a restricted base directory enforced here currently,
     // we primarily rely on normalization.
     // In a stricter environment, we would check if normalizedPath starts with a specific base.
-    
+
     return normalizedPath;
   }
 
