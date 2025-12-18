@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Workspace management tool that automatically launches multiple applications for project work",
   "main": "dist-electron/main/index.js",
+  "type": "module",
   "author": "AgiRity Team",
   "license": "MIT",
   "private": true,
