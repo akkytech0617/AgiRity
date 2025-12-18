@@ -1,6 +1,6 @@
 # Tech Stack
 
-**Desktop Framework**: Electron ^28.2.0
+**Desktop Framework**: Electron ^39.2.7 (updated from ^28.2.0)
 **UI Framework**: React ^18.2.0
 **Language**: TypeScript ^5.9.3 (updated from 5.3.3)
 **Styling**: Tailwind CSS ^3.4.1
@@ -16,7 +16,7 @@
   - eslint-plugin-react-hooks ^7.0.1
   - eslint-plugin-react-refresh ^0.4.24
   - globals ^16.5.0
-- **Testing**: Vitest ^1.3.1, Playwright ^1.41.2
+- **Testing**: Vitest ^4.0.15, Playwright ^1.41.2
 - **Icons**: lucide-react ^0.344.0
 - **Utilities**: clsx ^2.1.1, tailwind-merge ^2.6.0, zod ^3.22.4
 
