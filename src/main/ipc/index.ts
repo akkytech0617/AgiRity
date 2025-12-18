@@ -4,7 +4,7 @@ import type { ServiceContainer } from '../container';
 
 interface WorkspaceResult {
   success: boolean;
-  data?: Workspace | Workspace[] | null;
+  data?: Workspace | Workspace[] | null | boolean;
   error?: string;
 }
 
@@ -64,7 +64,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
   ipcMain.handle('workspace:delete', async (_event, id: string): Promise<WorkspaceResult> => {
     try {
       const deleted = await project.deleteWorkspace(id);
-      return { success: true, data: deleted ? null : undefined };
+      return { success: true, data: deleted };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       console.error('Delete workspace failed:', message);

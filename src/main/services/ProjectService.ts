@@ -88,7 +88,7 @@ export class ProjectService implements IProjectService {
     } else {
       workspaces.push({
         ...workspace,
-        createdAt: workspace.createdAt || new Date().toISOString(),
+        createdAt: workspace.createdAt,
         updatedAt: new Date().toISOString(),
       });
     }
