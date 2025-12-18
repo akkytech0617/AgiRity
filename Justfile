@@ -93,6 +93,16 @@ security-code:
 # Run all security scans
 security-all: security security-code
 
+# Run SonarCloud scan
+sonar:
+    sonar-scanner \
+        -Dsonar.organization=${SONAR_ORG} \
+        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+        -Dsonar.sources=src \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.token=${SONARCLOUD_TOKEN}
+
+
 # --- Utility ---
 
 # Install dependencies
