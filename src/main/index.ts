@@ -69,6 +69,7 @@ async function createWindow() {
 const container = createContainer();
 setupIpcHandlers(container);
 
+// nosonar: Using promise chain instead of top-level await to prevent blocking Electron's main process startup
 app
   .whenReady()
   .then(async () => {
