@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import reactHooks from 'eslint-plugin-react-hooks';
 import security from 'eslint-plugin-security';
+import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
@@ -16,6 +17,8 @@ export default tseslint.config(
   js.configs.recommended,
   // Security recommended rules
   security.configs.recommended,
+  // SonarJS recommended rules for code quality
+  sonarjs.configs.recommended,
 
   // TypeScript strict type-checking rules - only for TS/TSX files
   ...tseslint.configs.strictTypeChecked.map((config) => ({

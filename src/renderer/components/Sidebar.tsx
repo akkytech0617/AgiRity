@@ -18,7 +18,7 @@ export function Sidebar({
   onOpenSettings,
   onOpenTools,
   onOpenMCP,
-}: SidebarProps) {
+}: Readonly<SidebarProps>) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredWorkspaces = workspaces.filter(

@@ -7,7 +7,11 @@ interface WorkspaceDetailProps {
   onLaunchItem?: (item: WorkspaceItem) => void;
 }
 
-export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: WorkspaceDetailProps) {
+export function WorkspaceDetail({
+  workspace,
+  onLaunch,
+  onLaunchItem,
+}: Readonly<WorkspaceDetailProps>) {
   const getItemIcon = (type: string) => {
     switch (type) {
       case 'app':

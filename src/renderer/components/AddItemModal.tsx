@@ -10,7 +10,7 @@ interface AddItemModalProps {
 
 type ItemType = 'app' | 'browser' | 'folder';
 
-export function AddItemModal({ onAdd, onClose, existingItemNames }: AddItemModalProps) {
+export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<AddItemModalProps>) {
   const [itemType, setItemType] = useState<ItemType>('app');
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');

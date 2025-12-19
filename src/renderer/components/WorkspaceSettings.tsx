@@ -11,7 +11,11 @@ interface WorkspaceSettingsProps {
   onCancel: () => void;
 }
 
-export function WorkspaceSettings({ workspace, onSave, onCancel }: WorkspaceSettingsProps) {
+export function WorkspaceSettings({
+  workspace,
+  onSave,
+  onCancel,
+}: Readonly<WorkspaceSettingsProps>) {
   const [editedWorkspace, setEditedWorkspace] = useState<Workspace>({
     ...workspace,
     items: [...workspace.items],

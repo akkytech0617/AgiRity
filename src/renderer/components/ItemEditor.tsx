@@ -32,7 +32,7 @@ export function ItemEditor({
   onDelete,
   onMoveUp,
   onMoveDown,
-}: ItemEditorProps) {
+}: Readonly<ItemEditorProps>) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const baseId = useId();

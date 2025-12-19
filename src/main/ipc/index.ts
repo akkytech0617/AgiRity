@@ -9,6 +9,16 @@ import {
 import type { ServiceContainer } from '../container';
 import { z } from 'zod';
 
+function getErrorMessage(error: unknown, zodErrorMessage: string): string {
+  if (error instanceof z.ZodError) {
+    return zodErrorMessage;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'Unknown error';
+}
+
 export function setupIpcHandlers(container: ServiceContainer): void {
   const { launcher, project } = container;
 
@@ -20,12 +30,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         await launcher.launchItem(validatedItem);
         return { success: true };
       } catch (error) {
-        const message =
-          error instanceof z.ZodError
-            ? 'Invalid input data'
-            : error instanceof Error
-              ? error.message
-              : 'Unknown error';
+        const message = getErrorMessage(error, 'Invalid input data');
         console.error('Launch failed:', message);
         return { success: false, error: message };
       }
@@ -51,12 +56,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         const workspace = await project.getWorkspace(validatedId);
         return { success: true, data: workspace };
       } catch (error) {
-        const message =
-          error instanceof z.ZodError
-            ? 'Invalid ID format'
-            : error instanceof Error
-              ? error.message
-              : 'Unknown error';
+        const message = getErrorMessage(error, 'Invalid ID format');
         console.error('Get workspace failed:', message);
         return { success: false, error: message };
       }
@@ -71,12 +71,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         await project.saveWorkspace(validatedWorkspace);
         return { success: true };
       } catch (error) {
-        const message =
-          error instanceof z.ZodError
-            ? 'Invalid workspace data'
-            : error instanceof Error
-              ? error.message
-              : 'Unknown error';
+        const message = getErrorMessage(error, 'Invalid workspace data');
         console.error('Save workspace failed:', message);
         return { success: false, error: message };
       }
@@ -91,12 +86,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         const deleted = await project.deleteWorkspace(validatedId);
         return { success: true, data: deleted };
       } catch (error) {
-        const message =
-          error instanceof z.ZodError
-            ? 'Invalid ID format'
-            : error instanceof Error
-              ? error.message
-              : 'Unknown error';
+        const message = getErrorMessage(error, 'Invalid ID format');
         console.error('Delete workspace failed:', message);
         return { success: false, error: message };
       }

@@ -7,6 +7,10 @@ import { setupIpcHandlers } from './ipc';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Explicitly log startup
+console.log('Electron process started (ESM)');
+console.log('__dirname:', __dirname);
+
 // The built directory structure
 //
 // ├─┬ dist-electron
@@ -17,33 +21,30 @@ const __dirname = dirname(__filename);
 // │ └── renderer
 // │     └── index.html
 
-process.env.DIST_ELECTRON = path.join(__dirname, '../..');
+process.env.DIST_ELECTRON = path.join(__dirname, '..');
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist');
 process.env.PUBLIC =
   process.env.VITE_DEV_SERVER_URL !== undefined && process.env.VITE_DEV_SERVER_URL !== ''
     ? path.join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST;
 
+console.log('DIST_ELECTRON:', process.env.DIST_ELECTRON);
+console.log('DIST:', process.env.DIST);
+console.log('PUBLIC:', process.env.PUBLIC);
+
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
-const publicDir = process.env.PUBLIC || '';
-// Note: vite-plugin-electron builds preload to dist-electron/preload/preload.js based on our config
-// But wait, our config output is 'dist-electron/preload'. The input is 'src/main/preload.ts'.
-// So it will be 'dist-electron/preload/preload.js' if the input filename is preserved,
-// or index.js depending on rollup options.
-// Let's check vite.config.ts again.
-// We didn't specify entry file names, so it defaults.
-// Usually vite-plugin-electron/simple handles this.
-// Let's assume the standard output path for now, and if it fails, we'll debug.
-// Actually, let's look at standard vite-plugin-electron templates.
-// Usually: path.join(__dirname, '../preload/index.js') if we didn't name it preload.js explicitly.
-// In vite.config.ts, input is 'src/main/preload.ts'.
-// Let's point to '../preload/preload.js' assuming the file name is preserved or mapped.
+console.log('Preload path:', preload);
 
+const publicDir = process.env.PUBLIC || '';
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = path.join(process.env.DIST, 'index.html');
 
+console.log('VITE_DEV_SERVER_URL:', url);
+console.log('indexHtml:', indexHtml);
+
 async function createWindow() {
+  console.log('Creating window...');
   win = new BrowserWindow({
     title: 'AgiRity',
     icon: path.join(publicDir, 'favicon.ico'),
@@ -55,19 +56,32 @@ async function createWindow() {
   });
 
   if (url !== undefined && url !== '') {
+    console.log('Loading URL:', url);
     await win.loadURL(url);
-    // win.webContents.openDevTools();
   } else {
+    console.log('Loading File:', indexHtml);
     await win.loadFile(indexHtml);
   }
+  console.log('Window created successfully');
 }
 
-// Create service container and setup IPC handlers
-const container = createContainer();
-setupIpcHandlers(container);
+// Wrap in IIFE to avoid top-level await issues in some environments
+void (async () => {
+  try {
+    console.log('Setting up container...');
+    const container = createContainer();
+    setupIpcHandlers(container);
+    console.log('Container setup complete');
 
-await app.whenReady();
-await createWindow();
+    console.log('Waiting for app.whenReady()...');
+    await app.whenReady();
+    console.log('App ready, creating window...');
+    await createWindow();
+  } catch (error) {
+    console.error('Failed to start application:', error);
+    app.quit();
+  }
+})();
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

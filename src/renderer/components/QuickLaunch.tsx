@@ -13,7 +13,7 @@ export function QuickLaunch({
   onSelectWorkspace,
   onLaunchItem,
   onLaunchWorkspace,
-}: QuickLaunchProps) {
+}: Readonly<QuickLaunchProps>) {
   const getItemIcon = (type: string) => {
     switch (type) {
       case 'app':

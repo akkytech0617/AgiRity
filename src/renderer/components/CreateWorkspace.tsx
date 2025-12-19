@@ -10,7 +10,7 @@ interface CreateWorkspaceProps {
   onCancel: () => void;
 }
 
-export function CreateWorkspace({ onSave, onCancel }: CreateWorkspaceProps) {
+export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspaceProps>) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
