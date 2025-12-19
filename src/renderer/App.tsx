@@ -145,7 +145,7 @@ function App() {
   };
 
   const handleSelectWorkspace = (id: string | null) => {
-    if (id !== null) {
+    if (id !== null && id !== '') {
       setActiveView({ type: 'workspace', id });
     } else {
       setActiveView({ type: 'quick-launch' });

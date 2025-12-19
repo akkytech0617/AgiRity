@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
 import electron from 'vite-plugin-electron/simple';
 import react from '@vitejs/plugin-react';
 
@@ -34,6 +33,7 @@ export default defineConfig({
             rollupOptions: {
               output: {
                 format: 'cjs',
+                entryFileNames: 'preload.js', // Explicitly output as .js for CJS
               },
             },
           },

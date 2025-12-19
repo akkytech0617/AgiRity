@@ -64,9 +64,9 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                   </p>
 
                   <div className="flex items-center gap-1 mb-5">
-                    {presetItems.slice(0, 5).map((item, i) => (
+                    {presetItems.slice(0, 5).map((item) => (
                       <div
-                        key={i}
+                        key={item.name}
                         className="p-1 bg-surface rounded border border-border"
                         title={item.name}
                       >
@@ -154,7 +154,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
 
               {/* Config Badges */}
               <div className="flex items-center gap-1 mt-auto pt-2 border-t border-gray-50">
-                {item.waitTime != null ? (
+                {item.waitTime !== undefined ? (
                   <div
                     className="flex items-center gap-1 text-[10px] text-amber-600"
                     title={`Wait ${item.waitTime}s`}

@@ -1,7 +1,6 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 
@@ -21,7 +20,7 @@ const __dirname = dirname(__filename);
 process.env.DIST_ELECTRON = path.join(__dirname, '../..');
 process.env.DIST = path.join(process.env.DIST_ELECTRON, '../dist');
 process.env.PUBLIC =
-  process.env.VITE_DEV_SERVER_URL !== undefined
+  process.env.VITE_DEV_SERVER_URL !== undefined && process.env.VITE_DEV_SERVER_URL !== ''
     ? path.join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST;
 
@@ -55,7 +54,7 @@ async function createWindow() {
     },
   });
 
-  if (url !== undefined) {
+  if (url !== undefined && url !== '') {
     await win.loadURL(url);
     // win.webContents.openDevTools();
   } else {

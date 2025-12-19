@@ -9,16 +9,7 @@ import eslintConfigPrettier from 'eslint-config-prettier/flat';
 export default tseslint.config(
   // Ignore patterns
   {
-    ignores: [
-      'dist/**',
-      'dist-electron/**',
-      'coverage/**',
-      'node_modules/**',
-      '*.config.js',
-      '*.config.cjs',
-      '*.config.mjs',
-      '*.config.ts',
-    ],
+    ignores: ['dist/**', 'dist-electron/**', 'coverage/**', 'node_modules/**'],
   },
 
   // Base JavaScript recommended rules
@@ -26,11 +17,17 @@ export default tseslint.config(
   // Security recommended rules
   security.configs.recommended,
 
-  // TypeScript strict type-checking rules
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  // TypeScript strict type-checking rules - only for TS/TSX files
+  ...tseslint.configs.strictTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
+  ...tseslint.configs.stylisticTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
 
-  // Main configuration
+  // Main configuration for TypeScript files
   {
     files: ['**/*.ts', '**/*.tsx'],
 
@@ -73,6 +70,17 @@ export default tseslint.config(
       '@typescript-eslint/no-unnecessary-condition': 'error',
       // Allow template literal with numbers (common pattern)
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+    },
+  },
+
+  // JavaScript config files - basic rules only
+  {
+    files: ['*.config.js', '*.config.mjs'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+      },
     },
   },
 
