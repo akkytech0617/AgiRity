@@ -15,7 +15,9 @@
   },
   "include": [
     "vite.config.ts",
+    "vitest.config.ts",
     "src/main/**/*.ts",
-    "src/shared/**/*.ts"
+    "src/shared/**/*.ts",
+    "tests/**/*.ts"
   ]
 }
