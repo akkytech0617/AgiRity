@@ -87,4 +87,7 @@ declare global {
     launcherApi: ILauncherApi;
     workspaceApi: IWorkspaceApi;
   }
+
+  var launcherApi: ILauncherApi;
+  var workspaceApi: IWorkspaceApi;
 }

@@ -65,23 +65,20 @@ async function createWindow() {
   console.log('Window created successfully');
 }
 
-// Wrap in IIFE to avoid top-level await issues in some environments
-void (async () => {
-  try {
-    console.log('Setting up container...');
-    const container = createContainer();
-    setupIpcHandlers(container);
-    console.log('Container setup complete');
+// Initialize container and handlers
+const container = createContainer();
+setupIpcHandlers(container);
 
-    console.log('Waiting for app.whenReady()...');
-    await app.whenReady();
+app
+  .whenReady()
+  .then(async () => {
     console.log('App ready, creating window...');
     await createWindow();
-  } catch (error) {
-    console.error('Failed to start application:', error);
+  })
+  .catch((error: unknown) => {
+    console.log('Failed to start application:', error);
     app.quit();
-  }
-})();
+  });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

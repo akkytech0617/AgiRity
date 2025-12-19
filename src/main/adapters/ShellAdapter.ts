@@ -76,9 +76,9 @@ export class ShellAdapter implements IShellAdapter {
         '/usr/bin',
         '/usr/local/bin',
         '/opt',
-        'C:\\Program Files',
-        'C:\\Program Files (x86)',
-        'C:\\Windows',
+        String.raw`C:\Program Files`,
+        String.raw`C:\Program Files (x86)`,
+        String.raw`C:\Windows`,
       ];
 
       const isAllowed = allowedPrefixes.some((prefix) =>
