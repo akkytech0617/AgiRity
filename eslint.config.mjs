@@ -4,6 +4,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import reactHooks from 'eslint-plugin-react-hooks';
 import security from 'eslint-plugin-security';
 import sonarjs from 'eslint-plugin-sonarjs';
+import sdl from '@microsoft/eslint-plugin-sdl';
 import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
@@ -19,6 +20,10 @@ export default tseslint.config(
   security.configs.recommended,
   // SonarJS recommended rules for code quality
   sonarjs.configs.recommended,
+  // Microsoft SDL security rules (common + electron + react)
+  ...sdl.configs.common,
+  ...sdl.configs.electron,
+  ...sdl.configs.react,
 
   // TypeScript strict type-checking rules - only for TS/TSX files
   ...tseslint.configs.strictTypeChecked.map((config) => ({
