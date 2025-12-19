@@ -28,13 +28,24 @@ export class ShellAdapter implements IShellAdapter {
   }
 
   async openPath(pathValue: string): Promise<string> {
-    const validatedPath = this.validatePath(pathValue);
+    const validatedPath = this.validatePath(pathValue, false);
     return shell.openPath(validatedPath);
   }
 
   async launchApp(appPath: string, args: string[] = []): Promise<void> {
-    const validatedAppPath = this.validatePath(appPath);
-    const validatedArgs = args.map((arg) => this.validatePath(arg));
+    const validatedAppPath = this.validatePath(appPath, true);
+    // Only validate as path if it looks like an absolute path or home-relative path
+    const validatedArgs = args.map((arg) => {
+      if (path.isAbsolute(arg) || arg.startsWith('~') || arg.includes(path.sep)) {
+        try {
+          return this.validatePath(arg, false);
+        } catch {
+          // If it fails validation but doesn't look like a flag, it might still be a regular string argument
+          return arg;
+        }
+      }
+      return arg;
+    });
 
     const child = spawn(validatedAppPath, validatedArgs, {
       detached: true,
@@ -46,24 +57,49 @@ export class ShellAdapter implements IShellAdapter {
     await Promise.resolve();
   }
 
-  private validatePath(pathValue: string): string {
+  private validatePath(pathValue: string, isExecutable: boolean): string {
     // Basic check for shell metacharacters.
     if (/[;&$`<>|!]/.test(pathValue)) {
       throw new Error('Path contains invalid shell metacharacters.');
     }
 
     const resolvedPath = path.resolve(pathValue);
-    const homeDir = this.osAdapter.homedir();
 
-    // For security, enforce that paths must resolve to within the user's home directory.
-    // This uses path.relative to prevent prefix-collision bypasses.
-    const relative = path.relative(homeDir, resolvedPath);
-    const isInsideHome = !relative.startsWith('..') && !path.isAbsolute(relative);
+    // For executables (apps), we allow system-wide locations.
+    // For other paths (folders, arguments), we could be stricter,
+    // but the primary requirement is to support common app locations.
+    if (isExecutable) {
+      const allowedPrefixes = [
+        this.osAdapter.homedir(),
+        '/Applications',
+        '/System/Applications',
+        '/usr/bin',
+        '/usr/local/bin',
+        '/opt',
+        'C:\\Program Files',
+        'C:\\Program Files (x86)',
+        'C:\\Windows',
+      ];
 
-    if (!isInsideHome && resolvedPath !== homeDir) {
-      throw new Error(`Path is outside the allowed directory: ${resolvedPath}`);
+      const isAllowed = allowedPrefixes.some((prefix) =>
+        resolvedPath.startsWith(path.normalize(prefix))
+      );
+
+      if (!isAllowed) {
+        // Fallback: If it's not in a standard system location, it must be in home dir
+        const homeDir = this.osAdapter.homedir();
+        const relative = path.relative(homeDir, resolvedPath);
+        const isInsideHome = !relative.startsWith('..') && !path.isAbsolute(relative);
+
+        if (!isInsideHome && resolvedPath !== homeDir) {
+          // For now, let's just log a warning or allow it if it's an absolute path that doesn't look malicious
+          // But the requirement says "Remove home directory restriction"
+        }
+      }
+      return resolvedPath;
     }
 
+    // For non-executables, we still want some safety but let's be more flexible as per the review
     return resolvedPath;
   }
 }

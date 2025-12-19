@@ -154,7 +154,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
 
               {/* Config Badges */}
               <div className="flex items-center gap-1 mt-auto pt-2 border-t border-gray-50">
-                {item.waitTime !== undefined ? (
+                {item.waitTime !== undefined && item.waitTime > 0 ? (
                   <div
                     className="flex items-center gap-1 text-[10px] text-amber-600"
                     title={`Wait ${item.waitTime}s`}
@@ -171,7 +171,7 @@ export function WorkspaceDetail({ workspace, onLaunch, onLaunchItem }: Workspace
                   </div>
                 )}
 
-                {item.dependsOn != null && (
+                {item.dependsOn !== undefined && item.dependsOn !== '' && (
                   <div
                     className="flex items-center gap-1 text-[10px] text-purple-600 ml-auto"
                     title={`After ${item.dependsOn}`}

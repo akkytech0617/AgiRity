@@ -1,9 +1,26 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { WorkspaceItem, Workspace, IPC_CHANNELS } from '../shared/types';
 
+// --------- Expose Scoped APIs to the Renderer process ---------
+
+const launcherApi = {
+  launchItem: (item: WorkspaceItem) => ipcRenderer.invoke(IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM, item),
+};
+
+const workspaceApi = {
+  load: () => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_LOAD),
+  get: (id: string) => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_GET, id),
+  save: (workspace: Workspace) => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_SAVE, workspace),
+  delete: (id: string) => ipcRenderer.invoke(IPC_CHANNELS.WORKSPACE_DELETE, id),
+};
+
+contextBridge.exposeInMainWorld('launcherApi', launcherApi);
+contextBridge.exposeInMainWorld('workspaceApi', workspaceApi);
+
+// Keep legacy for now, but mark as deprecated or for removal
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const listenerWrappers = new WeakMap<(...args: any[]) => void, (...args: any[]) => void>();
 
-// --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
     const [channel, listener] = args;

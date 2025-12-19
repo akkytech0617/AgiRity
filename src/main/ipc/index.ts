@@ -1,31 +1,38 @@
 import { ipcMain } from 'electron';
-import type { WorkspaceItem, Workspace, LaunchResult } from '../../shared/types';
+import {
+  WorkspaceItemSchema,
+  WorkspaceSchema,
+  LaunchResult,
+  WorkspaceResult,
+  IPC_CHANNELS,
+} from '../../shared/types';
 import type { ServiceContainer } from '../container';
-
-interface WorkspaceResult {
-  success: boolean;
-  data?: Workspace | Workspace[] | null | boolean;
-  error?: string;
-}
+import { z } from 'zod';
 
 export function setupIpcHandlers(container: ServiceContainer): void {
   const { launcher, project } = container;
 
   ipcMain.handle(
-    'launcher:launchItem',
-    async (_event, item: WorkspaceItem): Promise<LaunchResult> => {
+    IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM,
+    async (_event, item: unknown): Promise<LaunchResult> => {
       try {
-        await launcher.launchItem(item);
+        const validatedItem = WorkspaceItemSchema.parse(item);
+        await launcher.launchItem(validatedItem);
         return { success: true };
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
+        const message =
+          error instanceof z.ZodError
+            ? 'Invalid input data'
+            : error instanceof Error
+              ? error.message
+              : 'Unknown error';
         console.error('Launch failed:', message);
         return { success: false, error: message };
       }
     }
   );
 
-  ipcMain.handle('workspace:load', async (): Promise<WorkspaceResult> => {
+  ipcMain.handle(IPC_CHANNELS.WORKSPACE_LOAD, async (): Promise<WorkspaceResult> => {
     try {
       const workspaces = await project.loadWorkspaces();
       return { success: true, data: workspaces };
@@ -36,39 +43,63 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     }
   });
 
-  ipcMain.handle('workspace:get', async (_event, id: string): Promise<WorkspaceResult> => {
-    try {
-      const workspace = await project.getWorkspace(id);
-      return { success: true, data: workspace };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Get workspace failed:', message);
-      return { success: false, error: message };
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSPACE_GET,
+    async (_event, id: unknown): Promise<WorkspaceResult> => {
+      try {
+        const validatedId = z.string().uuid().parse(id);
+        const workspace = await project.getWorkspace(validatedId);
+        return { success: true, data: workspace };
+      } catch (error) {
+        const message =
+          error instanceof z.ZodError
+            ? 'Invalid ID format'
+            : error instanceof Error
+              ? error.message
+              : 'Unknown error';
+        console.error('Get workspace failed:', message);
+        return { success: false, error: message };
+      }
     }
-  });
+  );
 
   ipcMain.handle(
-    'workspace:save',
-    async (_event, workspace: Workspace): Promise<WorkspaceResult> => {
+    IPC_CHANNELS.WORKSPACE_SAVE,
+    async (_event, workspace: unknown): Promise<WorkspaceResult> => {
       try {
-        await project.saveWorkspace(workspace);
+        const validatedWorkspace = WorkspaceSchema.parse(workspace);
+        await project.saveWorkspace(validatedWorkspace);
         return { success: true };
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
+        const message =
+          error instanceof z.ZodError
+            ? 'Invalid workspace data'
+            : error instanceof Error
+              ? error.message
+              : 'Unknown error';
         console.error('Save workspace failed:', message);
         return { success: false, error: message };
       }
     }
   );
 
-  ipcMain.handle('workspace:delete', async (_event, id: string): Promise<WorkspaceResult> => {
-    try {
-      const deleted = await project.deleteWorkspace(id);
-      return { success: true, data: deleted };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Delete workspace failed:', message);
-      return { success: false, error: message };
+  ipcMain.handle(
+    IPC_CHANNELS.WORKSPACE_DELETE,
+    async (_event, id: unknown): Promise<WorkspaceResult> => {
+      try {
+        const validatedId = z.string().uuid().parse(id);
+        const deleted = await project.deleteWorkspace(validatedId);
+        return { success: true, data: deleted };
+      } catch (error) {
+        const message =
+          error instanceof z.ZodError
+            ? 'Invalid ID format'
+            : error instanceof Error
+              ? error.message
+              : 'Unknown error';
+        console.error('Delete workspace failed:', message);
+        return { success: false, error: message };
+      }
     }
-  });
+  );
 }
