@@ -26,22 +26,22 @@ AgiRityプロジェクトはESM（ECMAScript Modules）へと移行済みであ�
 
 ## Rationale
 
-*   **起動の安定性**: Electronのライフサイクル管理において、イベントループをブロックせずに初期化を完了させる必要がある。
-*   **信頼性**: `createWindow` はElectronが完全に準備できた後に呼び出される必要があり、Promiseチェーンはこの順序を確実に保証する。
-*   **保守性**: `// nosonar` コメントを付与することで、将来の修正時に誤って破壊的な変更（トップレベルawaitへの再移行）が行われるのを防ぐ。
+- **起動の安定性**: Electronのライフサイクル管理において、イベントループをブロックせずに初期化を完了させる必要がある。
+- **信頼性**: `createWindow` はElectronが完全に準備できた後に呼び出される必要があり、Promiseチェーンはこの順序を確実に保証する。
+- **保守性**: `// nosonar` コメントを付与することで、将来の修正時に誤って破壊的な変更（トップレベルawaitへの再移行）が行われるのを防ぐ。
 
 ## Consequences
 
 ### Positive
 
-*   ESM環境下でもElectronアプリが確実に起動する。
-*   静的解析ツールのエラーを解消しつつ、設計意図をコード内に明記できる。
+- ESM環境下でもElectronアプリが確実に起動する。
+- 静的解析ツールのエラーを解消しつつ、設計意図をコード内に明記できる。
 
 ### Negative
 
-*   ESMの一般的なベストプラクティス（トップレベルawait推奨）とは異なる例外的な書き方となる。
+- ESMの一般的なベストプラクティス（トップレベルawait推奨）とは異なる例外的な書き方となる。
 
 ## References
 
-*   [Electron Documentation: app.whenReady()](https://www.electronjs.org/docs/latest/api/app#appwhenready)
-*   SonarCloud Rule: typescript:S7785 (Prefer top-level await over using a promise chain)
+- [Electron Documentation: app.whenReady()](https://www.electronjs.org/docs/latest/api/app#appwhenready)
+- SonarCloud Rule: typescript:S7785 (Prefer top-level await over using a promise chain)
