@@ -32,7 +32,7 @@ export async function initSentryMain(): Promise<void> {
       environment: isDevelopment() ? 'development' : 'production',
       release: process.env.npm_package_version,
       debug: isDevelopment(),
-      tracesSampleRate: isDevelopment() ? 1.0 : 0.1,
+      tracesSampleRate: isDevelopment() ? 1 : 0.1,
     });
   } catch {
     // Sentry initialization failed, continue without it
