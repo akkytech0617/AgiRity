@@ -9,6 +9,7 @@ import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
+import { log } from './lib/logger';
 
 // Mock Data
 const MOCK_WORKSPACES: Workspace[] = [
@@ -101,7 +102,7 @@ function App() {
       : null;
 
   const handleLaunch = (id: string) => {
-    console.log('Launching workspace:', id);
+    log.info('Launching workspace:', id);
   };
 
   const handleEditWorkspace = (id: string) => {
@@ -109,7 +110,7 @@ function App() {
   };
 
   const handleSaveWorkspace = (workspace: Workspace) => {
-    console.log('Saving workspace:', workspace);
+    log.info('Saving workspace:', workspace);
     // Here we would update the state, but for now we just go back to detail view
     setActiveView({ type: 'workspace', id: workspace.id });
   };
@@ -123,14 +124,14 @@ function App() {
   };
 
   const launchItem = async (item: WorkspaceItem) => {
-    console.log('Launching item:', item.name);
+    log.info('Launching item:', item.name);
     try {
       const result = await launcherApi.launchItem(item);
       if (!result.success) {
-        console.error('Launch failed:', result.error);
+        log.error('Launch failed:', result.error);
       }
     } catch (error) {
-      console.error('IPC error:', error);
+      log.error('IPC error:', error);
     }
   };
 
@@ -139,7 +140,7 @@ function App() {
   };
 
   const handleCreateWorkspace = (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('Creating workspace:', workspace);
+    log.info('Creating workspace:', workspace);
     // In real app, would create workspace and navigate to it
     setActiveView({ type: 'quick-launch' });
   };
@@ -242,7 +243,7 @@ function App() {
           subtitle: 'Start your work in seconds',
           showEditButton: true,
           onEdit: () => {
-            console.log('Edit Quick Launch settings');
+            log.debug('Edit Quick Launch settings');
           },
         };
     }

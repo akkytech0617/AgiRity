@@ -1,15 +1,19 @@
 import { app, BrowserWindow } from 'electron';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { initMainLogger, log } from './lib/logger';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
+
+// Initialize logger first
+initMainLogger();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Explicitly log startup
-console.log('Electron process started (ESM)');
-console.log('__dirname:', __dirname);
+// Log startup
+log.info('Electron process started (ESM)');
+log.debug('__dirname:', __dirname);
 
 // The built directory structure
 //
@@ -28,23 +32,23 @@ process.env.PUBLIC =
     ? path.join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST;
 
-console.log('DIST_ELECTRON:', process.env.DIST_ELECTRON);
-console.log('DIST:', process.env.DIST);
-console.log('PUBLIC:', process.env.PUBLIC);
+log.debug('DIST_ELECTRON:', process.env.DIST_ELECTRON);
+log.debug('DIST:', process.env.DIST);
+log.debug('PUBLIC:', process.env.PUBLIC);
 
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
-console.log('Preload path:', preload);
+log.debug('Preload path:', preload);
 
 const publicDir = process.env.PUBLIC || '';
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = path.join(process.env.DIST, 'index.html');
 
-console.log('VITE_DEV_SERVER_URL:', url);
-console.log('indexHtml:', indexHtml);
+log.debug('VITE_DEV_SERVER_URL:', url);
+log.debug('indexHtml:', indexHtml);
 
 async function createWindow() {
-  console.log('Creating window...');
+  log.info('Creating window...');
   win = new BrowserWindow({
     title: 'AgiRity',
     icon: path.join(publicDir, 'favicon.ico'),
@@ -56,13 +60,13 @@ async function createWindow() {
   });
 
   if (url !== undefined && url !== '') {
-    console.log('Loading URL:', url);
+    log.info('Loading URL:', url);
     await win.loadURL(url);
   } else {
-    console.log('Loading File:', indexHtml);
+    log.info('Loading File:', indexHtml);
     await win.loadFile(indexHtml);
   }
-  console.log('Window created successfully');
+  log.info('Window created successfully');
 }
 
 // Initialize container and handlers
@@ -73,11 +77,11 @@ setupIpcHandlers(container);
 app
   .whenReady()
   .then(async () => {
-    console.log('App ready, creating window...');
+    log.info('App ready, creating window...');
     await createWindow();
   })
   .catch((error: unknown) => {
-    console.log('Failed to start application:', error);
+    log.error('Failed to start application:', error);
     app.quit();
   });
 
@@ -90,7 +94,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow().catch((err: unknown) => {
-      console.error('Failed to create window on activate:', err);
+      log.error('Failed to create window on activate:', err);
     });
   }
 });

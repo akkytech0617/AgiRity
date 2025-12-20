@@ -1,3 +1,4 @@
+import '@sentry/electron/preload';
 import { contextBridge, ipcRenderer } from 'electron';
 import { WorkspaceItem, Workspace, IPC_CHANNELS } from '../shared/types';
 

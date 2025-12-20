@@ -14,6 +14,11 @@ export default defineConfig({
       main: {
         entry: 'src/main/index.ts',
         vite: {
+          resolve: {
+            alias: {
+              '@': path.resolve(__dirname, 'src'),
+            },
+          },
           build: {
             outDir: 'dist-electron/main',
             target: 'es2022',
@@ -28,6 +33,11 @@ export default defineConfig({
       preload: {
         input: 'src/main/preload.ts',
         vite: {
+          resolve: {
+            alias: {
+              '@': path.resolve(__dirname, 'src'),
+            },
+          },
           build: {
             outDir: 'dist-electron/preload',
             rollupOptions: {
