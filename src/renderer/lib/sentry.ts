@@ -9,7 +9,7 @@ import { isDevelopment } from '@/shared/lib/logging/config';
  * Returns null if not configured
  */
 function getSentryDsn(): string | null {
-  const dsn = process.env.SENTRY_DSN;
+  const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
   if (dsn === undefined || dsn === '') {
     return null;
   }
@@ -30,7 +30,7 @@ export async function initSentryRenderer(): Promise<void> {
     Sentry.init({
       dsn,
       environment: isDevelopment() ? 'development' : 'production',
-      release: process.env.npm_package_version,
+      release: import.meta.env.VITE_APP_VERSION as string | undefined,
       debug: isDevelopment(),
     });
   } catch {
