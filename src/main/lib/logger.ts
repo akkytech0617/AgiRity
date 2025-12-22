@@ -1,6 +1,5 @@
 /**
  * Main process logger initialization and configuration
- * Uses electron-log for file and console output
  */
 
 import logger from 'electron-log/main';
@@ -13,11 +12,8 @@ import {
   CONSOLE_FORMAT,
   LOG_FILE_NAMES,
 } from '@/shared/lib/logging/config';
-import { initSentryMain, captureExceptionMain, sendLogMain } from './sentry';
+import { initSentryMain, captureException, sendLog, captureIssue } from './sentry';
 
-/**
- * Check if a file exists using async fs.access
- */
 async function fileExists(filePath: string): Promise<boolean> {
   try {
     await fs.access(filePath);
@@ -27,51 +23,39 @@ async function fileExists(filePath: string): Promise<boolean> {
   }
 }
 
-/**
- * Async implementation of log rotation
- * Keeps up to FILE_ROTATION.maxFiles rotated logs
- */
 async function archiveLogAsync(file: { toString(): string }): Promise<void> {
   const filePath = file.toString();
   const info = path.parse(filePath);
 
   try {
-    // Shift existing rotated files
     for (let i = FILE_ROTATION.maxFiles - 1; i >= 1; i--) {
       const oldPath = path.join(info.dir, `${info.name}.${String(i)}${info.ext}`);
       const newPath = path.join(info.dir, `${info.name}.${String(i + 1)}${info.ext}`);
 
       if (await fileExists(oldPath)) {
         if (i === FILE_ROTATION.maxFiles - 1) {
-          await fs.unlink(oldPath); // Delete oldest
+          await fs.unlink(oldPath);
         } else {
           await fs.rename(oldPath, newPath);
         }
       }
     }
-
-    // Rotate current log to .1
     await fs.rename(filePath, path.join(info.dir, `${info.name}.1${info.ext}`));
   } catch {
-    // Log rotation failed, continue without rotation
+    // Log rotation failed
   }
 }
 
-/**
- * Synchronous wrapper for archiveLogAsync to maintain compatibility with electron-log API
- * Uses setImmediate to avoid blocking and .catch() to prevent unhandled rejections
- */
 function archiveLog(file: { toString(): string }): void {
   setImmediate(() => {
     archiveLogAsync(file).catch(() => {
-      // Silently ignore errors - rotation is best-effort
+      // Silently ignore rotation errors
     });
   });
 }
 
 /**
  * Initialize logging for the main process
- * Must be called before any other code in main/index.ts
  */
 export function initMainLogger(): typeof logger {
   const dev = isDevelopment();
@@ -90,19 +74,18 @@ export function initMainLogger(): typeof logger {
   // Initialize for renderer process IPC
   logger.initialize({ spyRendererConsole: dev });
 
-  // Initialize Sentry first (synchronously, as early as possible)
+  // Initialize Sentry
   initSentryMain();
 
-  // Set up error handler with Sentry integration
+  // Error handler
   logger.errorHandler.startCatching({
     showDialog: !dev,
     onError: ({ error }) => {
-      captureExceptionMain(error, { processType: 'main' });
-      // Return undefined to allow default handling
+      captureException(error, { processType: 'main' });
     },
   });
 
-  // すべてのログをSentryに送信するフックを追加
+  // Send logs to Sentry
   logger.hooks.push((message, transport) => {
     if (transport !== logger.transports.file) {
       return message;
@@ -111,27 +94,22 @@ export function initMainLogger(): typeof logger {
     const { level, data } = message;
     const logMessage = data.map((d) => (typeof d === 'string' ? d : JSON.stringify(d))).join(' ');
 
-    // すべてのレベルのログをSentry Logsに送信
+    // All logs → Sentry Logs
+    if (level === 'error' || level === 'warn' || level === 'info' || level === 'debug') {
+      sendLog(logMessage, level, { processType: 'main' });
+    }
+
+    // error/warn → Sentry Issues
     if (level === 'error') {
-      sendLogMain(logMessage, 'error', { level, processType: 'main' });
+      captureIssue(logMessage, 'error', { processType: 'main' });
     } else if (level === 'warn') {
-      sendLogMain(logMessage, 'warn', { level, processType: 'main' });
-    } else if (level === 'info') {
-      sendLogMain(logMessage, 'info', { level, processType: 'main' });
-    } else if (level === 'debug') {
-      sendLogMain(logMessage, 'debug', { level, processType: 'main' });
+      captureIssue(logMessage, 'warning', { processType: 'main' });
     }
 
     return message;
   });
 
-  logger.info('Main process logger initialized', {
-    environment: dev ? 'development' : 'production',
-    logPath: logger.transports.file.getFile().path,
-  });
-
   return logger;
 }
 
-// Export the log instance for use throughout the main process
 export { default as log } from 'electron-log/main';

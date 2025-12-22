@@ -102,7 +102,10 @@ function App() {
       : null;
 
   const handleLaunch = (id: string) => {
-    log.info('Launching workspace:', id);
+    const workspace = MOCK_WORKSPACES.find((w) => w.id === id);
+    if (workspace) {
+      log.info(`Launching workspace: ${workspace.name}`);
+    }
   };
 
   const handleEditWorkspace = (id: string) => {
@@ -110,8 +113,6 @@ function App() {
   };
 
   const handleSaveWorkspace = (workspace: Workspace) => {
-    log.info('Saving workspace:', workspace);
-    // Here we would update the state, but for now we just go back to detail view
     setActiveView({ type: 'workspace', id: workspace.id });
   };
 
@@ -124,14 +125,14 @@ function App() {
   };
 
   const launchItem = async (item: WorkspaceItem) => {
-    log.info('Launching item:', item.name);
+    log.info(`Launching: ${item.name}`);
     try {
       const result = await launcherApi.launchItem(item);
       if (!result.success) {
-        log.error('Launch failed:', result.error);
+        log.error(`Launch failed: ${item.name}`, result.error);
       }
     } catch (error) {
-      log.error('IPC error:', error);
+      log.error(`IPC error: ${item.name}`, error);
     }
   };
 
@@ -139,9 +140,7 @@ function App() {
     setActiveView({ type: 'create-workspace' });
   };
 
-  const handleCreateWorkspace = (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => {
-    log.info('Creating workspace:', workspace);
-    // In real app, would create workspace and navigate to it
+  const handleCreateWorkspace = () => {
     setActiveView({ type: 'quick-launch' });
   };
 
@@ -243,7 +242,7 @@ function App() {
           subtitle: 'Start your work in seconds',
           showEditButton: true,
           onEdit: () => {
-            log.debug('Edit Quick Launch settings');
+            // Edit Quick Launch settings
           },
         };
     }

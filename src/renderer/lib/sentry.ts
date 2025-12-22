@@ -7,7 +7,6 @@ import { isDevelopment } from '@/shared/lib/logging/config';
 
 /**
  * Get Sentry DSN from environment
- * Returns null if not configured
  */
 function getSentryDsn(): string | null {
   const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
@@ -26,40 +25,19 @@ export function initSentryRenderer(): void {
     return;
   }
 
-  try {
-    Sentry.init({
-      dsn,
-      environment: isDevelopment() ? 'development' : 'production',
-      release: import.meta.env.VITE_APP_VERSION as string | undefined,
-      debug: isDevelopment(),
-      enableLogs: true,
-    });
-  } catch {
-    // Sentry initialization failed, continue without it
-  }
+  Sentry.init({
+    dsn,
+    environment: isDevelopment() ? 'development' : 'production',
+    release: import.meta.env.VITE_APP_VERSION as string | undefined,
+    debug: false,
+    enableLogs: true,
+  });
 }
 
 /**
- * Capture an exception to Sentry (renderer process)
+ * Send log to Sentry Logs
  */
-export function captureExceptionRenderer(error: Error, context?: Record<string, unknown>): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  try {
-    Sentry.captureException(error, { extra: context });
-  } catch {
-    // Sentry not available
-  }
-}
-
-/**
- * Send a log to Sentry Logs (renderer process)
- * Uses Sentry.logger API for Logs feature (requires enableLogs: true)
- */
-export function sendLogRenderer(
+export function sendLog(
   message: string,
   level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' = 'info',
   attributes?: Record<string, unknown>
@@ -69,42 +47,15 @@ export function sendLogRenderer(
     return;
   }
 
-  try {
-    const attrs = attributes ?? {};
-    switch (level) {
-      case 'trace':
-        Sentry.logger.trace(message, attrs);
-        break;
-      case 'debug':
-        Sentry.logger.debug(message, attrs);
-        break;
-      case 'info':
-        Sentry.logger.info(message, attrs);
-        break;
-      case 'warn':
-        Sentry.logger.warn(message, attrs);
-        break;
-      case 'error':
-        Sentry.logger.error(message, attrs);
-        break;
-      case 'fatal':
-        Sentry.logger.fatal(message, attrs);
-        break;
-      default:
-        Sentry.logger.info(message, attrs);
-    }
-  } catch {
-    // Sentry logger not available
-  }
+  Sentry.logger[level](message, attributes ?? {});
 }
 
 /**
- * Capture a message to Sentry Issues (renderer process)
- * Uses captureMessage API for Issues feature
+ * Send error/warn to Sentry Issues
  */
-export function captureMessageRenderer(
+export function captureIssue(
   message: string,
-  level: 'info' | 'warning' | 'error' | 'debug' = 'info',
+  level: 'warning' | 'error' = 'error',
   context?: Record<string, unknown>
 ): void {
   const dsn = getSentryDsn();
@@ -112,16 +63,24 @@ export function captureMessageRenderer(
     return;
   }
 
-  try {
-    if (context && Object.keys(context).length > 0) {
-      Sentry.withScope((scope) => {
-        scope.setExtras(context);
-        Sentry.captureMessage(message, level);
-      });
-    } else {
+  if (context !== undefined && Object.keys(context).length > 0) {
+    Sentry.withScope((scope) => {
+      scope.setExtras(context);
       Sentry.captureMessage(message, level);
-    }
-  } catch {
-    // Sentry not available
+    });
+  } else {
+    Sentry.captureMessage(message, level);
   }
+}
+
+/**
+ * Capture exception to Sentry Issues
+ */
+export function captureException(error: Error, context?: Record<string, unknown>): void {
+  const dsn = getSentryDsn();
+  if (dsn === null) {
+    return;
+  }
+
+  Sentry.captureException(error, { extra: context });
 }

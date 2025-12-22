@@ -1,49 +1,45 @@
 /**
  * Renderer process logger initialization and configuration
- * Uses electron-log for IPC-based logging to main process
  */
 
 import logger from 'electron-log/renderer';
-import { initSentryRenderer, captureExceptionRenderer, sendLogRenderer } from './sentry';
+import { initSentryRenderer, captureException, sendLog, captureIssue } from './sentry';
 
 /**
  * Initialize logging for the renderer process
- * Should be called early in renderer/index.tsx
  */
 export function initRendererLogger(): typeof logger {
-  // Initialize Sentry first (synchronously, as early as possible)
+  // Initialize Sentry
   initSentryRenderer();
 
-  // Set up error handler with Sentry integration
+  // Error handler
   logger.errorHandler.startCatching({
     onError: ({ error }) => {
-      captureExceptionRenderer(error, { processType: 'renderer' });
+      captureException(error, { processType: 'renderer' });
     },
   });
 
-  // すべてのログをSentry Logsに送信するフックを追加
+  // Send logs to Sentry
   logger.hooks.push((message) => {
     const { level, data } = message;
     const logMessage = data.map((d) => (typeof d === 'string' ? d : JSON.stringify(d))).join(' ');
 
-    // すべてのレベルのログをSentry Logsに送信
+    // All logs → Sentry Logs
+    if (level === 'error' || level === 'warn' || level === 'info' || level === 'debug') {
+      sendLog(logMessage, level, { processType: 'renderer' });
+    }
+
+    // error/warn → Sentry Issues
     if (level === 'error') {
-      sendLogRenderer(logMessage, 'error', { level, processType: 'renderer' });
+      captureIssue(logMessage, 'error', { processType: 'renderer' });
     } else if (level === 'warn') {
-      sendLogRenderer(logMessage, 'warn', { level, processType: 'renderer' });
-    } else if (level === 'info') {
-      sendLogRenderer(logMessage, 'info', { level, processType: 'renderer' });
-    } else if (level === 'debug') {
-      sendLogRenderer(logMessage, 'debug', { level, processType: 'renderer' });
+      captureIssue(logMessage, 'warning', { processType: 'renderer' });
     }
 
     return message;
   });
 
-  logger.info('Renderer logger initialized');
-
   return logger;
 }
 
-// Export the log instance for use throughout the renderer process
 export { default as log } from 'electron-log/renderer';

@@ -1,8 +1,9 @@
+import 'dotenv/config';
 import { app, BrowserWindow } from 'electron';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { initMainLogger, log } from './lib/logger';
-import { flushSentryMain } from './lib/sentry';
+import { flushSentry } from './lib/sentry';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 
@@ -13,8 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Log startup
-log.info('Electron process started (ESM)');
-log.debug('__dirname:', __dirname);
+log.info('AgiRity started');
 
 // The built directory structure
 //
@@ -33,23 +33,14 @@ process.env.PUBLIC =
     ? path.join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST;
 
-log.debug('DIST_ELECTRON:', process.env.DIST_ELECTRON);
-log.debug('DIST:', process.env.DIST);
-log.debug('PUBLIC:', process.env.PUBLIC);
-
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
-log.debug('Preload path:', preload);
 
 const publicDir = process.env.PUBLIC || '';
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = path.join(process.env.DIST, 'index.html');
 
-log.debug('VITE_DEV_SERVER_URL:', url);
-log.debug('indexHtml:', indexHtml);
-
 async function createWindow() {
-  log.info('Creating window...');
   win = new BrowserWindow({
     title: 'AgiRity',
     icon: path.join(publicDir, 'favicon.ico'),
@@ -61,13 +52,10 @@ async function createWindow() {
   });
 
   if (url !== undefined && url !== '') {
-    log.info('Loading URL:', url);
     await win.loadURL(url);
   } else {
-    log.info('Loading File:', indexHtml);
     await win.loadFile(indexHtml);
   }
-  log.info('Window created successfully');
 }
 
 // Initialize container and handlers
@@ -78,7 +66,6 @@ setupIpcHandlers(container);
 app
   .whenReady()
   .then(async () => {
-    log.info('App ready, creating window...');
     await createWindow();
   })
   .catch((error: unknown) => {
@@ -89,7 +76,7 @@ app
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     // Sentryバッファをフラッシュしてから終了
-    flushSentryMain(2000)
+    flushSentry(2000)
       .then(() => {
         app.quit();
       })
@@ -100,8 +87,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+  log.info('AgiRity shutting down');
   // アプリ終了前にSentryのログをフラッシュ
-  flushSentryMain(2000).catch(() => {
+  flushSentry(2000).catch(() => {
     // フラッシュ失敗しても終了を続行
   });
 });
