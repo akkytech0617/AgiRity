@@ -13,7 +13,7 @@ import {
   CONSOLE_FORMAT,
   LOG_FILE_NAMES,
 } from '@/shared/lib/logging/config';
-import { initSentryMain, captureExceptionMain } from './sentry';
+import { initSentryMain, captureExceptionMain, sendLogMain } from './sentry';
 
 /**
  * Check if a file exists using async fs.access
@@ -90,17 +90,40 @@ export function initMainLogger(): typeof logger {
   // Initialize for renderer process IPC
   logger.initialize({ spyRendererConsole: dev });
 
+  // Initialize Sentry first (synchronously, as early as possible)
+  initSentryMain();
+
   // Set up error handler with Sentry integration
   logger.errorHandler.startCatching({
     showDialog: !dev,
     onError: ({ error }) => {
-      void captureExceptionMain(error, { processType: 'main' });
+      captureExceptionMain(error, { processType: 'main' });
       // Return undefined to allow default handling
     },
   });
 
-  // Initialize Sentry (async, non-blocking)
-  void initSentryMain();
+  // すべてのログをSentryに送信するフックを追加
+  logger.hooks.push((message, transport) => {
+    if (transport !== logger.transports.file) {
+      return message;
+    }
+
+    const { level, data } = message;
+    const logMessage = data.map((d) => (typeof d === 'string' ? d : JSON.stringify(d))).join(' ');
+
+    // すべてのレベルのログをSentry Logsに送信
+    if (level === 'error') {
+      sendLogMain(logMessage, 'error', { level, processType: 'main' });
+    } else if (level === 'warn') {
+      sendLogMain(logMessage, 'warn', { level, processType: 'main' });
+    } else if (level === 'info') {
+      sendLogMain(logMessage, 'info', { level, processType: 'main' });
+    } else if (level === 'debug') {
+      sendLogMain(logMessage, 'debug', { level, processType: 'main' });
+    }
+
+    return message;
+  });
 
   logger.info('Main process logger initialized', {
     environment: dev ? 'development' : 'production',

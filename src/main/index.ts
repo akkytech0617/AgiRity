@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { initMainLogger, log } from './lib/logger';
+import { flushSentryMain } from './lib/sentry';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 
@@ -87,8 +88,22 @@ app
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    // Sentryバッファをフラッシュしてから終了
+    flushSentryMain(2000)
+      .then(() => {
+        app.quit();
+      })
+      .catch(() => {
+        app.quit();
+      });
   }
+});
+
+app.on('before-quit', () => {
+  // アプリ終了前にSentryのログをフラッシュ
+  flushSentryMain(2000).catch(() => {
+    // フラッシュ失敗しても終了を続行
+  });
 });
 
 app.on('activate', () => {
