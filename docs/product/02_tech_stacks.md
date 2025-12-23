@@ -307,38 +307,39 @@ npm install -D snyk
 
 ## ロギング・エラー監視
 
-### winston (アプリケーションログ)
+### electron-log (アプリケーションログ)
 
 ```bash
-npm install winston
+npm install electron-log
 ```
 
-**設定例:**
+AgiRity では Main/Renderer 両プロセスで electron-log を使用しています。
+
+**設定ファイル:**
+- Main: `src/main/lib/logger.ts`
+- Renderer: `src/renderer/lib/logger.ts`
+- 共通設定: `src/shared/lib/logging/config.ts`
+
+**ログ出力先:**
+
+| 出力先 | Development | Production |
+|--------|-------------|------------|
+| ファイル (`~/.agirity/logs/main.log`) | debug | info |
+| コンソール | debug | warn |
+
+**ファイルローテーション:**
+- 最大サイズ: 5MB
+- 保持ファイル数: 3
+
+**使用例:**
 
 ```typescript
-import winston from 'winston';
-import { app } from 'electron';
+import { log } from '@/main/lib/logger';
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({
-      filename: path.join(app.getPath('logs'), 'agirity.log'),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-  ],
-});
-```
-
-**ログレベル:**
-
-```typescript
-logger.error(); // クラッシュ、重大なエラー
-logger.warn(); // 警告、起動失敗
-logger.info(); // 起動成功、ユーザー操作
-logger.debug(); // 詳細な動作ログ
+log.error('クラッシュ、重大なエラー');
+log.warn('警告、起動失敗');
+log.info('起動成功、ユーザー操作');
+log.debug('詳細な動作ログ');
 ```
 
 ---
@@ -349,21 +350,36 @@ logger.debug(); // 詳細な動作ログ
 npm install @sentry/electron
 ```
 
-**設定例:**
+AgiRity では Sentry を使用してエラー監視とログ集約を行っています。
 
-```typescript
-import * as Sentry from '@sentry/electron';
+**設定ファイル:**
+- Main: `src/main/lib/sentry.ts`
+- Renderer: `src/renderer/lib/sentry.ts`
 
-Sentry.init({
-  dsn: 'YOUR_SENTRY_DSN',
-  environment: process.env.NODE_ENV,
-  release: `agirity@${app.getVersion()}`,
-  beforeSend(event) {
-    // 機密情報を除外
-    return event;
-  },
-});
-```
+**環境変数:**
+
+| 変数名 | プロセス | 説明 |
+|--------|---------|------|
+| `SENTRY_DSN` | Main | Main プロセス用 Sentry DSN |
+| `VITE_SENTRY_DSN` | Renderer | Renderer プロセス用 Sentry DSN |
+
+**Note**: DSN が未設定の場合、Sentry 機能は自動的に無効化されます。
+
+**機能:**
+
+| 関数 | 説明 |
+|------|------|
+| `sendLog(message, level)` | Sentry Logs にログ送信 |
+| `captureIssue(message, level)` | Sentry Issues にエラー/警告を送信 |
+| `captureException(error)` | 例外を Sentry Issues に送信 |
+| `flushSentry()` | アプリ終了前にバッファをフラッシュ |
+
+**連携動作:**
+
+electron-log の hook により、すべてのログが自動的に Sentry にも送信されます:
+- `info`, `debug` → Sentry Logs のみ
+- `warn` → Sentry Logs + Sentry Issues (warning)
+- `error` → Sentry Logs + Sentry Issues (error)
 
 **無料枠:** 5,000 events/月
 
@@ -587,9 +603,10 @@ agirity/
 {
   "react": "^18.2.0",
   "react-dom": "^18.2.0",
-  "winston": "^3.11.0",
+  "electron-log": "^5.2.0",
   "@sentry/electron": "^4.17.0",
-  "yaml": "^2.3.0"
+  "yaml": "^2.3.0",
+  "zod": "^3.22.0"
 }
 ```
 
