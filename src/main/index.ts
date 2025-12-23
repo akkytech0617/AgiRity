@@ -1,15 +1,20 @@
+import 'dotenv/config';
 import { app, BrowserWindow } from 'electron';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { initMainLogger, log } from './lib/logger';
+import { flushSentry } from './lib/sentry';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
+
+// Initialize logger first
+initMainLogger();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Explicitly log startup
-console.log('Electron process started (ESM)');
-console.log('__dirname:', __dirname);
+// Log startup
+log.info('AgiRity started');
 
 // The built directory structure
 //
@@ -28,23 +33,14 @@ process.env.PUBLIC =
     ? path.join(process.env.DIST_ELECTRON, '../public')
     : process.env.DIST;
 
-console.log('DIST_ELECTRON:', process.env.DIST_ELECTRON);
-console.log('DIST:', process.env.DIST);
-console.log('PUBLIC:', process.env.PUBLIC);
-
 let win: BrowserWindow | null = null;
 const preload = path.join(__dirname, '../preload/preload.js');
-console.log('Preload path:', preload);
 
 const publicDir = process.env.PUBLIC || '';
 const url = process.env.VITE_DEV_SERVER_URL;
 const indexHtml = path.join(process.env.DIST, 'index.html');
 
-console.log('VITE_DEV_SERVER_URL:', url);
-console.log('indexHtml:', indexHtml);
-
 async function createWindow() {
-  console.log('Creating window...');
   win = new BrowserWindow({
     title: 'AgiRity',
     icon: path.join(publicDir, 'favicon.ico'),
@@ -56,13 +52,10 @@ async function createWindow() {
   });
 
   if (url !== undefined && url !== '') {
-    console.log('Loading URL:', url);
     await win.loadURL(url);
   } else {
-    console.log('Loading File:', indexHtml);
     await win.loadFile(indexHtml);
   }
-  console.log('Window created successfully');
 }
 
 // Initialize container and handlers
@@ -73,24 +66,38 @@ setupIpcHandlers(container);
 app
   .whenReady()
   .then(async () => {
-    console.log('App ready, creating window...');
     await createWindow();
   })
   .catch((error: unknown) => {
-    console.log('Failed to start application:', error);
+    log.error('Failed to start application:', error);
     app.quit();
   });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    // Sentryバッファをフラッシュしてから終了
+    flushSentry(2000)
+      .then(() => {
+        app.quit();
+      })
+      .catch(() => {
+        app.quit();
+      });
   }
+});
+
+app.on('before-quit', () => {
+  log.info('AgiRity shutting down');
+  // アプリ終了前にSentryのログをフラッシュ
+  flushSentry(2000).catch(() => {
+    // フラッシュ失敗しても終了を続行
+  });
 });
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow().catch((err: unknown) => {
-      console.error('Failed to create window on activate:', err);
+      log.error('Failed to create window on activate:', err);
     });
   }
 });

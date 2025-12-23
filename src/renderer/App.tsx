@@ -9,6 +9,7 @@ import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
+import { log } from './lib/logger';
 
 // Mock Data
 const MOCK_WORKSPACES: Workspace[] = [
@@ -101,7 +102,10 @@ function App() {
       : null;
 
   const handleLaunch = (id: string) => {
-    console.log('Launching workspace:', id);
+    const workspace = MOCK_WORKSPACES.find((w) => w.id === id);
+    if (workspace) {
+      log.info(`Launching workspace: ${workspace.name}`);
+    }
   };
 
   const handleEditWorkspace = (id: string) => {
@@ -109,8 +113,6 @@ function App() {
   };
 
   const handleSaveWorkspace = (workspace: Workspace) => {
-    console.log('Saving workspace:', workspace);
-    // Here we would update the state, but for now we just go back to detail view
     setActiveView({ type: 'workspace', id: workspace.id });
   };
 
@@ -123,14 +125,14 @@ function App() {
   };
 
   const launchItem = async (item: WorkspaceItem) => {
-    console.log('Launching item:', item.name);
+    log.info(`Launching: ${item.name}`);
     try {
       const result = await launcherApi.launchItem(item);
       if (!result.success) {
-        console.error('Launch failed:', result.error);
+        log.error(`Launch failed: ${item.name}`, result.error);
       }
     } catch (error) {
-      console.error('IPC error:', error);
+      log.error(`IPC error: ${item.name}`, error);
     }
   };
 
@@ -138,9 +140,7 @@ function App() {
     setActiveView({ type: 'create-workspace' });
   };
 
-  const handleCreateWorkspace = (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('Creating workspace:', workspace);
-    // In real app, would create workspace and navigate to it
+  const handleCreateWorkspace = () => {
     setActiveView({ type: 'quick-launch' });
   };
 
@@ -242,7 +242,7 @@ function App() {
           subtitle: 'Start your work in seconds',
           showEditButton: true,
           onEdit: () => {
-            console.log('Edit Quick Launch settings');
+            // Edit Quick Launch settings
           },
         };
     }

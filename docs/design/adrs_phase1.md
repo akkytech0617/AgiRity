@@ -215,4 +215,3 @@ interface WorkspacePreset {
 
 - **Positive**: Addresses real user need for scenario-based launching. Simple mental model.
 - **Negative**: If an item is renamed, presets may break (mitigation: validation on load).
-

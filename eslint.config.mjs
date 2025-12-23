@@ -64,6 +64,9 @@ export default tseslint.config(
       // React Hooks rules
       ...reactHooks.configs.recommended.rules,
 
+      // Disallow console.log (use logger instead)
+      'no-console': 'error',
+
       // Strict TypeScript rules
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',

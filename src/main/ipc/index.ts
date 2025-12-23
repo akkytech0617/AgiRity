@@ -8,6 +8,7 @@ import {
 } from '../../shared/types';
 import type { ServiceContainer } from '../container';
 import { z } from 'zod';
+import { log } from '../lib/logger';
 
 function getErrorMessage(error: unknown, zodErrorMessage: string): string {
   if (error instanceof z.ZodError) {
@@ -31,7 +32,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         return { success: true };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid input data');
-        console.error('Launch failed:', message);
+        log.error('Launch failed:', message);
         return { success: false, error: message };
       }
     }
@@ -43,7 +44,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
       return { success: true, data: workspaces };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Load workspaces failed:', message);
+      log.error('Load workspaces failed:', message);
       return { success: false, error: message };
     }
   });
@@ -57,7 +58,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         return { success: true, data: workspace };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid ID format');
-        console.error('Get workspace failed:', message);
+        log.error('Get workspace failed:', message);
         return { success: false, error: message };
       }
     }
@@ -72,7 +73,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         return { success: true };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid workspace data');
-        console.error('Save workspace failed:', message);
+        log.error('Save workspace failed:', message);
         return { success: false, error: message };
       }
     }
@@ -87,7 +88,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
         return { success: true, data: deleted };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid ID format');
-        console.error('Delete workspace failed:', message);
+        log.error('Delete workspace failed:', message);
         return { success: false, error: message };
       }
     }
