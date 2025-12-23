@@ -2,11 +2,11 @@
 import { test as base, _electron as electron } from '@playwright/test';
 import type { ElectronApplication } from 'playwright';
 
-// Development mode fixture - uses source code instead of packaged app
+// Development mode fixture - uses built main file from dist-electron
 export const test = base.extend<{ app: ElectronApplication }>({
   app: async ({}, use) => {
     const electronApp = await electron.launch({
-      args: ['.'],
+      args: ['dist-electron/main/index.js'],
       timeout: 30000,
     });
 
