@@ -18,7 +18,7 @@ dev:
     npm run dev
 
 # Run checks, test, scan and build as local CI
-ci: check test security-all build
+ci: check test e2e security-all build
 
 
 # Run all checks (type-check, format, lint)
@@ -60,7 +60,7 @@ coverage:
 
 # Run End-to-End tests with Playwright
 e2e:
-    npm run test:e2e --no-color
+    npm run test:e2e:dev --no-color
 
 # --- Build & Release ---
 

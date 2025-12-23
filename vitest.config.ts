@@ -11,7 +11,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     exclude: ['node_modules', 'dist', 'dist-electron'],
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ['./tests/unit/setup.ts'],
     mockReset: true,
     server: {
       deps: {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ConfigService } from '@/main/services/ConfigService';
-import { createMockFileSystemAdapter, createMockOSAdapter } from '../../../mocks/adapters';
+import { createMockFileSystemAdapter, createMockOSAdapter } from '../../mocks/adapters';
 
 describe('ConfigService', () => {
   const TEST_HOME_DIR = '/test/home';
