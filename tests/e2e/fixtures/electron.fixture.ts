@@ -1,7 +1,8 @@
-/* eslint-disable react-hooks/rules-of-hooks, no-empty-pattern */
+/* eslint-disable no-empty-pattern, react-hooks/rules-of-hooks */
 import { test as base, _electron as electron } from '@playwright/test';
 import type { ElectronApplication, Page } from 'playwright';
 import path from 'node:path';
+import fs from 'node:fs';
 
 /**
  * Screenshot helper type
@@ -9,11 +10,19 @@ import path from 'node:path';
  */
 type ScreenshotHelper = (page: Page, filename: string) => Promise<void>;
 
+const SCREENSHOT_OUTPUT_DIR = 'tests/results/e2e/ss';
+const MAIN_ENTRY_PATH = 'dist-electron/main/index.js';
+
 /**
- * Electron E2E Test Fixture
+ * Electron E2E Test Fixture (Development Mode)
+ *
+ * This fixture launches Electron directly from the development build
+ * (dist-electron/main/index.js) for faster test execution.
+ *
+ * For packaged app testing, use a separate fixture with findLatestBuild().
  *
  * This fixture provides:
- * - app: ElectronApplication instance (launches from dist-electron/main/index.js)
+ * - app: ElectronApplication instance
  * - takeScreenshot: Helper function for capturing screenshots with centralized path
  *
  * Usage:
@@ -27,8 +36,16 @@ export const test = base.extend<{
   takeScreenshot: ScreenshotHelper;
 }>({
   app: async ({}, use) => {
+    // Validate that build exists before launching
+    if (!fs.existsSync(MAIN_ENTRY_PATH)) {
+      throw new Error(
+        `Build not found at ${MAIN_ENTRY_PATH}. ` +
+          'Please run "npm run prebuild:e2e" or "tsc && vite build" before running E2E tests.'
+      );
+    }
+
     const electronApp = await electron.launch({
-      args: ['dist-electron/main/index.js'],
+      args: [MAIN_ENTRY_PATH],
       timeout: 30000,
     });
 
@@ -37,13 +54,17 @@ export const test = base.extend<{
   },
 
   takeScreenshot: async ({}, use) => {
-    const screenshotDir = 'tests/results/e2e/ss';
+    // Ensure screenshot directory exists
+    if (!fs.existsSync(SCREENSHOT_OUTPUT_DIR)) {
+      fs.mkdirSync(SCREENSHOT_OUTPUT_DIR, { recursive: true });
+    }
+
     const helper: ScreenshotHelper = async (page, filename) => {
-      await page.screenshot({ path: path.join(screenshotDir, filename) });
+      await page.screenshot({ path: path.join(SCREENSHOT_OUTPUT_DIR, filename) });
     };
     await use(helper);
   },
 });
 
 export { expect } from '@playwright/test';
-/* eslint-enable react-hooks/rules-of-hooks, no-empty-pattern */
+/* eslint-enable no-empty-pattern, react-hooks/rules-of-hooks */

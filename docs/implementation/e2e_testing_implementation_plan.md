@@ -119,22 +119,36 @@ AgiRity/
 
    **実装のポイント:**
    - 開発モード専用（`dist-electron/main/index.js`を直接起動）
+   - ビルドファイル存在チェック（分かりやすいエラーメッセージ）
    - `takeScreenshot` ヘルパー追加（パス管理の一元化）
+   - スクリーンショットディレクトリの自動作成
 
    ```typescript
    import { test as base, _electron as electron } from '@playwright/test';
    import type { ElectronApplication, Page } from 'playwright';
-   import path from 'path';
+   import path from 'node:path';
+   import fs from 'node:fs';
 
    type ScreenshotHelper = (page: Page, filename: string) => Promise<void>;
+
+   const SCREENSHOT_OUTPUT_DIR = 'tests/results/e2e/ss';
+   const MAIN_ENTRY_PATH = 'dist-electron/main/index.js';
 
    export const test = base.extend<{
      app: ElectronApplication;
      takeScreenshot: ScreenshotHelper;
    }>({
      app: async ({}, use) => {
+       // ビルドファイル存在チェック
+       if (!fs.existsSync(MAIN_ENTRY_PATH)) {
+         throw new Error(
+           `Build not found at ${MAIN_ENTRY_PATH}. ` +
+             'Please run "npm run prebuild:e2e" before running E2E tests.'
+         );
+       }
+
        const electronApp = await electron.launch({
-         args: ['dist-electron/main/index.js'],
+         args: [MAIN_ENTRY_PATH],
          timeout: 30000,
        });
        await use(electronApp);
@@ -142,9 +156,13 @@ AgiRity/
      },
 
      takeScreenshot: async ({}, use) => {
-       const screenshotDir = 'tests/results/e2e/ss';
+       // スクリーンショットディレクトリの自動作成
+       if (!fs.existsSync(SCREENSHOT_OUTPUT_DIR)) {
+         fs.mkdirSync(SCREENSHOT_OUTPUT_DIR, { recursive: true });
+       }
+
        const helper: ScreenshotHelper = async (page, filename) => {
-         await page.screenshot({ path: path.join(screenshotDir, filename) });
+         await page.screenshot({ path: path.join(SCREENSHOT_OUTPUT_DIR, filename) });
        };
        await use(helper);
      },
@@ -159,9 +177,12 @@ AgiRity/
    - 6テストケース（計画の3倍）
    - `process.env` エラー検出機能
    - 無限再帰エラー検出機能
+   - `waitForTimeout()`を使わず、`waitForSelector()`で安定した待機
 
    ```typescript
    import { test, expect } from '../fixtures/electron.fixture';
+
+   const APP_ROOT_SELECTOR = '[data-testid="app-root"]';
 
    test.describe('Smoke Tests', () => {
      test('should launch app without console errors', async ({ app }) => {
@@ -174,8 +195,8 @@ AgiRity/
          if (msg.type() === 'warning') warnings.push(msg.text());
        });
 
-       await window.waitForLoadState('domcontentloaded');
-       await window.waitForTimeout(2000);
+       // 固定時間待ちではなく、アプリのレンダリング完了を待機
+       await window.waitForSelector(APP_ROOT_SELECTOR);
 
        expect(
          errors.filter(
@@ -194,8 +215,8 @@ AgiRity/
 
      test('should load renderer process successfully', async ({ app }) => {
        const window = await app.firstWindow();
-       await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
-       const appRoot = window.locator('[data-testid="app-root"]');
+       await window.waitForSelector(APP_ROOT_SELECTOR);
+       const appRoot = window.locator(APP_ROOT_SELECTOR);
        await expect(appRoot).toBeVisible();
      });
    });
@@ -356,7 +377,9 @@ jobs:
      });
 
      await window.click('[data-testid="workspace-item-vscode"]');
-     await window.waitForTimeout(1000);
+
+     // アプリ起動後の状態変化を待機（固定時間待ちは避ける）
+     await window.waitForSelector('[data-testid="launch-status"]');
 
      expect(errors).toHaveLength(0);
    });
@@ -484,7 +507,7 @@ jobs:
    - 再現しない場合はフレーキーテストとしてissue化
 
 2. **フレーキーテスト対策**:
-   - `waitForTimeout()` の適切な使用
+   - `waitForTimeout()` は避け、`waitForSelector()` で要素の出現を待機
    - `waitForLoadState()` でページロード待機
    - `retries: 2` 設定（playwright.config.ts）
 
