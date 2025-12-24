@@ -118,19 +118,6 @@ test.describe('Console Error Monitoring', () => {
 });
 
 test.describe('Workspace Management', () => {
-  test.skip('should load workspaces from mock data', async ({ app, takeScreenshot }) => {
-    const window = await app.firstWindow();
-
-    await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
-
-    // Take screenshot to see initial state
-    await takeScreenshot(window, 'dev-initial-state.png');
-
-    // Check if workspace list is visible
-    const workspaceList = window.locator('[data-testid="workspace-list"]');
-    await expect(workspaceList).toBeVisible({ timeout: 5000 });
-  });
-
   test('should show initial app state', async ({ app, takeScreenshot }) => {
     const window = await app.firstWindow();
 
