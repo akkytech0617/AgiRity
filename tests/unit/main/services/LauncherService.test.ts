@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { WorkspaceItem } from '@/shared/types';
 import type { IConfigService } from '@/main/services/interfaces';
 import { LauncherService } from '@/main/services/LauncherService';
-import { createMockShellAdapter } from '../../../mocks/adapters';
+import { createMockShellAdapter } from '../../mocks/adapters';
 
 describe('LauncherService', () => {
   const TEST_HOME_DIR = '/test/home';

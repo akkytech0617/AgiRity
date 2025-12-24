@@ -43,14 +43,24 @@
   - 実際の Electron API はモック化するが、ハンドラー登録ロジックはテスト
   - ファイル操作は一時ディレクトリを使用 (`os.tmpdir()`)
 
-### E2E Tests
+### E2E Tests ✅ **実装済み**
 
-- **対象**: アプリ起動 → ワークスペース作成 → 保存
-- **ツール**: Playwright for Electron
-- **タイミング**: `main` ブランチへのマージ時
-- **要件**:
-  - `_electron.launch()` を使用
-  - 実際のビルド成果物 (`dist/`) を使用してテスト
+- **対象**:
+  - アプリ起動
+  - コンソールエラー監視（process.env、無限再帰検出）
+  - Rendererプロセス読み込み
+  - 初期状態表示
+- **ツール**: Playwright for Electron + electron-playwright-helpers
+- **タイミング**:
+  - ローカル: `npm run test:smoke` (手動)
+  - CI: 別途実装予定
+- **実装状況**:
+  - ✅ Smoke Test実装（6テストケース）
+  - ✅ カスタムフィクスチャ（`takeScreenshot` ヘルパー含む）
+  - ✅ 開発モード対応（`dist-electron/main/index.js`）
+  - ⏳ CI統合は別途実装予定
+- **ディレクトリ**: `tests/e2e/`
+- **設定ファイル**: `tests/e2e/playwright.config.ts`
 
 ---
 
@@ -73,7 +83,12 @@
 
 ---
 
-## 5. CI/CD パイプライン
+## 5. CI/CD パイプライン ⏳ **別途実装予定**
+
+**現状**: ローカルでの手動実行のみ
+**計画**: 別のCI/CD実装計画に従って統合予定
+
+**参考: CI/CD統合案**
 
 ```yaml
 # .github/workflows/test.yml
@@ -85,7 +100,25 @@ jobs:
       - run: npm run test:coverage
   e2e:
     if: branch == 'main'
+    runs-on: macos-latest # Electron requires macOS
     steps:
-      - run: npm run build
-      - run: npm run test:e2e
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run test:smoke
+```
+
+**ローカル実行コマンド**:
+
+```bash
+# Smoke Test実行
+npm run test:smoke
+
+# 全E2Eテスト実行
+npm run test:e2e
+
+# UIモードで実行
+npm run test:e2e:ui
+
+# デバッグモード
+npm run test:e2e:debug
 ```

@@ -42,7 +42,7 @@ const indexHtml = path.join(process.env.DIST, 'index.html');
 
 async function createWindow() {
   win = new BrowserWindow({
-    title: 'AgiRity',
+    title: 'AgiRity - Workspace Manager',
     icon: path.join(publicDir, 'favicon.ico'),
     webPreferences: {
       preload,

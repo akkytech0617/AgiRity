@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as yaml from 'js-yaml';
 import type { Workspace } from '@/shared/types';
 import { ProjectService } from '@/main/services/ProjectService';
-import { createMockFileSystemAdapter, createMockConfigService } from '../../../mocks/adapters';
+import { createMockFileSystemAdapter, createMockConfigService } from '../../mocks/adapters';
 
 describe('ProjectService', () => {
   const TEST_HOME_DIR = '/mock/home';
