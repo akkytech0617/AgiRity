@@ -12,6 +12,7 @@ type ScreenshotHelper = (page: Page, filename: string) => Promise<void>;
 
 const SCREENSHOT_OUTPUT_DIR = 'tests/results/e2e/ss';
 const MAIN_ENTRY_PATH = 'dist-electron/main/index.js';
+const ELECTRON_LAUNCH_TIMEOUT_MS = 30000;
 
 /**
  * Electron E2E Test Fixture (Development Mode)
@@ -46,7 +47,7 @@ export const test = base.extend<{
 
     const electronApp = await electron.launch({
       args: [MAIN_ENTRY_PATH],
-      timeout: 30000,
+      timeout: ELECTRON_LAUNCH_TIMEOUT_MS,
     });
 
     await use(electronApp);
