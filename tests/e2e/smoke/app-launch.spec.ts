@@ -118,26 +118,26 @@ test.describe('Console Error Monitoring', () => {
 });
 
 test.describe('Workspace Management', () => {
-  test.skip('should load workspaces from mock data', async ({ app }) => {
+  test.skip('should load workspaces from mock data', async ({ app, takeScreenshot }) => {
     const window = await app.firstWindow();
 
     await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
 
     // Take screenshot to see initial state
-    await window.screenshot({ path: 'dev-initial-state.png' });
+    await takeScreenshot(window, 'dev-initial-state.png');
 
     // Check if workspace list is visible
     const workspaceList = window.locator('[data-testid="workspace-list"]');
     await expect(workspaceList).toBeVisible({ timeout: 5000 });
   });
 
-  test('should show initial app state', async ({ app }) => {
+  test('should show initial app state', async ({ app, takeScreenshot }) => {
     const window = await app.firstWindow();
 
     await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
 
     // Take screenshot to see what the app looks like
-    await window.screenshot({ path: 'dev-app-state.png' });
+    await takeScreenshot(window, 'dev-app-state.png');
 
     // Get page title to verify we're on the right page
     const title = await window.title();

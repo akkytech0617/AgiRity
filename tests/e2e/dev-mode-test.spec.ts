@@ -1,9 +1,9 @@
 import { test, expect } from './fixtures/electron-dev.fixture';
 
 test.describe('Development Mode Tests', () => {
-  test('should launch app in development mode', async ({ app }) => {
+  test('should launch app in development mode', async ({ app, takeScreenshot }) => {
     const window = await app.firstWindow();
-    await window.screenshot({ path: 'tests/results/e2e/ss/dev-mode-screenshot.png' });
+    await takeScreenshot(window, 'dev-mode-screenshot.png');
     expect(window).toBeDefined();
   });
 
