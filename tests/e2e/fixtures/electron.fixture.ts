@@ -1,23 +1,47 @@
 /* eslint-disable react-hooks/rules-of-hooks, no-empty-pattern */
 import { test as base, _electron as electron } from '@playwright/test';
-import type { ElectronApplication } from 'playwright';
-import { parseElectronApp } from 'electron-playwright-helpers';
+import type { ElectronApplication, Page } from 'playwright';
+import path from 'path';
 
-export const test = base.extend<{ app: ElectronApplication }>({
+/**
+ * Screenshot helper type
+ * Simplifies screenshot capture with centralized path management
+ */
+type ScreenshotHelper = (page: Page, filename: string) => Promise<void>;
+
+/**
+ * Electron E2E Test Fixture
+ *
+ * This fixture provides:
+ * - app: ElectronApplication instance (launches from dist-electron/main/index.js)
+ * - takeScreenshot: Helper function for capturing screenshots with centralized path
+ *
+ * Usage:
+ *   test('example', async ({ app, takeScreenshot }) => {
+ *     const window = await app.firstWindow();
+ *     await takeScreenshot(window, 'example.png');
+ *   });
+ */
+export const test = base.extend<{
+  app: ElectronApplication;
+  takeScreenshot: ScreenshotHelper;
+}>({
   app: async ({}, use) => {
-    // Pass correct build directory path to parseElectronApp directly
-    // since electron-builder created app in dist/mac-arm64
-    const buildPath = './dist/mac-arm64';
-    const appInfo = parseElectronApp(buildPath);
-
-    const app = await electron.launch({
-      args: [appInfo.main],
-      executablePath: appInfo.executable,
+    const electronApp = await electron.launch({
+      args: ['dist-electron/main/index.js'],
       timeout: 30000,
     });
 
-    await use(app);
-    await app.close();
+    await use(electronApp);
+    await electronApp.close();
+  },
+
+  takeScreenshot: async ({}, use) => {
+    const screenshotDir = 'tests/results/e2e/ss';
+    const helper: ScreenshotHelper = async (page, filename) => {
+      await page.screenshot({ path: path.join(screenshotDir, filename) });
+    };
+    await use(helper);
   },
 });
 

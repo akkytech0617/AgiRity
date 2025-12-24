@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { test, expect } from '../fixtures/electron-dev.fixture';
+import { test, expect } from '../fixtures/electron.fixture';
 
 test.describe('Smoke Tests', () => {
   test('should launch app without console errors', async ({ app }) => {
