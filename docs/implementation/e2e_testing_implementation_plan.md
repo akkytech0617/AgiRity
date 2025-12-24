@@ -68,6 +68,7 @@ npx playwright install
 #### 3.2 ディレクトリ構成
 
 **実装済み構成:**
+
 ```
 AgiRity/
 ├── tests/e2e/                      # ✅ 実装（計画: e2e/）
@@ -96,11 +97,11 @@ AgiRity/
    import { defineConfig } from '@playwright/test';
 
    export default defineConfig({
-     testDir: '.',  // カレントディレクトリ（tests/e2e/）
+     testDir: '.', // カレントディレクトリ（tests/e2e/）
      timeout: 30000,
      fullyParallel: false,
      workers: 1,
-     retries: 2,  // フレーキーテスト対策
+     retries: 2, // フレーキーテスト対策
      reporter: [
        ['html', { outputFolder: '../results/e2e/html' }],
        ['junit', { outputFile: '../results/e2e/junit.xml' }],
@@ -177,10 +178,11 @@ AgiRity/
        await window.waitForTimeout(2000);
 
        expect(
-         errors.filter(err =>
-           err.includes('process.env') ||
-           err.includes('Maximum call stack') ||
-           err.includes('Uncaught ReferenceError')
+         errors.filter(
+           (err) =>
+             err.includes('process.env') ||
+             err.includes('Maximum call stack') ||
+             err.includes('Uncaught ReferenceError')
          )
        ).toHaveLength(0);
      });
@@ -579,31 +581,35 @@ jobs:
 
 ### Phase 1: 基盤構築 ✅ **完了**
 
-| 項目 | 計画 | 実装 | 状態 |
-|------|------|------|------|
-| Playwrightインストール | ✓ | ✓ | ✅ 完了 |
-| electron-playwright-helpers | ✓ | ✓ | ✅ 完了 |
-| Smoke Tests | 2ケース | 6ケース | ✅ **超過達成** |
-| Fixtureの作成 | 1種類 | 1種類 + スクリーンショットヘルパー | ✅ **機能拡張** |
-| CI/CD統合 | 計画済み | 別途実装予定 | ⏳ **保留** |
+| 項目                        | 計画     | 実装                               | 状態            |
+| --------------------------- | -------- | ---------------------------------- | --------------- |
+| Playwrightインストール      | ✓        | ✓                                  | ✅ 完了         |
+| electron-playwright-helpers | ✓        | ✓                                  | ✅ 完了         |
+| Smoke Tests                 | 2ケース  | 6ケース                            | ✅ **超過達成** |
+| Fixtureの作成               | 1種類    | 1種類 + スクリーンショットヘルパー | ✅ **機能拡張** |
+| CI/CD統合                   | 計画済み | 別途実装予定                       | ⏳ **保留**     |
 
 ### 主要な実装差分
 
 #### 1. ディレクトリ構成の変更
+
 - **計画**: `e2e/`
 - **実装**: `tests/e2e/`
 - **理由**: ユニットテストとの統一管理
 
 #### 2. Fixture戦略の改善
+
 - **計画**: `electron.fixture.ts`のみ（`findLatestBuild()` + `parseElectronApp()`）
 - **実装**: 開発モード専用fixture（`dist-electron/main/index.js`を直接起動）
 - **追加**: `takeScreenshot` ヘルパーフィクスチャ（スクリーンショットパスの一元管理）
 
 #### 3. テストスクリプトの拡張
+
 - **追加**: `prebuild:e2e` - テスト前の自動ビルド
 - **追加**: `--config` オプションによる設定ファイルの明示
 
 #### 4. 実装済みテストケース（Phase 1想定以上）
+
 1. ✅ アプリ起動時のコンソールエラー監視
 2. ✅ メインウィンドウ作成確認
 3. ✅ Rendererプロセス読み込み確認

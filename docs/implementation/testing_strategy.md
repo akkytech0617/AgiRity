@@ -89,6 +89,7 @@
 **計画**: 別のCI/CD実装計画に従って統合予定
 
 **参考: CI/CD統合案**
+
 ```yaml
 # .github/workflows/test.yml
 jobs:
@@ -99,7 +100,7 @@ jobs:
       - run: npm run test:coverage
   e2e:
     if: branch == 'main'
-    runs-on: macos-latest  # Electron requires macOS
+    runs-on: macos-latest # Electron requires macOS
     steps:
       - run: npm ci
       - run: npx playwright install --with-deps
@@ -107,6 +108,7 @@ jobs:
 ```
 
 **ローカル実行コマンド**:
+
 ```bash
 # Smoke Test実行
 npm run test:smoke
