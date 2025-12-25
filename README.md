@@ -1,5 +1,8 @@
 # AgiRity
 
+[![CI](https://github.com/akkytech0617/AgiRity/actions/workflows/ci.yml/badge.svg)](https://github.com/akkytech0617/AgiRity/actions/workflows/ci.yml)
+[![Release](https://github.com/akkytech0617/AgiRity/actions/workflows/release.yml/badge.svg)](https://github.com/akkytech0617/AgiRity/actions/workflows/release.yml)
+
 Start working in 3 seconds, not 3 minutes
 
 ## Testing
