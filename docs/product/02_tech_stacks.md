@@ -479,10 +479,12 @@ CI/CD パイプラインは GitHub Actions で実装されています。詳細�
 
 #### 概要
 
-| ワークフロー | トリガー              | 主な内容                                    |
-| ------------ | --------------------- | ------------------------------------------- |
-| CI           | Push, Pull Request    | check, test, security, sonar, build         |
-| Release      | `v*.*.*` タグ Push    | validate, build, package, GitHub Releases   |
+| ワークフロー | トリガー              | ジョブ                                              |
+| ------------ | --------------------- | --------------------------------------------------- |
+| CI           | Push, Pull Request    | setup, check, test, security, sonar, build, e2e     |
+| Release      | `v*.*.*` タグ Push    | check-enabled, validate, build-and-release, create-release |
+
+> **Note**: Release ワークフローは `check-enabled` ジョブで `ENABLE_RELEASE` フラグを確認し、無効の場合は後続ジョブをスキップします。
 
 #### Feature Flags
 
