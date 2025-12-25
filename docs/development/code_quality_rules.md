@@ -9,7 +9,7 @@ AgiRity では以下のツールでコード品質を担保しています:
 | **ESLint**     | コード品質・セキュリティチェック | 開発時、pre-commit、CI |
 | **Prettier**   | コードフォーマット               | 開発時、pre-commit     |
 | **TypeScript** | 型チェック                       | 開発時、pre-commit、CI |
-| **SonarCloud** | 継続的コード品質分析             | CI (TBD)               |
+| **SonarCloud** | 継続的コード品質分析             | CI                     |
 
 ---
 

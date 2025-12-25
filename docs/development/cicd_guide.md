@@ -84,12 +84,13 @@ just --list   # 同上
 
 #### ビルド・リリース
 
-| コマンド       | 説明                           |
-| -------------- | ------------------------------ |
-| `just clean`   | ビルド成果物削除               |
-| `just build`   | プロダクションビルド           |
-| `just package` | インストーラー作成             |
-| `just release` | リリース (タグ作成 + プッシュ) |
+| コマンド        | 説明                                    |
+| --------------- | --------------------------------------- |
+| `just clean`    | ビルド成果物削除                        |
+| `just build`    | プロダクションビルド                    |
+| `just build-ci` | CI用ビルド (electron-builder をスキップ) |
+| `just package`  | インストーラー作成                      |
+| `just release`  | リリース (タグ作成 + プッシュ)          |
 
 #### セキュリティ
 
@@ -222,73 +223,119 @@ just type-check
 
 ### 4.1 概要
 
-GitHub Actions でリモート CI/CD を実行します。
+GitHub Actions でリモート CI/CD を実行します。Push および Pull Request 時に自動でチェック・ビルドを実行します。
 
-### 4.2 現在のワークフロー
+### 4.2 ワークフロー一覧
 
-#### E2E Tests (`.github/workflows/e2e-tests.yml`)
+| ワークフロー | ファイル                           | トリガー                    |
+| ------------ | ---------------------------------- | --------------------------- |
+| CI           | `.github/workflows/ci.yml`         | Push, Pull Request          |
+| Release      | `.github/workflows/release.yml`    | `v*.*.*` タグ Push          |
 
-**ステータス**: 実装済み
+### 4.3 CI Workflow (`.github/workflows/ci.yml`)
 
-| トリガー     | 対象ブランチ      |
-| ------------ | ----------------- |
-| Push         | `main`, `develop` |
-| Pull Request | `main`            |
+#### トリガー
 
-**実行内容**:
+| イベント     | 対象ブランチ                           |
+| ------------ | -------------------------------------- |
+| Push         | `main`, `develop`, `feat/**`, `fix/**` |
+| Pull Request | `main`, `develop`                      |
 
-1. 依存関係インストール
-2. Playwright インストール
-3. アプリビルド
-4. Smoke テスト実行
-5. 失敗時: スクリーンショット・動画をアップロード
+#### ジョブ構成
 
-### 4.3 計画中のワークフロー
-
-> 詳細は `docs/implementation/cicd_implementation_plan.md` を参照
-
-#### CI Workflow (TBD)
-
-**トリガー**: すべての Push, Pull Request
-
-```yaml
-jobs:
-  check: # type-check, format-check, lint
-  test: # unit tests + coverage
-  security: # Snyk, SonarCloud
-  build: # multi-OS build
-  e2e: # Playwright tests
+```
+setup ─┬─► check ─┬─► test ─┬─► build (macOS)
+       │          │         │
+       │          │         └─► sonar (optional)
+       │          │
+       │          └─► security
+       │
+       └─► build-multi-os (optional)
+       │
+       └─► e2e (optional)
 ```
 
-#### Release Workflow (TBD)
+| ジョブ           | 説明                           | 実行条件          |
+| ---------------- | ------------------------------ | ----------------- |
+| `setup`          | Feature flags 設定             | 常に実行          |
+| `check`          | type-check, format-check, lint | 常に実行          |
+| `test`           | Unit テスト + カバレッジ       | check 成功後      |
+| `security`       | Snyk スキャン (SCA + SAST)     | check 成功後      |
+| `sonar`          | SonarCloud スキャン            | flag 有効時       |
+| `build`          | macOS ビルド                   | check, test 成功後 |
+| `build-multi-os` | Linux/Windows ビルド           | flag 有効時       |
+| `e2e`            | E2E テスト                     | flag 有効時       |
 
-**トリガー**: `v*.*.*` タグ Push
+#### Feature Flags
+
+CI Workflow では一部のジョブを Feature Flag で制御できます。
+`.github/workflows/ci.yml` の `setup` ジョブ内で設定します:
 
 ```yaml
-jobs:
-  semantic-release: # バージョン決定
-  build-and-release: # multi-OS ビルド + GitHub Releases
+outputs:
+  enable_multi_os_build: 'false'  # Linux/Windows ビルド
+  enable_e2e: 'false'              # E2E テスト
+  enable_sonar: 'true'             # SonarCloud スキャン
 ```
 
-### 4.4 GitHub Secrets (TBD)
+| フラグ                 | デフォルト | 説明                      |
+| ---------------------- | ---------- | ------------------------- |
+| `enable_multi_os_build` | `false`    | Linux/Windows ビルドを有効化 |
+| `enable_e2e`           | `false`    | E2E テストを有効化         |
+| `enable_sonar`         | `true`     | SonarCloud スキャンを有効化 |
 
-| Secret              | 用途                        |
-| ------------------- | --------------------------- |
-| `SNYK_TOKEN`        | Snyk API トークン           |
-| `SONAR_ORG`         | SonarCloud 組織             |
-| `SONAR_PROJECT_KEY` | SonarCloud プロジェクトキー |
-| `SONARCLOUD_TOKEN`  | SonarCloud トークン         |
+### 4.4 Release Workflow (`.github/workflows/release.yml`)
 
-### 4.5 ブランチ保護ルール (TBD)
+#### トリガー
 
-**対象**: `main` ブランチ
+`v*.*.*` 形式のタグ Push 時に実行 (例: `v1.0.0`, `v0.2.1`)
 
-- Require status checks to pass:
-  - `check`
-  - `test`
-  - `e2e-tests`
-- Require branches to be up to date
-- Require linear history
+#### ジョブ構成
+
+| ジョブ              | 説明                           |
+| ------------------- | ------------------------------ |
+| `check-enabled`     | リリースワークフロー有効確認   |
+| `validate`          | チェック + テスト              |
+| `build-and-release` | macOS ビルド + パッケージング  |
+| `create-release`    | GitHub Releases 作成           |
+
+#### Feature Flag
+
+Release Workflow も Feature Flag で無効化できます:
+
+```yaml
+env:
+  ENABLE_RELEASE: 'true'
+```
+
+### 4.5 GitHub Secrets / Variables
+
+#### Secrets (機密情報)
+
+| Secret              | 用途                    | 必須 |
+| ------------------- | ----------------------- | ---- |
+| `SNYK_TOKEN`        | Snyk API トークン       | Yes  |
+| `SONARCLOUD_TOKEN`  | SonarCloud トークン     | Yes  |
+| `GH_TOKEN`          | GitHub Token (リリース用) | Release時 |
+
+#### Variables (設定値)
+
+| Variable            | 用途                        | 必須 |
+| ------------------- | --------------------------- | ---- |
+| `SONAR_ORG`         | SonarCloud 組織名           | Yes  |
+| `SONAR_PROJECT_KEY` | SonarCloud プロジェクトキー | Yes  |
+
+### 4.6 アーティファクト
+
+CI で生成されるアーティファクトは GitHub Actions の Artifacts に保存されます:
+
+| アーティファクト    | 内容                 | 保持期間 |
+| ------------------- | -------------------- | -------- |
+| `coverage-report`   | カバレッジレポート   | 7日      |
+| `build-macos`       | macOS ビルド成果物   | 7日      |
+| `build-ubuntu-latest` | Linux ビルド成果物 | 7日      |
+| `build-windows-latest` | Windows ビルド成果物 | 7日    |
+| `e2e-results`       | E2E テスト結果       | 7日      |
 
 ---
 
@@ -296,15 +343,16 @@ jobs:
 
 ### 5.1 実行内容の比較
 
-| チェック項目  | Lefthook (ローカル) | GitHub Actions (リモート) |
-| ------------- | ------------------- | ------------------------- |
-| Type Check    | pre-commit          | CI                        |
-| Lint          | pre-commit          | CI                        |
-| Format Check  | pre-commit          | CI                        |
-| Unit Tests    | pre-push            | CI                        |
-| Security Scan | pre-push            | CI                        |
-| E2E Tests     | -                   | CI                        |
-| Build         | -                   | CI                        |
+| チェック項目     | Lefthook (ローカル) | GitHub Actions (リモート) |
+| ---------------- | ------------------- | ------------------------- |
+| Type Check       | pre-commit          | CI (check)                |
+| Lint             | pre-commit          | CI (check)                |
+| Format Check     | pre-commit          | CI (check)                |
+| Unit Tests       | pre-push            | CI (test)                 |
+| Security Scan    | pre-push            | CI (security)             |
+| SonarCloud       | -                   | CI (sonar)                |
+| E2E Tests        | -                   | CI (e2e)                  |
+| Build            | -                   | CI (build)                |
 
 ### 5.2 設計思想
 
@@ -317,6 +365,7 @@ jobs:
    - マージ前の最終チェック
    - マルチ OS ビルド検証
    - E2E テスト実行
+   - SonarCloud による詳細な品質分析
    - リリース自動化
 
 ---
@@ -360,6 +409,7 @@ git commit -m "feat: add new feature"
 # 4. プッシュ (Lefthook が自動テスト)
 git push
 # → pre-push: test, security-all
+# → GitHub Actions: CI ワークフロー実行
 ```
 
 ### 7.2 PR 作成前
@@ -376,7 +426,8 @@ just ci
 ```bash
 # バージョン更新 + タグ作成 + プッシュ
 just release
-# → GitHub Actions がリリースビルドを実行 (TBD)
+# → GitHub Actions が Release ワークフローを実行
+# → GitHub Releases に成果物がアップロードされる
 ```
 
 ---
@@ -417,39 +468,32 @@ ls -la .git/hooks/
 ### 8.4 セキュリティスキャンが失敗する
 
 ```bash
-# Snyk CLI がインストールされているか確認
-snyk --version
+# Snyk は npm 経由で実行される (npx snyk)
+# ローカルで確認
+npx snyk test
+npx snyk code test
 
-# トークンが設定されているか確認
+# または brew でグローバルインストール
+brew install snyk
 snyk auth
 ```
+
+### 8.5 SonarCloud スキャンが失敗する
+
+1. GitHub Secrets に `SONARCLOUD_TOKEN` が設定されているか確認
+2. GitHub Variables に `SONAR_ORG`, `SONAR_PROJECT_KEY` が設定されているか確認
+3. SonarCloud でプロジェクトが作成されているか確認
 
 ---
 
 ## 9. 関連ドキュメント
 
-| ドキュメント                                      | 内容                               |
-| ------------------------------------------------- | ---------------------------------- |
-| `docs/development/code_quality_rules.md`          | コード品質ルール (ESLint/Prettier) |
-| `docs/implementation/cicd_implementation_plan.md` | CI/CD 導入計画 (詳細設計)          |
-| `docs/implementation/testing_strategy.md`         | テスト戦略                         |
-| `docs/product/03_development_rules.md`            | 開発ルール・ブランチ戦略           |
+| ドキュメント                             | 内容                               |
+| ---------------------------------------- | ---------------------------------- |
+| `docs/development/code_quality_rules.md` | コード品質ルール (ESLint/Prettier) |
+| `docs/implementation/testing_strategy.md` | テスト戦略                        |
+| `docs/product/03_development_rules.md`   | 開発ルール・ブランチ戦略           |
 
 ---
 
-## 10. 実装状況
-
-| 項目                | ステータス  | 備考                                |
-| ------------------- | ----------- | ----------------------------------- |
-| Justfile            | ✅ 実装済み | 全コマンド利用可能                  |
-| Lefthook            | ✅ 実装済み | pre-commit, pre-push 設定済み       |
-| E2E Tests Workflow  | ✅ 実装済み | Smoke テスト実行                    |
-| CI Workflow (full)  | TBD         | check, test, security, build        |
-| Release Workflow    | TBD         | semantic-release + electron-builder |
-| Branch Protection   | TBD         | main ブランチ保護ルール             |
-| Codecov Integration | TBD         | カバレッジレポート                  |
-| Dependabot          | TBD         | 依存関係自動更新                    |
-
----
-
-_最終更新: 2025-12-23_
+_最終更新: 2025-12-25_

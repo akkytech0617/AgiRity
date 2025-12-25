@@ -475,59 +475,34 @@ npm run release
 
 ### GitHub Actions
 
-#### CI Pipeline
+CI/CD パイプラインは GitHub Actions で実装されています。詳細は `docs/development/cicd_guide.md` を参照してください。
 
-**`.github/workflows/ci.yml`:**
+#### 概要
 
-```yaml
-name: CI
+| ワークフロー | トリガー              | 主な内容                                    |
+| ------------ | --------------------- | ------------------------------------------- |
+| CI           | Push, Pull Request    | check, test, security, sonar, build         |
+| Release      | `v*.*.*` タグ Push    | validate, build, package, GitHub Releases   |
 
-on: [push, pull_request]
+#### Feature Flags
 
-jobs:
-  test:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+一部のジョブはフラグで制御可能:
 
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
-      - run: npm run test:coverage
-      - run: npm run build
-```
+| フラグ                  | デフォルト | 説明                       |
+| ----------------------- | ---------- | -------------------------- |
+| `enable_multi_os_build` | `false`    | Linux/Windows ビルド       |
+| `enable_e2e`            | `false`    | E2E テスト                 |
+| `enable_sonar`          | `true`     | SonarCloud スキャン        |
 
-#### Release Pipeline
+#### 必要な設定
 
-**`.github/workflows/release.yml`:**
+**Secrets:**
+- `SNYK_TOKEN`: Snyk API トークン
+- `SONARCLOUD_TOKEN`: SonarCloud トークン
 
-```yaml
-name: Release
-
-on:
-  push:
-    tags: ['v*']
-
-jobs:
-  release:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-
-      - run: npm ci
-      - run: npm run test:all
-      - run: npm run package
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/*.dmg
-```
+**Variables:**
+- `SONAR_ORG`: SonarCloud 組織名
+- `SONAR_PROJECT_KEY`: SonarCloud プロジェクトキー
 
 ---
 
@@ -781,4 +756,4 @@ agirity/
 ---
 
 _このドキュメントは技術の進化に伴って更新されます。_
-_最終更新: 2025-11-20_
+_最終更新: 2025-12-25_
