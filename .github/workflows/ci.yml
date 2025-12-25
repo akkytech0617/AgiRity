@@ -19,7 +19,7 @@ jobs:
       # =============================================================================
       # Feature Flags - Set to 'true' to enable optional jobs
       # =============================================================================
-      # Enable multi-OS build jobs
+      # Enable build job (macOS only)
       # TODO: Enable when ready for distribution builds
       enable_build: 'false'
       # Enable E2E tests (requires build artifacts)
@@ -54,9 +54,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run checks with Just
+      - name: Run checks
         run: just check
-        # just check = type-check + format-check + lint
 
   # Job 2: Unit Tests
   test:
@@ -108,32 +107,24 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Setup Just
+        uses: extractions/setup-just@v2
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Snyk security scan (SCA)
+      - name: Run security scans
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: npx snyk test --severity-threshold=high
+        run: just security-all
         continue-on-error: true
 
-      - name: Run Snyk Code scan (SAST)
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: npx snyk code test
-        continue-on-error: true
-
-  # Job 4: Build Test (macOS only for now)
-  # TODO: Add ubuntu-latest and windows-latest when ready for multi-OS distribution
+  # Job 4: Build (macOS only)
   build:
-    name: Build (${{ matrix.os }})
+    name: Build (macOS)
     needs: [setup, check, test]
     if: ${{ needs.setup.outputs.enable_build == 'true' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     timeout-minutes: 30
 
     steps:
@@ -146,16 +137,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Setup Just
+        uses: extractions/setup-just@v2
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build application
-        run: tsc && npx vite build
+        run: just build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.os }}
+          name: build-macos
           path: |
             dist/
             dist-electron/
@@ -165,9 +159,9 @@ jobs:
   e2e:
     name: E2E Tests
     needs: [setup, build]
+    if: ${{ needs.setup.outputs.enable_e2e == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
     runs-on: macos-latest
     timeout-minutes: 30
-    if: ${{ needs.setup.outputs.enable_e2e == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
 
     steps:
       - name: Checkout code
@@ -178,6 +172,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@v2
 
       - name: Install dependencies
         run: npm ci
@@ -188,11 +185,11 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-macos-latest
+          name: build-macos
           path: .
 
-      - name: Run E2E Smoke tests
-        run: npm run test:smoke
+      - name: Run E2E tests
+        run: just e2e
 
       - name: Upload E2E results
         if: always()
