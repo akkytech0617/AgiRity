@@ -17,11 +17,11 @@ AgiRity の CI/CD は以下の3層で構成されています:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-| レイヤー | ツール | 役割 | 実行タイミング |
-|---------|--------|------|---------------|
-| ローカル開発 | Just | タスクランナー | 手動実行 |
-| Git Hooks | Lefthook | 品質ゲート | コミット/プッシュ時 |
-| リモート CI | GitHub Actions | 自動テスト・ビルド | Push/PR 時 |
+| レイヤー     | ツール         | 役割               | 実行タイミング      |
+| ------------ | -------------- | ------------------ | ------------------- |
+| ローカル開発 | Just           | タスクランナー     | 手動実行            |
+| Git Hooks    | Lefthook       | 品質ゲート         | コミット/プッシュ時 |
+| リモート CI  | GitHub Actions | 自動テスト・ビルド | Push/PR 時          |
 
 ---
 
@@ -57,53 +57,53 @@ just --list   # 同上
 
 #### 開発
 
-| コマンド | 説明 |
-|---------|------|
-| `just dev` | 開発サーバー起動 (Electron + React + HMR) |
-| `just install` | 依存関係インストール |
+| コマンド       | 説明                                      |
+| -------------- | ----------------------------------------- |
+| `just dev`     | 開発サーバー起動 (Electron + React + HMR) |
+| `just install` | 依存関係インストール                      |
 
 #### チェック
 
-| コマンド | 説明 |
-|---------|------|
-| `just check` | 全チェック実行 (type-check + format-check + lint) |
-| `just type-check` | TypeScript 型チェック |
-| `just lint` | ESLint 実行 |
-| `just fix` | ESLint 自動修正 |
-| `just format-check` | Prettier フォーマットチェック |
-| `just format` | Prettier フォーマット実行 |
+| コマンド            | 説明                                              |
+| ------------------- | ------------------------------------------------- |
+| `just check`        | 全チェック実行 (type-check + format-check + lint) |
+| `just type-check`   | TypeScript 型チェック                             |
+| `just lint`         | ESLint 実行                                       |
+| `just fix`          | ESLint 自動修正                                   |
+| `just format-check` | Prettier フォーマットチェック                     |
+| `just format`       | Prettier フォーマット実行                         |
 
 #### テスト
 
-| コマンド | 説明 |
-|---------|------|
-| `just test` | Unit テスト実行 |
+| コマンド          | 説明                         |
+| ----------------- | ---------------------------- |
+| `just test`       | Unit テスト実行              |
 | `just test-watch` | Unit テスト (ウォッチモード) |
-| `just coverage` | Unit テスト + カバレッジ |
-| `just e2e` | E2E テスト実行 |
+| `just coverage`   | Unit テスト + カバレッジ     |
+| `just e2e`        | E2E テスト実行               |
 
 #### ビルド・リリース
 
-| コマンド | 説明 |
-|---------|------|
-| `just clean` | ビルド成果物削除 |
-| `just build` | プロダクションビルド |
-| `just package` | インストーラー作成 |
+| コマンド       | 説明                           |
+| -------------- | ------------------------------ |
+| `just clean`   | ビルド成果物削除               |
+| `just build`   | プロダクションビルド           |
+| `just package` | インストーラー作成             |
 | `just release` | リリース (タグ作成 + プッシュ) |
 
 #### セキュリティ
 
-| コマンド | 説明 |
-|---------|------|
-| `just security` | Snyk 依存関係スキャン (SCA) |
-| `just security-code` | Snyk コードスキャン (SAST) |
-| `just security-all` | 全セキュリティスキャン |
-| `just sonar` | SonarCloud スキャン |
+| コマンド             | 説明                        |
+| -------------------- | --------------------------- |
+| `just security`      | Snyk 依存関係スキャン (SCA) |
+| `just security-code` | Snyk コードスキャン (SAST)  |
+| `just security-all`  | 全セキュリティスキャン      |
+| `just sonar`         | SonarCloud スキャン         |
 
 #### CI
 
-| コマンド | 説明 |
-|---------|------|
+| コマンド  | 説明                                                         |
+| --------- | ------------------------------------------------------------ |
 | `just ci` | ローカル CI 実行 (check + test + e2e + security-all + build) |
 
 ### 2.4 よく使うワークフロー
@@ -161,10 +161,10 @@ pre-push:
 
 ### 3.3 実行タイミング
 
-| フック | 実行タイミング | 実行内容 |
-|--------|---------------|---------|
+| フック       | 実行タイミング      | 実行内容                       |
+| ------------ | ------------------- | ------------------------------ |
 | `pre-commit` | `git commit` 実行時 | lint, format-check, type-check |
-| `pre-push` | `git push` 実行時 | test, security-all |
+| `pre-push`   | `git push` 実行時   | test, security-all             |
 
 ### 3.4 インストール・セットアップ
 
@@ -230,12 +230,13 @@ GitHub Actions でリモート CI/CD を実行します。
 
 **ステータス**: 実装済み
 
-| トリガー | 対象ブランチ |
-|---------|-------------|
-| Push | `main`, `develop` |
-| Pull Request | `main` |
+| トリガー     | 対象ブランチ      |
+| ------------ | ----------------- |
+| Push         | `main`, `develop` |
+| Pull Request | `main`            |
 
 **実行内容**:
+
 1. 依存関係インストール
 2. Playwright インストール
 3. アプリビルド
@@ -252,11 +253,11 @@ GitHub Actions でリモート CI/CD を実行します。
 
 ```yaml
 jobs:
-  check:     # type-check, format-check, lint
-  test:      # unit tests + coverage
-  security:  # Snyk, SonarCloud
-  build:     # multi-OS build
-  e2e:       # Playwright tests
+  check: # type-check, format-check, lint
+  test: # unit tests + coverage
+  security: # Snyk, SonarCloud
+  build: # multi-OS build
+  e2e: # Playwright tests
 ```
 
 #### Release Workflow (TBD)
@@ -265,18 +266,18 @@ jobs:
 
 ```yaml
 jobs:
-  semantic-release:  # バージョン決定
+  semantic-release: # バージョン決定
   build-and-release: # multi-OS ビルド + GitHub Releases
 ```
 
 ### 4.4 GitHub Secrets (TBD)
 
-| Secret | 用途 |
-|--------|------|
-| `SNYK_TOKEN` | Snyk API トークン |
-| `SONAR_ORG` | SonarCloud 組織 |
+| Secret              | 用途                        |
+| ------------------- | --------------------------- |
+| `SNYK_TOKEN`        | Snyk API トークン           |
+| `SONAR_ORG`         | SonarCloud 組織             |
 | `SONAR_PROJECT_KEY` | SonarCloud プロジェクトキー |
-| `SONARCLOUD_TOKEN` | SonarCloud トークン |
+| `SONARCLOUD_TOKEN`  | SonarCloud トークン         |
 
 ### 4.5 ブランチ保護ルール (TBD)
 
@@ -295,15 +296,15 @@ jobs:
 
 ### 5.1 実行内容の比較
 
-| チェック項目 | Lefthook (ローカル) | GitHub Actions (リモート) |
-|-------------|--------------------|-----------------------|
-| Type Check | pre-commit | CI |
-| Lint | pre-commit | CI |
-| Format Check | pre-commit | CI |
-| Unit Tests | pre-push | CI |
-| Security Scan | pre-push | CI |
-| E2E Tests | - | CI |
-| Build | - | CI |
+| チェック項目  | Lefthook (ローカル) | GitHub Actions (リモート) |
+| ------------- | ------------------- | ------------------------- |
+| Type Check    | pre-commit          | CI                        |
+| Lint          | pre-commit          | CI                        |
+| Format Check  | pre-commit          | CI                        |
+| Unit Tests    | pre-push            | CI                        |
+| Security Scan | pre-push            | CI                        |
+| E2E Tests     | -                   | CI                        |
+| Build         | -                   | CI                        |
 
 ### 5.2 設計思想
 
@@ -324,13 +325,13 @@ jobs:
 
 Just コマンドは内部で npm scripts を呼び出しています:
 
-| Just コマンド | npm script |
-|--------------|------------|
-| `just dev` | `npm run dev` |
-| `just test` | `npm run test` |
-| `just lint` | `npm run lint` |
-| `just build` | `npm run build` |
-| `just e2e` | `npm run test:e2e:dev` |
+| Just コマンド | npm script             |
+| ------------- | ---------------------- |
+| `just dev`    | `npm run dev`          |
+| `just test`   | `npm run test`         |
+| `just lint`   | `npm run lint`         |
+| `just build`  | `npm run build`        |
+| `just e2e`    | `npm run test:e2e:dev` |
 
 **なぜ Just を使うのか?**
 
@@ -427,27 +428,27 @@ snyk auth
 
 ## 9. 関連ドキュメント
 
-| ドキュメント | 内容 |
-|-------------|------|
-| `docs/development/code_quality_rules.md` | コード品質ルール (ESLint/Prettier) |
-| `docs/implementation/cicd_implementation_plan.md` | CI/CD 導入計画 (詳細設計) |
-| `docs/implementation/testing_strategy.md` | テスト戦略 |
-| `docs/product/03_development_rules.md` | 開発ルール・ブランチ戦略 |
+| ドキュメント                                      | 内容                               |
+| ------------------------------------------------- | ---------------------------------- |
+| `docs/development/code_quality_rules.md`          | コード品質ルール (ESLint/Prettier) |
+| `docs/implementation/cicd_implementation_plan.md` | CI/CD 導入計画 (詳細設計)          |
+| `docs/implementation/testing_strategy.md`         | テスト戦略                         |
+| `docs/product/03_development_rules.md`            | 開発ルール・ブランチ戦略           |
 
 ---
 
 ## 10. 実装状況
 
-| 項目 | ステータス | 備考 |
-|------|-----------|------|
-| Justfile | ✅ 実装済み | 全コマンド利用可能 |
-| Lefthook | ✅ 実装済み | pre-commit, pre-push 設定済み |
-| E2E Tests Workflow | ✅ 実装済み | Smoke テスト実行 |
-| CI Workflow (full) | TBD | check, test, security, build |
-| Release Workflow | TBD | semantic-release + electron-builder |
-| Branch Protection | TBD | main ブランチ保護ルール |
-| Codecov Integration | TBD | カバレッジレポート |
-| Dependabot | TBD | 依存関係自動更新 |
+| 項目                | ステータス  | 備考                                |
+| ------------------- | ----------- | ----------------------------------- |
+| Justfile            | ✅ 実装済み | 全コマンド利用可能                  |
+| Lefthook            | ✅ 実装済み | pre-commit, pre-push 設定済み       |
+| E2E Tests Workflow  | ✅ 実装済み | Smoke テスト実行                    |
+| CI Workflow (full)  | TBD         | check, test, security, build        |
+| Release Workflow    | TBD         | semantic-release + electron-builder |
+| Branch Protection   | TBD         | main ブランチ保護ルール             |
+| Codecov Integration | TBD         | カバレッジレポート                  |
+| Dependabot          | TBD         | 依存関係自動更新                    |
 
 ---
 

@@ -76,6 +76,7 @@ git diff main...<ブランチ名> -- package.json package-lock.json
 ```
 
 確認項目：
+
 - 変更されるライブラリ名
 - 現在のバージョン → 新バージョン
 - メジャー/マイナー/パッチのどれか
@@ -84,13 +85,14 @@ git diff main...<ブランチ名> -- package.json package-lock.json
 
 ライブラリのリリースノート・CHANGELOGを確認：
 
-| 確認先 | URL例 |
-|--------|-------|
-| GitHub Releases | `https://github.com/<owner>/<repo>/releases` |
-| CHANGELOG.md | リポジトリ内のCHANGELOG.md |
-| npm | `https://www.npmjs.com/package/<package-name>?activeTab=versions` |
+| 確認先          | URL例                                                             |
+| --------------- | ----------------------------------------------------------------- |
+| GitHub Releases | `https://github.com/<owner>/<repo>/releases`                      |
+| CHANGELOG.md    | リポジトリ内のCHANGELOG.md                                        |
+| npm             | `https://www.npmjs.com/package/<package-name>?activeTab=versions` |
 
 特に注意すべきキーワード：
+
 - `BREAKING CHANGE`
 - `DEPRECATED`
 - `Renamed`
@@ -112,12 +114,12 @@ grep -r "<シンボル名>" --include="*.ts" --include="*.tsx" src/
 
 #### 2.2 Breaking Changesの影響判定
 
-| Breaking Changeの内容 | 確認方法 |
-|----------------------|----------|
-| 関数/コンポーネント名の変更 | 旧名称でgrep検索 |
-| 引数/プロパティの変更 | 該当関数の呼び出し箇所を確認 |
-| 型定義の変更 | TypeScriptビルドで検出 |
-| デフォルト値の変更 | 動作確認で検出 |
+| Breaking Changeの内容       | 確認方法                     |
+| --------------------------- | ---------------------------- |
+| 関数/コンポーネント名の変更 | 旧名称でgrep検索             |
+| 引数/プロパティの変更       | 該当関数の呼び出し箇所を確認 |
+| 型定義の変更                | TypeScriptビルドで検出       |
+| デフォルト値の変更          | 動作確認で検出               |
 
 ---
 
@@ -138,6 +140,7 @@ npm ci
 ```
 
 確認項目：
+
 - [ ] インストール成功
 - [ ] 脆弱性警告の確認（`found X vulnerabilities`）
 - [ ] peer dependency警告の確認
@@ -153,6 +156,7 @@ npm run build
 ```
 
 確認項目：
+
 - [ ] 型エラーなし
 - [ ] ビルド成功
 
@@ -163,6 +167,7 @@ npm run lint
 ```
 
 確認項目：
+
 - [ ] エラー0件
 - [ ] 新規警告がないか（既存警告は許容）
 
@@ -177,6 +182,7 @@ npm run test:e2e
 ```
 
 確認項目：
+
 - [ ] 全テストパス
 - [ ] 新たな失敗なし
 
@@ -187,6 +193,7 @@ npm run dev
 ```
 
 確認項目：
+
 - [ ] 開発サーバー起動成功
 - [ ] アプリケーション正常動作
 - [ ] 変更ライブラリを使用している画面の目視確認
@@ -197,12 +204,12 @@ npm run dev
 
 #### 4.1 判断基準
 
-| 結果 | 判断 |
-|------|------|
-| 全項目パス | マージ可 |
+| 結果         | 判断                      |
+| ------------ | ------------------------- |
+| 全項目パス   | マージ可                  |
 | ビルドエラー | Breaking Change対応が必要 |
-| テスト失敗 | 原因調査・修正が必要 |
-| 動作不具合 | 原因調査・修正が必要 |
+| テスト失敗   | 原因調査・修正が必要      |
+| 動作不具合   | 原因調査・修正が必要      |
 
 #### 4.2 Breaking Change対応が必要な場合
 
@@ -220,11 +227,13 @@ PRレビュー時に使用するチェックリスト：
 ## ライブラリアップグレード検証
 
 ### 対象
+
 - ライブラリ名:
 - バージョン: X.X.X → Y.Y.Y
 - Breaking Changes: あり / なし
 
 ### 検証結果
+
 - [ ] 依存関係インストール成功
 - [ ] TypeScriptビルド成功
 - [ ] Lint エラーなし
@@ -233,6 +242,7 @@ PRレビュー時に使用するチェックリスト：
 - [ ] 動作確認完了
 
 ### 判定
+
 - [ ] マージ可
 - [ ] 修正が必要（理由: ）
 ```

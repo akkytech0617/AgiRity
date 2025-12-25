@@ -316,18 +316,20 @@ npm install electron-log
 AgiRity では Main/Renderer 両プロセスで electron-log を使用しています。
 
 **設定ファイル:**
+
 - Main: `src/main/lib/logger.ts`
 - Renderer: `src/renderer/lib/logger.ts`
 - 共通設定: `src/shared/lib/logging/config.ts`
 
 **ログ出力先:**
 
-| 出力先 | Development | Production |
-|--------|-------------|------------|
-| ファイル (`~/.agirity/logs/main.log`) | debug | info |
-| コンソール | debug | warn |
+| 出力先                                | Development | Production |
+| ------------------------------------- | ----------- | ---------- |
+| ファイル (`~/.agirity/logs/main.log`) | debug       | info       |
+| コンソール                            | debug       | warn       |
 
 **ファイルローテーション:**
+
 - 最大サイズ: 5MB
 - 保持ファイル数: 3
 
@@ -353,30 +355,32 @@ npm install @sentry/electron
 AgiRity では Sentry を使用してエラー監視とログ集約を行っています。
 
 **設定ファイル:**
+
 - Main: `src/main/lib/sentry.ts`
 - Renderer: `src/renderer/lib/sentry.ts`
 
 **環境変数:**
 
-| 変数名 | プロセス | 説明 |
-|--------|---------|------|
-| `SENTRY_DSN` | Main | Main プロセス用 Sentry DSN |
+| 変数名            | プロセス | 説明                           |
+| ----------------- | -------- | ------------------------------ |
+| `SENTRY_DSN`      | Main     | Main プロセス用 Sentry DSN     |
 | `VITE_SENTRY_DSN` | Renderer | Renderer プロセス用 Sentry DSN |
 
 **Note**: DSN が未設定の場合、Sentry 機能は自動的に無効化されます。
 
 **機能:**
 
-| 関数 | 説明 |
-|------|------|
-| `sendLog(message, level)` | Sentry Logs にログ送信 |
-| `captureIssue(message, level)` | Sentry Issues にエラー/警告を送信 |
-| `captureException(error)` | 例外を Sentry Issues に送信 |
-| `flushSentry()` | アプリ終了前にバッファをフラッシュ |
+| 関数                           | 説明                               |
+| ------------------------------ | ---------------------------------- |
+| `sendLog(message, level)`      | Sentry Logs にログ送信             |
+| `captureIssue(message, level)` | Sentry Issues にエラー/警告を送信  |
+| `captureException(error)`      | 例外を Sentry Issues に送信        |
+| `flushSentry()`                | アプリ終了前にバッファをフラッシュ |
 
 **連携動作:**
 
 electron-log の hook により、すべてのログが自動的に Sentry にも送信されます:
+
 - `info`, `debug` → Sentry Logs のみ
 - `warn` → Sentry Logs + Sentry Issues (warning)
 - `error` → Sentry Logs + Sentry Issues (error)

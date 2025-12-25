@@ -22,6 +22,7 @@ Linearチケットが与えられた場合：
    - 関連するチケットやブロッカーを確認
 
 2. **ステータスを「In Progress」に更新**
+
    ```
    Linear: チケットのステータスを「In Progress」に変更
    ```
@@ -36,6 +37,7 @@ Linearチケットが与えられた場合：
 ### 0.2 ブランチ作成
 
 1. **最新のmainを取得**
+
    ```bash
    git checkout main
    git pull origin main
@@ -43,14 +45,14 @@ Linearチケットが与えられた場合：
 
 2. **ブランチを作成（命名規則に従う）**
 
-   | Prefix | 用途 | 例 |
-   |--------|------|-----|
-   | `feature/*` | 新機能 | `feature/browser-url-support` |
-   | `fix/*` | バグ修正 | `fix/app-launch-error` |
-   | `docs/*` | ドキュメント | `docs/add-installation-guide` |
-   | `refactor/*` | リファクタリング | `refactor/project-service` |
-   | `test/*` | テスト追加 | `test/add-launcher-tests` |
-   | `chore/*` | その他 | `chore/update-dependencies` |
+   | Prefix       | 用途             | 例                            |
+   | ------------ | ---------------- | ----------------------------- |
+   | `feature/*`  | 新機能           | `feature/browser-url-support` |
+   | `fix/*`      | バグ修正         | `fix/app-launch-error`        |
+   | `docs/*`     | ドキュメント     | `docs/add-installation-guide` |
+   | `refactor/*` | リファクタリング | `refactor/project-service`    |
+   | `test/*`     | テスト追加       | `test/add-launcher-tests`     |
+   | `chore/*`    | その他           | `chore/update-dependencies`   |
 
    ```bash
    git checkout -b feature/[機能名]
@@ -81,17 +83,18 @@ Linearチケットが与えられた場合：
 
 タスクに応じて以下を参照：
 
-| タスク種別 | 参照すべきドキュメント |
-|-----------|----------------------|
-| 新機能実装 | `docs/product/01_requirment.md`, `docs/design/architecture.md` |
-| UI変更 | `docs/product/02_tech_stacks.md`（React/Tailwind） |
-| テスト追加 | `docs/implementation/testing_strategy.md` |
-| バグ修正 | `docs/design/architecture.md`（該当箇所） |
-| リファクタリング | `docs/design/architecture.md`, ADRs |
+| タスク種別       | 参照すべきドキュメント                                         |
+| ---------------- | -------------------------------------------------------------- |
+| 新機能実装       | `docs/product/01_requirment.md`, `docs/design/architecture.md` |
+| UI変更           | `docs/product/02_tech_stacks.md`（React/Tailwind）             |
+| テスト追加       | `docs/implementation/testing_strategy.md`                      |
+| バグ修正         | `docs/design/architecture.md`（該当箇所）                      |
+| リファクタリング | `docs/design/architecture.md`, ADRs                            |
 
 ### 1.3 現状把握
 
 1. **codebase-explorerで調査**（必要に応じて）
+
    ```
    codebase-explorer に委任:
    - 対象: [調査対象のディレクトリ/ファイル]
@@ -133,22 +136,27 @@ TodoWrite([
 ## 作業計画
 
 ### タスク概要
+
 [タスクの簡潔な説明]
 
 ### 分解タスク
+
 1. [タスク1]: [成果物]
 2. [タスク2]: [成果物]
 3. ...
 
 ### 期待される成果物
+
 - [ファイルパス1]
 - [ファイルパス2]
 
 ### 完了条件
+
 - [条件1]
 - [条件2]
 
 ### やらないこと
+
 - [スコープ外の事項]
 ```
 
@@ -162,19 +170,23 @@ TodoWrite([
 
 ```markdown
 ## タスク
+
 [具体的な作業内容を1文で]
 
 ## コンテキスト
+
 - 対象: [ファイルパス]
 - 前提: [知っておくべき情報]
 - 制約: [守るべきルール]
 - 参照: [関連ドキュメント]
 
 ## 期待する出力
+
 - [ファイルパス1]
 - [ファイルパス2]
 
 ## 完了条件
+
 - [条件1]
 - [条件2]
 - テストが通ること
@@ -184,13 +196,13 @@ TodoWrite([
 
 **テスト追加の基準：**
 
-| 変更内容 | 必要なテスト |
-|----------|-------------|
-| 新規関数/メソッド | ユニットテスト必須 |
-| 既存ロジック変更 | 既存テスト更新 + 新規ケース追加 |
-| UIコンポーネント追加 | React Testing Libraryテスト |
-| IPC追加 | 統合テスト |
-| 重要なユーザーフロー | E2Eテスト検討 |
+| 変更内容             | 必要なテスト                    |
+| -------------------- | ------------------------------- |
+| 新規関数/メソッド    | ユニットテスト必須              |
+| 既存ロジック変更     | 既存テスト更新 + 新規ケース追加 |
+| UIコンポーネント追加 | React Testing Libraryテスト     |
+| IPC追加              | 統合テスト                      |
+| 重要なユーザーフロー | E2Eテスト検討                   |
 
 ### 3.3 実装時の注意事項
 
@@ -218,13 +230,16 @@ TodoWrite([
 
 ```markdown
 ## タスク
+
 実装したコードのレビュー
 
 ## 対象ファイル
+
 - [ファイルパス1]
 - [ファイルパス2]
 
 ## レビュー観点
+
 - 機能: 仕様通りに動作するか
 - テスト: テストは十分か
 - コード品質: 読みやすさ、保守性
@@ -241,6 +256,7 @@ just ci
 ```
 
 これにより以下が実行される：
+
 1. `check` - type-check, format-check, lint
 2. `test` - ユニットテスト
 3. `e2e` - E2Eテスト
@@ -251,14 +267,14 @@ just ci
 
 **just ciが失敗した場合：**
 
-| エラー種別 | 対処 |
-|-----------|------|
-| Type Error | 型定義を修正 |
-| Lint Error | `just fix` で自動修正、または手動修正 |
-| Format Error | `just format` で自動修正 |
-| Test Failure | テストまたは実装を修正 |
-| Security Issue | 依存関係更新または脆弱なコード修正 |
-| Build Error | ビルド設定または実装を修正 |
+| エラー種別     | 対処                                  |
+| -------------- | ------------------------------------- |
+| Type Error     | 型定義を修正                          |
+| Lint Error     | `just fix` で自動修正、または手動修正 |
+| Format Error   | `just format` で自動修正              |
+| Test Failure   | テストまたは実装を修正                |
+| Security Issue | 依存関係更新または脆弱なコード修正    |
+| Build Error    | ビルド設定または実装を修正            |
 
 **修正後、再度 `just ci` を実行して確認**
 
@@ -269,6 +285,7 @@ just ci
 コミットとPR作成はユーザーからの指示があった場合のみ行います。
 
 **詳細は [git_release_guide.md](git_release_guide.md) を参照：**
+
 - コミットメッセージ規約（Conventional Commits）
 - バージョニング（Semantic Versioning）
 - リリースフロー
@@ -298,21 +315,26 @@ just ci
 ## 完了報告
 
 ### 実施内容
+
 [何をしたかの要約]
 
 ### 変更ファイル
+
 - `src/main/services/[Service].ts` - [変更内容]
 - `src/renderer/components/[Component].tsx` - [変更内容]
 - `tests/unit/...` - テスト追加
 
 ### PR
+
 [PRのURL]
 
 ### 注意点・残課題
+
 - [注意すべき点]
 - [残っている課題があれば]
 
 ### 次のアクション（あれば）
+
 - [次にやるべきこと]
 ```
 
@@ -321,6 +343,7 @@ just ci
 1. **ステータスを「In Review」に更新**
 
 2. **完了コメントを追加**
+
    ```
    作業完了しました。
 
@@ -361,10 +384,10 @@ just ci
 
 #### Lefthookによる自動チェック
 
-| フック | タイミング | 実行内容 |
-|--------|-----------|---------|
+| フック     | タイミング      | 実行内容                       |
+| ---------- | --------------- | ------------------------------ |
 | pre-commit | `git commit` 時 | lint, format-check, type-check |
-| pre-push | `git push` 時 | test, security-all |
+| pre-push   | `git push` 時   | test, security-all             |
 
 #### フックをスキップする場合（緊急時のみ）
 
@@ -379,11 +402,11 @@ git push --no-verify
 
 #### Snyk（実装済み）
 
-| スキャン | コマンド | 内容 |
-|---------|---------|------|
-| SCA | `just security` | 依存関係の脆弱性スキャン |
-| SAST | `just security-code` | コードの脆弱性スキャン |
-| 両方 | `just security-all` | 上記両方 |
+| スキャン | コマンド             | 内容                     |
+| -------- | -------------------- | ------------------------ |
+| SCA      | `just security`      | 依存関係の脆弱性スキャン |
+| SAST     | `just security-code` | コードの脆弱性スキャン   |
+| 両方     | `just security-all`  | 上記両方                 |
 
 #### 脆弱性が検出された場合
 
@@ -402,6 +425,7 @@ git push --no-verify
    - 本当に必要か？既存ライブラリで代替できないか？
 
 2. **セキュリティ確認**
+
    ```bash
    npm install [package]
    just security  # 脆弱性チェック
@@ -418,18 +442,19 @@ git push --no-verify
 
 #### 更新が必要なケース
 
-| 変更内容 | 更新すべきドキュメント |
-|----------|----------------------|
-| 新機能追加 | `docs/product/01_requirment.md`（機能一覧） |
-| アーキテクチャ変更 | `docs/design/architecture.md` |
-| 技術スタック変更 | `docs/product/02_tech_stacks.md` |
-| 重要な設計判断 | ADR作成（`docs/adr/`） |
-| テスト戦略変更 | `docs/implementation/testing_strategy.md` |
-| 開発フロー変更 | `docs/development/` 配下 |
+| 変更内容           | 更新すべきドキュメント                      |
+| ------------------ | ------------------------------------------- |
+| 新機能追加         | `docs/product/01_requirment.md`（機能一覧） |
+| アーキテクチャ変更 | `docs/design/architecture.md`               |
+| 技術スタック変更   | `docs/product/02_tech_stacks.md`            |
+| 重要な設計判断     | ADR作成（`docs/adr/`）                      |
+| テスト戦略変更     | `docs/implementation/testing_strategy.md`   |
+| 開発フロー変更     | `docs/development/` 配下                    |
 
 #### ADR作成の基準
 
 以下の場合はADRを作成：
+
 - アーキテクチャに影響する判断
 - 技術選定（ライブラリ、フレームワーク）
 - 重要なトレードオフを伴う判断
@@ -465,13 +490,13 @@ just ci 失敗
 
 ### よくあるエラーと対処
 
-| エラー | 原因 | 対処 |
-|--------|------|------|
-| `TS2345: Argument of type...` | 型不一致 | 型定義を確認・修正 |
-| `ESLint: no-explicit-any` | any型使用 | 適切な型を定義 |
-| `Test failed: Expected...` | テスト失敗 | 期待値または実装を修正 |
-| `SNYK-JS-...` | 脆弱な依存関係 | バージョンアップ |
-| `Build failed: Cannot find module` | インポートエラー | パスを確認・修正 |
+| エラー                             | 原因             | 対処                   |
+| ---------------------------------- | ---------------- | ---------------------- |
+| `TS2345: Argument of type...`      | 型不一致         | 型定義を確認・修正     |
+| `ESLint: no-explicit-any`          | any型使用        | 適切な型を定義         |
+| `Test failed: Expected...`         | テスト失敗       | 期待値または実装を修正 |
+| `SNYK-JS-...`                      | 脆弱な依存関係   | バージョンアップ       |
+| `Build failed: Cannot find module` | インポートエラー | パスを確認・修正       |
 
 ---
 
@@ -515,13 +540,13 @@ just build        # プロダクションビルド
 
 ## 関連ドキュメント
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [AGENTS.md](../../AGENTS.md) | エージェント行動指針（絶対原則） |
-| [docs/development/cicd_guide.md](cicd_guide.md) | CI/CDガイド（Just, Lefthook, GitHub Actions） |
-| [docs/development/code_quality_rules.md](code_quality_rules.md) | コード品質ルール（ESLint, Prettier, Snyk） |
-| [git_release_guide.md](git_release_guide.md) | Git操作・リリース管理ガイド |
-| [docs/implementation/testing_strategy.md](../implementation/testing_strategy.md) | テスト戦略 |
+| ドキュメント                                                                     | 内容                                          |
+| -------------------------------------------------------------------------------- | --------------------------------------------- |
+| [AGENTS.md](../../AGENTS.md)                                                     | エージェント行動指針（絶対原則）              |
+| [docs/development/cicd_guide.md](cicd_guide.md)                                  | CI/CDガイド（Just, Lefthook, GitHub Actions） |
+| [docs/development/code_quality_rules.md](code_quality_rules.md)                  | コード品質ルール（ESLint, Prettier, Snyk）    |
+| [git_release_guide.md](git_release_guide.md)                                     | Git操作・リリース管理ガイド                   |
+| [docs/implementation/testing_strategy.md](../implementation/testing_strategy.md) | テスト戦略                                    |
 
 ---
 

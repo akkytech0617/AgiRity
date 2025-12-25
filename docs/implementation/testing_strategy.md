@@ -16,19 +16,19 @@
 
 ### テストツール構成
 
-| レベル | ツール | 対象 |
-|--------|--------|------|
-| Static Analysis | TypeScript, ESLint, Prettier | 型安全性、コード品質 |
-| Unit Tests | Vitest + Testing Library | Services, Components, Schemas |
-| E2E Tests | Playwright for Electron | アプリ起動、重要フロー |
+| レベル          | ツール                       | 対象                          |
+| --------------- | ---------------------------- | ----------------------------- |
+| Static Analysis | TypeScript, ESLint, Prettier | 型安全性、コード品質          |
+| Unit Tests      | Vitest + Testing Library     | Services, Components, Schemas |
+| E2E Tests       | Playwright for Electron      | アプリ起動、重要フロー        |
 
 ### カバレッジ目標
 
-| 対象 | 目標 |
-|------|------|
-| 全体 | 70% 以上 |
+| 対象                        | 目標     |
+| --------------------------- | -------- |
+| 全体                        | 70% 以上 |
 | ビジネスロジック (Services) | 80% 以上 |
-| IPC 通信 | 90% 以上 |
+| IPC 通信                    | 90% 以上 |
 
 ---
 
@@ -69,6 +69,7 @@ tests/
         ├── html/                   # HTML レポート
         └── junit.xml               # JUnit レポート
 ```
+
 ### Static Analysis
 
 - **ツール**: TypeScript, ESLint, Prettier
@@ -119,6 +120,7 @@ tests/
 ### 設定ファイル
 
 **vitest.config.ts**:
+
 ```typescript
 export default defineConfig({
   test: {
@@ -140,6 +142,7 @@ export default defineConfig({
 ```
 
 **tests/unit/setup.ts**:
+
 ```typescript
 import '@testing-library/jest-dom/vitest';
 ```
@@ -150,14 +153,14 @@ DI コンテナに対応したモックファクトリを提供:
 
 ```typescript
 // Adapter モック
-createMockFileSystemAdapter()    // IFileSystemAdapter
-createMockOSAdapter(homeDir)     // IOSAdapter
-createMockShellAdapter()         // IShellAdapter
+createMockFileSystemAdapter(); // IFileSystemAdapter
+createMockOSAdapter(homeDir); // IOSAdapter
+createMockShellAdapter(); // IShellAdapter
 
 // Service モック
-createMockConfigService(homeDir) // IConfigService
-createMockProjectService()       // IProjectService
-createMockLauncherService()      // ILauncherService
+createMockConfigService(homeDir); // IConfigService
+createMockProjectService(); // IProjectService
+createMockLauncherService(); // ILauncherService
 ```
 
 ### テストパターン
@@ -239,6 +242,7 @@ npm run test:coverage  # カバレッジ付き実行
 ### 設定ファイル
 
 **tests/e2e/playwright.config.ts**:
+
 ```typescript
 export default defineConfig({
   testDir: '.',
@@ -307,10 +311,9 @@ test('should launch app without console errors', async ({ app }) => {
 
   await window.waitForLoadState('domcontentloaded');
 
-  expect(errors.filter(err =>
-    err.includes('process.env') ||
-    err.includes('Maximum call stack')
-  )).toHaveLength(0);
+  expect(
+    errors.filter((err) => err.includes('process.env') || err.includes('Maximum call stack'))
+  ).toHaveLength(0);
 });
 ```
 
@@ -338,11 +341,11 @@ npm run test:smoke      # Smoke テストのみ
 
 ### 必須チェック項目
 
-| 項目 | テスト内容 | テストファイル |
-|------|-----------|---------------|
-| Path Injection | `../` を含むパスが拒否される | `LauncherService.test.ts` |
-| Zod Validation | 不正な入力が拒否される | `types.test.ts` |
-| Protocol Whitelist | 許可されたプロトコルのみ | `LauncherService.test.ts` |
+| 項目               | テスト内容                   | テストファイル            |
+| ------------------ | ---------------------------- | ------------------------- |
+| Path Injection     | `../` を含むパスが拒否される | `LauncherService.test.ts` |
+| Zod Validation     | 不正な入力が拒否される       | `types.test.ts`           |
+| Protocol Whitelist | 許可されたプロトコルのみ     | `LauncherService.test.ts` |
 
 ### 例: パスインジェクションテスト
 
@@ -358,6 +361,7 @@ it('should reject path traversal attempts', async () => {
 ## 6. CI/CD 統合
 
 ### GitHub Actions ワークフロー
+
 ### 閾値
 
 - **起動時間**: < 1000ms
@@ -433,12 +437,12 @@ npm run test:e2e:debug
 
 ### テスト実行タイミング
 
-| イベント | Unit | E2E |
-|---------|------|-----|
-| Push (feature/*) | Yes | No |
-| Pull Request | Yes | Yes (Smoke のみ) |
-| Merge to main | Yes | Yes (全て) |
-| Release | Yes | Yes (全て) |
+| イベント          | Unit | E2E              |
+| ----------------- | ---- | ---------------- |
+| Push (feature/\*) | Yes  | No               |
+| Pull Request      | Yes  | Yes (Smoke のみ) |
+| Merge to main     | Yes  | Yes (全て)       |
+| Release           | Yes  | Yes (全て)       |
 
 ---
 
@@ -453,10 +457,10 @@ npm run test:e2e:debug
 
 ### 命名規則
 
-| 種類 | パターン | 例 |
-|------|---------|-----|
+| 種類        | パターン                   | 例                      |
+| ----------- | -------------------------- | ----------------------- |
 | Unit テスト | `*.test.ts` / `*.test.tsx` | `ConfigService.test.ts` |
-| E2E テスト | `*.spec.ts` | `app-launch.spec.ts` |
+| E2E テスト  | `*.spec.ts`                | `app-launch.spec.ts`    |
 
 ### テストデータ
 

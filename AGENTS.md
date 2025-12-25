@@ -43,11 +43,11 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ワークスペース管理ツール。プロジェクト作業に必要な複数アプリを自動起動します。
 
-| 項目 | 内容 |
-|------|------|
-| 現在のフェーズ | MVP開発中 (v0.1.0) |
-| 対象ユーザー | 開発者・エンジニア |
-| 技術スタック | Electron + React + TypeScript |
+| 項目           | 内容                          |
+| -------------- | ----------------------------- |
+| 現在のフェーズ | MVP開発中 (v0.1.0)            |
+| 対象ユーザー   | 開発者・エンジニア            |
+| 技術スタック   | Electron + React + TypeScript |
 
 詳細は以下のドキュメントインデックスを参照してください。
 
@@ -59,53 +59,53 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ### プロダクト定義
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [docs/product/01_requirment.md](docs/product/01_requirment.md) | 要件定義書（機能一覧、Phase分け、KPI） |
-| [docs/product/02_tech_stacks.md](docs/product/02_tech_stacks.md) | 技術スタック選定と実装指針 |
-| [docs/product/domain_glossary.md](docs/product/domain_glossary.md) | ドメイン用語集とデータモデル |
+| ドキュメント                                                       | 内容                                   |
+| ------------------------------------------------------------------ | -------------------------------------- |
+| [docs/product/01_requirment.md](docs/product/01_requirment.md)     | 要件定義書（機能一覧、Phase分け、KPI） |
+| [docs/product/02_tech_stacks.md](docs/product/02_tech_stacks.md)   | 技術スタック選定と実装指針             |
+| [docs/product/domain_glossary.md](docs/product/domain_glossary.md) | ドメイン用語集とデータモデル           |
 
 ### アーキテクチャ・設計
 
-| ドキュメント | 内容 |
-|-------------|------|
+| ドキュメント                                               | 内容                                        |
+| ---------------------------------------------------------- | ------------------------------------------- |
 | [docs/design/architecture.md](docs/design/architecture.md) | システムアーキテクチャ（IPC、DI、ロギング） |
-| [docs/design/adrs_phase1.md](docs/design/adrs_phase1.md) | Phase 1 ADR 統合ドキュメント |
-| [docs/design/adr_template.md](docs/design/adr_template.md) | ADR テンプレート |
-| [docs/design/rfc_template.md](docs/design/rfc_template.md) | RFC テンプレート |
+| [docs/design/adrs_phase1.md](docs/design/adrs_phase1.md)   | Phase 1 ADR 統合ドキュメント                |
+| [docs/design/adr_template.md](docs/design/adr_template.md) | ADR テンプレート                            |
+| [docs/design/rfc_template.md](docs/design/rfc_template.md) | RFC テンプレート                            |
 
 ### ADR (Architecture Decision Records)
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [docs/adr/001-strict-eslint-typescript-rules.md](docs/adr/001-strict-eslint-typescript-rules.md) | TypeScript 厳格ルール採用 |
-| [docs/adr/002-lefthook-git-hooks.md](docs/adr/002-lefthook-git-hooks.md) | Lefthook Git Hooks 採用 |
-| [docs/adr/003-security-linter-configuration.md](docs/adr/003-security-linter-configuration.md) | セキュリティ Linter 設定 |
-| [docs/adr/003-react-testing-library.md](docs/adr/003-react-testing-library.md) | React Testing Library 採用 |
-| [docs/adr/004-main-process-initialization-esm.md](docs/adr/004-main-process-initialization-esm.md) | ESM 環境での初期化方式 |
+| ドキュメント                                                                                       | 内容                       |
+| -------------------------------------------------------------------------------------------------- | -------------------------- |
+| [docs/adr/001-strict-eslint-typescript-rules.md](docs/adr/001-strict-eslint-typescript-rules.md)   | TypeScript 厳格ルール採用  |
+| [docs/adr/002-lefthook-git-hooks.md](docs/adr/002-lefthook-git-hooks.md)                           | Lefthook Git Hooks 採用    |
+| [docs/adr/003-security-linter-configuration.md](docs/adr/003-security-linter-configuration.md)     | セキュリティ Linter 設定   |
+| [docs/adr/003-react-testing-library.md](docs/adr/003-react-testing-library.md)                     | React Testing Library 採用 |
+| [docs/adr/004-main-process-initialization-esm.md](docs/adr/004-main-process-initialization-esm.md) | ESM 環境での初期化方式     |
 
 ### 開発ガイド
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [docs/development/agent_workflow.md](docs/development/agent_workflow.md) | AIエージェント作業ワークフロー標準 |
-| [docs/development/git_release_guide.md](docs/development/git_release_guide.md) | Git操作・リリース管理ガイド |
-| [docs/development/cicd_guide.md](docs/development/cicd_guide.md) | CI/CD ガイド（Just、Lefthook、GitHub Actions） |
-| [docs/development/code_quality_rules.md](docs/development/code_quality_rules.md) | コード品質ルール（ESLint、Prettier、Snyk） |
+| ドキュメント                                                                     | 内容                                           |
+| -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [docs/development/agent_workflow.md](docs/development/agent_workflow.md)         | AIエージェント作業ワークフロー標準             |
+| [docs/development/git_release_guide.md](docs/development/git_release_guide.md)   | Git操作・リリース管理ガイド                    |
+| [docs/development/cicd_guide.md](docs/development/cicd_guide.md)                 | CI/CD ガイド（Just、Lefthook、GitHub Actions） |
+| [docs/development/code_quality_rules.md](docs/development/code_quality_rules.md) | コード品質ルール（ESLint、Prettier、Snyk）     |
 
 ### 実装計画・戦略
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [docs/implementation/testing_strategy.md](docs/implementation/testing_strategy.md) | テスト戦略（Unit、E2E、カバレッジ目標） |
-| [docs/implementation/cicd_implementation_plan.md](docs/implementation/cicd_implementation_plan.md) | CI/CD 導入計画（詳細設計） |
-| [docs/implementation/ai_code_review_checklist.md](docs/implementation/ai_code_review_checklist.md) | AI コードレビューチェックリスト |
-| [docs/implementation/supported_apps.md](docs/implementation/supported_apps.md) | 対応アプリ一覧 |
+| ドキュメント                                                                                       | 内容                                    |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [docs/implementation/testing_strategy.md](docs/implementation/testing_strategy.md)                 | テスト戦略（Unit、E2E、カバレッジ目標） |
+| [docs/implementation/cicd_implementation_plan.md](docs/implementation/cicd_implementation_plan.md) | CI/CD 導入計画（詳細設計）              |
+| [docs/implementation/ai_code_review_checklist.md](docs/implementation/ai_code_review_checklist.md) | AI コードレビューチェックリスト         |
+| [docs/implementation/supported_apps.md](docs/implementation/supported_apps.md)                     | 対応アプリ一覧                          |
 
 ### 管理
 
-| ドキュメント | 内容 |
-|-------------|------|
+| ドキュメント                                                             | 内容                  |
+| ------------------------------------------------------------------------ | --------------------- |
 | [docs/management/linear_task_sop.md](docs/management/linear_task_sop.md) | Linear タスク作成 SOP |
 
 ---
@@ -124,6 +124,7 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 ---
 
 ## 標準ワークフロー
+
 作業開始時に**docs/development/agent_workflow.mdを必ず参照し**、それに従い以下の手順で進行してください。
 
 ```
@@ -151,10 +152,10 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ### 結果の処理
 
-| 状況 | 形式 |
-|------|------|
-| 成功 | `[agent] 完了 - 成果物: [path] - 要約: [1行]` |
-| 問題 | `[agent] 問題報告 - 問題: [概要] → 対応: [方針]` |
+| 状況   | 形式                                                 |
+| ------ | ---------------------------------------------------- |
+| 成功   | `[agent] 完了 - 成果物: [path] - 要約: [1行]`        |
+| 問題   | `[agent] 問題報告 - 問題: [概要] → 対応: [方針]`     |
 | 要確認 | `[agent] 確認依頼 - 不明点: [内容] → ユーザーに確認` |
 
 ### コンテキスト管理
@@ -172,10 +173,10 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ### よくあるシナリオ
 
-| シナリオ | フロー |
-|----------|--------|
-| 新機能追加 | explorer → 計画 → 実装 → レビュー → 報告 |
-| バグ修正 | explorer → 実装 → レビュー → 報告 |
+| シナリオ   | フロー                                                |
+| ---------- | ----------------------------------------------------- |
+| 新機能追加 | explorer → 計画 → 実装 → レビュー → 報告              |
+| バグ修正   | explorer → 実装 → レビュー → 報告                     |
 | リファクタ | explorer → 計画（小分割） → 段階実装 → 各段階レビュー |
 
 _このドキュメントはAgiRityプロジェクトで作業するAIエージェントのガイドです。_

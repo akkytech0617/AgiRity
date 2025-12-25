@@ -251,10 +251,10 @@ npm run build
 
 ## 関連ドキュメント
 
-| ドキュメント | 内容 |
-|-------------|------|
+| ドキュメント                           | 内容             |
+| -------------------------------------- | ---------------- |
 | [agent_workflow.md](agent_workflow.md) | 開発ワークフロー |
-| [cicd_guide.md](cicd_guide.md) | CI/CDガイド |
+| [cicd_guide.md](cicd_guide.md)         | CI/CDガイド      |
 
 ---
 

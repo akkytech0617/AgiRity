@@ -88,11 +88,11 @@ graph TD
 
 外部依存（ファイルシステム、OS、シェル）を抽象化し、テスト時にモックに差し替え可能にします。
 
-| Adapter | Interface | 役割 |
-|---------|-----------|------|
-| `FileSystemAdapter` | `IFileSystemAdapter` | `fs.promises` のラッパー (mkdir, readFile, writeFile) |
-| `OSAdapter` | `IOSAdapter` | `os` モジュールのラッパー (homedir) |
-| `ShellAdapter` | `IShellAdapter` | Electron shell API + spawn のラッパー (openExternal, openPath, launchApp) |
+| Adapter             | Interface            | 役割                                                                      |
+| ------------------- | -------------------- | ------------------------------------------------------------------------- |
+| `FileSystemAdapter` | `IFileSystemAdapter` | `fs.promises` のラッパー (mkdir, readFile, writeFile)                     |
+| `OSAdapter`         | `IOSAdapter`         | `os` モジュールのラッパー (homedir)                                       |
+| `ShellAdapter`      | `IShellAdapter`      | Electron shell API + spawn のラッパー (openExternal, openPath, launchApp) |
 
 #### Services (`src/main/services/`)
 
@@ -134,13 +134,13 @@ We use **Two-way IPC (invoke/handle)** for all operations.
 
 ### IPC Channels (`src/shared/types.ts`)
 
-| Channel                | Type   | Args            | Return                            | Description        |
-| ---------------------- | ------ | --------------- | --------------------------------- | ------------------ |
-| `launcher:launchItem`  | Invoke | `WorkspaceItem` | `LaunchResult`                    | Launch single item |
-| `workspace:load`       | Invoke | -               | `WorkspaceResult<Workspace[]>`    | Get all workspaces |
-| `workspace:get`        | Invoke | `id: string`    | `WorkspaceResult<Workspace|null>` | Get by ID          |
-| `workspace:save`       | Invoke | `Workspace`     | `WorkspaceResult<void>`           | Create or update   |
-| `workspace:delete`     | Invoke | `id: string`    | `WorkspaceResult<boolean>`        | Delete             |
+| Channel               | Type   | Args            | Return                         | Description        |
+| --------------------- | ------ | --------------- | ------------------------------ | ------------------ | --------- |
+| `launcher:launchItem` | Invoke | `WorkspaceItem` | `LaunchResult`                 | Launch single item |
+| `workspace:load`      | Invoke | -               | `WorkspaceResult<Workspace[]>` | Get all workspaces |
+| `workspace:get`       | Invoke | `id: string`    | `WorkspaceResult<Workspace     | null>`             | Get by ID |
+| `workspace:save`      | Invoke | `Workspace`     | `WorkspaceResult<void>`        | Create or update   |
+| `workspace:delete`    | Invoke | `id: string`    | `WorkspaceResult<boolean>`     | Delete             |
 
 ### Result Types
 
@@ -162,11 +162,11 @@ interface WorkspaceResult<T> {
 Preload script で以下の API を `window` に公開:
 
 ```typescript
-window.launcherApi.launchItem(item)   // → LaunchResult
-window.workspaceApi.load()            // → WorkspaceResult<Workspace[]>
-window.workspaceApi.get(id)           // → WorkspaceResult<Workspace|null>
-window.workspaceApi.save(workspace)   // → WorkspaceResult<void>
-window.workspaceApi.delete(id)        // → WorkspaceResult<boolean>
+window.launcherApi.launchItem(item); // → LaunchResult
+window.workspaceApi.load(); // → WorkspaceResult<Workspace[]>
+window.workspaceApi.get(id); // → WorkspaceResult<Workspace|null>
+window.workspaceApi.save(workspace); // → WorkspaceResult<void>
+window.workspaceApi.delete(id); // → WorkspaceResult<boolean>
 ```
 
 **Security Rules (Context Isolation):**
@@ -224,28 +224,28 @@ graph LR
 
 ### electron-log Configuration (`src/main/lib/logger.ts`, `src/renderer/lib/logger.ts`)
 
-| 設定項目 | Development | Production |
-|---------|-------------|------------|
-| File level | `debug` | `info` |
-| Console level | `debug` | `warn` |
-| Max file size | 5MB | 5MB |
-| Max files | 3 | 3 |
+| 設定項目      | Development | Production |
+| ------------- | ----------- | ---------- |
+| File level    | `debug`     | `info`     |
+| Console level | `debug`     | `warn`     |
+| Max file size | 5MB         | 5MB        |
+| Max files     | 3           | 3          |
 
 ### Sentry Integration (`src/main/lib/sentry.ts`, `src/renderer/lib/sentry.ts`)
 
-| 機能 | 説明 |
-|------|------|
-| `sendLog()` | ログを Sentry Logs に送信 |
-| `captureIssue()` | 警告/エラーを Sentry Issues に送信 |
-| `captureException()` | 例外を Sentry Issues に送信 |
-| `flushSentry()` | アプリ終了前にバッファをフラッシュ |
+| 機能                 | 説明                               |
+| -------------------- | ---------------------------------- |
+| `sendLog()`          | ログを Sentry Logs に送信          |
+| `captureIssue()`     | 警告/エラーを Sentry Issues に送信 |
+| `captureException()` | 例外を Sentry Issues に送信        |
+| `flushSentry()`      | アプリ終了前にバッファをフラッシュ |
 
 ### Environment Variables
 
-| 変数名 | プロセス | 説明 |
-|--------|---------|------|
-| `SENTRY_DSN` | Main | Main プロセス用 Sentry DSN |
-| `VITE_SENTRY_DSN` | Renderer | Renderer プロセス用 Sentry DSN |
+| 変数名             | プロセス | 説明                              |
+| ------------------ | -------- | --------------------------------- |
+| `SENTRY_DSN`       | Main     | Main プロセス用 Sentry DSN        |
+| `VITE_SENTRY_DSN`  | Renderer | Renderer プロセス用 Sentry DSN    |
 | `VITE_APP_VERSION` | Renderer | アプリバージョン (リリース識別用) |
 
 **Note**: DSN が未設定の場合、Sentry 機能は自動的に無効化されます。

@@ -4,12 +4,12 @@
 
 AgiRity では以下のツールでコード品質を担保しています:
 
-| ツール | 役割 | 実行タイミング |
-|--------|------|---------------|
-| **ESLint** | コード品質・セキュリティチェック | 開発時、pre-commit、CI |
-| **Prettier** | コードフォーマット | 開発時、pre-commit |
-| **TypeScript** | 型チェック | 開発時、pre-commit、CI |
-| **SonarCloud** | 継続的コード品質分析 | CI (TBD) |
+| ツール         | 役割                             | 実行タイミング         |
+| -------------- | -------------------------------- | ---------------------- |
+| **ESLint**     | コード品質・セキュリティチェック | 開発時、pre-commit、CI |
+| **Prettier**   | コードフォーマット               | 開発時、pre-commit     |
+| **TypeScript** | 型チェック                       | 開発時、pre-commit、CI |
+| **SonarCloud** | 継続的コード品質分析             | CI (TBD)               |
 
 ---
 
@@ -21,16 +21,16 @@ AgiRity では以下のツールでコード品質を担保しています:
 
 ### 2.2 採用プラグイン
 
-| プラグイン | 目的 | 設定 |
-|-----------|------|------|
-| `@eslint/js` | JavaScript 基本ルール | `recommended` |
-| `typescript-eslint` | TypeScript 厳格ルール | `strictTypeChecked`, `stylisticTypeChecked` |
-| `eslint-plugin-react-hooks` | React Hooks ルール | `recommended` |
-| `eslint-plugin-react-refresh` | React Fast Refresh 対応 | カスタム |
-| `eslint-plugin-security` | セキュリティ脆弱性検出 | `recommended` |
-| `eslint-plugin-sonarjs` | コード品質・複雑度 | `recommended` |
-| `@microsoft/eslint-plugin-sdl` | Microsoft SDL セキュリティ | `common`, `electron`, `react` |
-| `eslint-config-prettier` | Prettier との競合回避 | - |
+| プラグイン                     | 目的                       | 設定                                        |
+| ------------------------------ | -------------------------- | ------------------------------------------- |
+| `@eslint/js`                   | JavaScript 基本ルール      | `recommended`                               |
+| `typescript-eslint`            | TypeScript 厳格ルール      | `strictTypeChecked`, `stylisticTypeChecked` |
+| `eslint-plugin-react-hooks`    | React Hooks ルール         | `recommended`                               |
+| `eslint-plugin-react-refresh`  | React Fast Refresh 対応    | カスタム                                    |
+| `eslint-plugin-security`       | セキュリティ脆弱性検出     | `recommended`                               |
+| `eslint-plugin-sonarjs`        | コード品質・複雑度         | `recommended`                               |
+| `@microsoft/eslint-plugin-sdl` | Microsoft SDL セキュリティ | `common`, `electron`, `react`               |
+| `eslint-config-prettier`       | Prettier との競合回避      | -                                           |
 
 ### 2.3 TypeScript 厳格ルール
 
@@ -38,22 +38,23 @@ AgiRity では以下のツールでコード品質を担保しています:
 
 AI コード生成の品質ゲートとして、以下のルールを `error` レベルで適用:
 
-| ルール | 目的 |
-|--------|------|
-| `@typescript-eslint/no-explicit-any` | `any` 型の禁止 |
-| `@typescript-eslint/no-unsafe-assignment` | 暗黙の `any` 伝播防止 |
-| `@typescript-eslint/no-unsafe-call` | 暗黙の `any` 伝播防止 |
-| `@typescript-eslint/no-unsafe-member-access` | 暗黙の `any` 伝播防止 |
-| `@typescript-eslint/no-unsafe-return` | 暗黙の `any` 伝播防止 |
-| `@typescript-eslint/no-floating-promises` | 未処理の Promise 検出 |
-| `@typescript-eslint/await-thenable` | 不要な `await` 検出 |
-| `@typescript-eslint/no-misused-promises` | Promise 誤用検出 |
-| `@typescript-eslint/require-await` | 不要な `async` 検出 |
-| `@typescript-eslint/strict-boolean-expressions` | 曖昧な条件式の禁止 |
-| `@typescript-eslint/no-unnecessary-condition` | 到達不能コード検出 |
+| ルール                                             | 目的                           |
+| -------------------------------------------------- | ------------------------------ |
+| `@typescript-eslint/no-explicit-any`               | `any` 型の禁止                 |
+| `@typescript-eslint/no-unsafe-assignment`          | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-call`                | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-member-access`       | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-return`              | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-floating-promises`          | 未処理の Promise 検出          |
+| `@typescript-eslint/await-thenable`                | 不要な `await` 検出            |
+| `@typescript-eslint/no-misused-promises`           | Promise 誤用検出               |
+| `@typescript-eslint/require-await`                 | 不要な `async` 検出            |
+| `@typescript-eslint/strict-boolean-expressions`    | 曖昧な条件式の禁止             |
+| `@typescript-eslint/no-unnecessary-condition`      | 到達不能コード検出             |
 | `@typescript-eslint/restrict-template-expressions` | テンプレートリテラルの型安全性 |
 
 **採用理由**:
+
 - AI は「動くコード」を生成するが、「最適なコード」とは限らない
 - 過剰な防御的コード（不要な null チェック）が生成されやすい
 - 曖昧な条件式が混在しやすい
@@ -67,34 +68,35 @@ AI コード生成の品質ゲートとして、以下のルールを `error` �
 
 Node.js 向けセキュリティパターンを検出:
 
-| ルール | 検出対象 |
-|--------|---------|
-| `detect-unsafe-regex` | ReDoS 脆弱性のある正規表現 |
-| `detect-buffer-noassert` | Buffer の noAssert オプション |
-| `detect-child-process` | 危険な child_process 使用 |
-| `detect-disable-mustache-escape` | Mustache エスケープ無効化 |
-| `detect-eval-with-expression` | eval() の動的使用 |
-| `detect-no-csrf-before-method-override` | CSRF 脆弱性 |
-| `detect-non-literal-fs-filename` | 動的ファイルパス |
-| `detect-non-literal-regexp` | 動的正規表現 |
-| `detect-non-literal-require` | 動的 require |
-| `detect-object-injection` | オブジェクトインジェクション |
-| `detect-possible-timing-attacks` | タイミング攻撃 |
-| `detect-pseudoRandomBytes` | 弱い乱数生成 |
+| ルール                                  | 検出対象                      |
+| --------------------------------------- | ----------------------------- |
+| `detect-unsafe-regex`                   | ReDoS 脆弱性のある正規表現    |
+| `detect-buffer-noassert`                | Buffer の noAssert オプション |
+| `detect-child-process`                  | 危険な child_process 使用     |
+| `detect-disable-mustache-escape`        | Mustache エスケープ無効化     |
+| `detect-eval-with-expression`           | eval() の動的使用             |
+| `detect-no-csrf-before-method-override` | CSRF 脆弱性                   |
+| `detect-non-literal-fs-filename`        | 動的ファイルパス              |
+| `detect-non-literal-regexp`             | 動的正規表現                  |
+| `detect-non-literal-require`            | 動的 require                  |
+| `detect-object-injection`               | オブジェクトインジェクション  |
+| `detect-possible-timing-attacks`        | タイミング攻撃                |
+| `detect-pseudoRandomBytes`              | 弱い乱数生成                  |
 
 #### @microsoft/eslint-plugin-sdl
 
 Microsoft Security Development Lifecycle ルール:
+
 - `common`: 一般的なセキュリティルール
 - `electron`: Electron 固有のセキュリティルール
 - `react`: React 固有のセキュリティルール
 
 ### 2.5 その他のルール
 
-| ルール | 設定 | 理由 |
-|--------|------|------|
-| `no-console` | `error` | logger を使用すべき |
-| `react-refresh/only-export-components` | `warn` | HMR 最適化 |
+| ルール                                 | 設定    | 理由                |
+| -------------------------------------- | ------- | ------------------- |
+| `no-console`                           | `error` | logger を使用すべき |
+| `react-refresh/only-export-components` | `warn`  | HMR 最適化          |
 
 ### 2.6 ルール緩和（例外）
 
@@ -157,16 +159,16 @@ const value = obj[key];
 
 ### 3.2 ルール詳細
 
-| ルール | 値 | 説明 |
-|--------|-----|------|
-| `semi` | `true` | セミコロンを付ける |
-| `singleQuote` | `true` | シングルクォートを使用 |
-| `tabWidth` | `2` | インデント幅 2 スペース |
-| `trailingComma` | `es5` | ES5 互換の末尾カンマ |
-| `printWidth` | `100` | 1行の最大文字数 |
-| `bracketSpacing` | `true` | オブジェクトリテラルのスペース |
-| `arrowParens` | `always` | アロー関数の引数に常に括弧 |
-| `endOfLine` | `lf` | 改行コード LF |
+| ルール           | 値       | 説明                           |
+| ---------------- | -------- | ------------------------------ |
+| `semi`           | `true`   | セミコロンを付ける             |
+| `singleQuote`    | `true`   | シングルクォートを使用         |
+| `tabWidth`       | `2`      | インデント幅 2 スペース        |
+| `trailingComma`  | `es5`    | ES5 互換の末尾カンマ           |
+| `printWidth`     | `100`    | 1行の最大文字数                |
+| `bracketSpacing` | `true`   | オブジェクトリテラルのスペース |
+| `arrowParens`    | `always` | アロー関数の引数に常に括弧     |
+| `endOfLine`      | `lf`     | 改行コード LF                  |
 
 ### 3.3 除外設定
 
@@ -221,6 +223,7 @@ yarn.lock
 ```
 
 使用例:
+
 ```typescript
 import { ConfigService } from '@/main/services/ConfigService';
 ```
@@ -233,10 +236,10 @@ import { ConfigService } from '@/main/services/ConfigService';
 
 [Snyk](https://snyk.io/) はセキュリティスキャンツールです。AgiRity では以下の2つの機能を使用しています:
 
-| 機能 | 説明 | コマンド |
-|------|------|---------|
-| **Snyk Open Source (SCA)** | 依存関係の脆弱性スキャン | `just security` |
-| **Snyk Code (SAST)** | ソースコードの静的解析 | `just security-code` |
+| 機能                       | 説明                     | コマンド             |
+| -------------------------- | ------------------------ | -------------------- |
+| **Snyk Open Source (SCA)** | 依存関係の脆弱性スキャン | `just security`      |
+| **Snyk Code (SAST)**       | ソースコードの静的解析   | `just security-code` |
 
 ### 5.2 Snyk Open Source (SCA)
 
@@ -270,12 +273,12 @@ Testing /path/to/project...
 
 #### 対応方針
 
-| 深刻度 | 対応 |
-|--------|------|
+| 深刻度       | 対応                         |
+| ------------ | ---------------------------- |
 | **Critical** | 即時対応（リリースブロック） |
-| **High** | 1週間以内に対応 |
-| **Medium** | 次回リリースまでに対応 |
-| **Low** | バックログに追加 |
+| **High**     | 1週間以内に対応              |
+| **Medium**   | 次回リリースまでに対応       |
+| **Low**      | バックログに追加             |
 
 ### 5.3 Snyk Code (SAST)
 
@@ -297,13 +300,13 @@ snyk code test
 
 #### 検出対象
 
-| カテゴリ | 例 |
-|---------|-----|
-| **Injection** | SQL Injection, Command Injection, XSS |
-| **Cryptography** | 弱い暗号化、ハードコードされたシークレット |
-| **Input Validation** | 未検証の入力 |
-| **Error Handling** | 不適切なエラーハンドリング |
-| **Code Quality** | 到達不能コード、未使用変数 |
+| カテゴリ             | 例                                         |
+| -------------------- | ------------------------------------------ |
+| **Injection**        | SQL Injection, Command Injection, XSS      |
+| **Cryptography**     | 弱い暗号化、ハードコードされたシークレット |
+| **Input Validation** | 未検証の入力                               |
+| **Error Handling**   | 不適切なエラーハンドリング                 |
+| **Code Quality**     | 到達不能コード、未使用変数                 |
 
 ### 5.4 全スキャン実行
 
@@ -333,8 +336,8 @@ snyk auth
 
 #### 環境変数 (CI 用)
 
-| 変数名 | 説明 |
-|--------|------|
+| 変数名       | 説明              |
+| ------------ | ----------------- |
 | `SNYK_TOKEN` | Snyk API トークン |
 
 ### 5.6 Git Hooks との統合
@@ -364,10 +367,10 @@ snyk ignore --id=SNYK-JS-EXAMPLE-123456 --reason="False positive, not applicable
 
 ### 5.8 無料枠
 
-| プラン | 制限 |
-|--------|------|
-| Free | 200 テスト/月 |
-| Team | 無制限 |
+| プラン | 制限          |
+| ------ | ------------- |
+| Free   | 200 テスト/月 |
+| Team   | 無制限        |
 
 ---
 
@@ -379,23 +382,23 @@ SonarCloud は継続的なコード品質分析ツールです。
 
 ### 6.2 Quality Gate 基準 (計画)
 
-| 指標 | 閾値 |
-|------|------|
-| Coverage | >= 70% |
-| Duplicated Lines | < 3% |
-| Maintainability Rating | A |
-| Reliability Rating | A |
-| Security Rating | A |
+| 指標                   | 閾値   |
+| ---------------------- | ------ |
+| Coverage               | >= 70% |
+| Duplicated Lines       | < 3%   |
+| Maintainability Rating | A      |
+| Reliability Rating     | A      |
+| Security Rating        | A      |
 
 ### 6.3 重視する指標 (計画)
 
-| 指標 | 説明 |
-|------|------|
-| **Code Smells** | 保守性を下げるコード |
-| **Bugs** | 潜在的なバグ |
-| **Vulnerabilities** | セキュリティ脆弱性 |
+| 指標                  | 説明                             |
+| --------------------- | -------------------------------- |
+| **Code Smells**       | 保守性を下げるコード             |
+| **Bugs**              | 潜在的なバグ                     |
+| **Vulnerabilities**   | セキュリティ脆弱性               |
 | **Security Hotspots** | セキュリティレビューが必要な箇所 |
-| **Technical Debt** | 修正に必要な推定時間 |
+| **Technical Debt**    | 修正に必要な推定時間             |
 
 ### 6.4 実装状況
 
@@ -501,7 +504,7 @@ npm install
 // eslint.config.mjs
 export default tseslint.config(
   // ... 他の設定 ...
-  eslintConfigPrettier  // 最後に配置
+  eslintConfigPrettier // 最後に配置
 );
 ```
 
@@ -516,12 +519,12 @@ Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
 
 ## 9. 関連ドキュメント
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [ADR-001: Strict ESLint/TypeScript Rules](../adr/001-strict-eslint-typescript-rules.md) | TypeScript 厳格ルール採用の決定 |
-| [ADR-003: Security Linter Configuration](../adr/003-security-linter-configuration.md) | セキュリティ Linter 採用の決定 |
-| [CI/CD ガイド](./cicd_guide.md) | CI/CD パイプラインでのチェック実行 |
-| [テスト戦略](../implementation/testing_strategy.md) | テスト品質基準 |
+| ドキュメント                                                                            | 内容                               |
+| --------------------------------------------------------------------------------------- | ---------------------------------- |
+| [ADR-001: Strict ESLint/TypeScript Rules](../adr/001-strict-eslint-typescript-rules.md) | TypeScript 厳格ルール採用の決定    |
+| [ADR-003: Security Linter Configuration](../adr/003-security-linter-configuration.md)   | セキュリティ Linter 採用の決定     |
+| [CI/CD ガイド](./cicd_guide.md)                                                         | CI/CD パイプラインでのチェック実行 |
+| [テスト戦略](../implementation/testing_strategy.md)                                     | テスト品質基準                     |
 
 ---
 
