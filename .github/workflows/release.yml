@@ -12,9 +12,6 @@ on:
         default: true
         type: boolean
 
-permissions:
-  contents: write
-
 jobs:
   # Job 0: Check if release is enabled
   check-enabled:
@@ -118,6 +115,8 @@ jobs:
     if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
