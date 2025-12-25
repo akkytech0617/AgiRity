@@ -1,0 +1,283 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, 'feat/**', 'fix/**']
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 0: Setup - Output feature flags for other jobs
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      # =============================================================================
+      # Feature Flags - Set to 'true' to enable optional jobs
+      # =============================================================================
+      # Enable Linux/Windows builds (macOS always runs)
+      # TODO: Enable when ready for multi-OS distribution
+      enable_multi_os_build: 'false'
+      # Enable E2E tests (requires build artifacts)
+      # TODO: Enable when E2E tests are stable in CI environment
+      enable_e2e: 'false'
+      # Enable SonarCloud scan
+      enable_sonar: 'true'
+    steps:
+      - name: Output feature flags
+        run: |
+          echo "Feature flags configured:"
+          echo "  enable_multi_os_build: false"
+          echo "  enable_e2e: false"
+          echo "  enable_sonar: true"
+
+  # Job 1: Checks (format, type, lint)
+  check:
+    name: Check (Type, Format, Lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run checks
+        run: just check
+
+  # Job 2: Unit Tests
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: check
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: just coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  # Job 3: Security Scans
+  security:
+    name: Security Scans
+    runs-on: ubuntu-latest
+    needs: check
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security scans
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: just security-all
+        continue-on-error: true
+
+  # Job 3b: SonarCloud Scan (optional)
+  sonar:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    needs: [setup, test]
+    if: ${{ needs.setup.outputs.enable_sonar == 'true' }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@383f7e52eae3ab0510c3cb0e7d9d150bbaeab838 # v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORG }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+  # Job 4: Build (macOS - always runs)
+  build:
+    name: Build (macOS)
+    needs: [check, test]
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: just build-ci
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-macos
+          path: |
+            dist/
+            dist-electron/
+          retention-days: 7
+
+  # Job 4b: Build (Linux/Windows - optional)
+  build-multi-os:
+    name: Build (${{ matrix.os }})
+    needs: [setup, check, test]
+    if: ${{ needs.setup.outputs.enable_multi_os_build == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: just build-ci
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-${{ matrix.os }}
+          path: |
+            dist/
+            dist-electron/
+          retention-days: 7
+
+  # Job 5: E2E Tests (macOS only - Electron requires GUI)
+  e2e:
+    name: E2E Tests
+    needs: [setup, build]
+    if: ${{ needs.setup.outputs.enable_e2e == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Download build artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-macos
+          path: .
+
+      - name: Run E2E tests
+        run: just e2e
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: e2e-results
+          path: |
+            tests/results/e2e/
+            test-results/
+          retention-days: 7
