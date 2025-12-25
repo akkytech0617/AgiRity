@@ -16,11 +16,11 @@ concurrency:
 env:
   # Enable multi-OS build jobs (ubuntu, macos, windows)
   # TODO: Enable when ready for distribution builds
-  ENABLE_BUILD: 'false'
+  ENABLE_BUILD: false
 
   # Enable E2E tests (requires build artifacts)
   # TODO: Enable when E2E tests are stable in CI environment
-  ENABLE_E2E: 'false'
+  ENABLE_E2E: false
 
 jobs:
   # Job 1: Checks (format, type, lint)
