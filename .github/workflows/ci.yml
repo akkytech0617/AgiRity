@@ -2,27 +2,36 @@ name: CI
 
 on:
   push:
-    branches: [main, 'feat/**', 'fix/**']
+    branches: [main, develop, 'feat/**', 'fix/**']
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# =============================================================================
-# Feature Flags - Set to 'true' to enable optional jobs
-# =============================================================================
-env:
-  # Enable multi-OS build jobs (ubuntu, macos, windows)
-  # TODO: Enable when ready for distribution builds
-  ENABLE_BUILD: false
-
-  # Enable E2E tests (requires build artifacts)
-  # TODO: Enable when E2E tests are stable in CI environment
-  ENABLE_E2E: false
-
 jobs:
+  # Job 0: Setup - Output feature flags for other jobs
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      # =============================================================================
+      # Feature Flags - Set to 'true' to enable optional jobs
+      # =============================================================================
+      # Enable multi-OS build jobs
+      # TODO: Enable when ready for distribution builds
+      enable_build: 'false'
+      # Enable E2E tests (requires build artifacts)
+      # TODO: Enable when E2E tests are stable in CI environment
+      enable_e2e: 'false'
+    steps:
+      - name: Output feature flags
+        run: |
+          echo "Feature flags configured:"
+          echo "  enable_build: false"
+          echo "  enable_e2e: false"
+
   # Job 1: Checks (format, type, lint)
   check:
     name: Check (Type, Format, Lint)
@@ -118,8 +127,8 @@ jobs:
   # TODO: Add ubuntu-latest and windows-latest when ready for multi-OS distribution
   build:
     name: Build (${{ matrix.os }})
-    needs: [check, test]
-    if: ${{ env.ENABLE_BUILD == 'true' }}
+    needs: [setup, check, test]
+    if: ${{ needs.setup.outputs.enable_build == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -155,10 +164,10 @@ jobs:
   # Job 5: E2E Tests (macOS only - Electron requires GUI)
   e2e:
     name: E2E Tests
-    needs: build
+    needs: [setup, build]
     runs-on: macos-latest
     timeout-minutes: 30
-    if: ${{ env.ENABLE_E2E == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
+    if: ${{ needs.setup.outputs.enable_e2e == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
 
     steps:
       - name: Checkout code
