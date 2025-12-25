@@ -129,7 +129,8 @@ jobs:
         run: npm ci
 
       - name: Build application
-        run: npm run build
+        run: tsc && npx vite build
+        # Note: electron-builder is skipped in CI build test (requires GH_TOKEN for publishing)
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
