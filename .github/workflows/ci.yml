@@ -26,15 +26,14 @@ jobs:
       # TODO: Enable when E2E tests are stable in CI environment
       enable_e2e: 'false'
       # Enable SonarCloud scan
-      # TODO: Enable when SonarCloud is configured
-      enable_sonar: 'false'
+      enable_sonar: 'true'
     steps:
       - name: Output feature flags
         run: |
           echo "Feature flags configured:"
           echo "  enable_multi_os_build: false"
           echo "  enable_e2e: false"
-          echo "  enable_sonar: false"
+          echo "  enable_sonar: true"
 
   # Job 1: Checks (format, type, lint)
   check:
