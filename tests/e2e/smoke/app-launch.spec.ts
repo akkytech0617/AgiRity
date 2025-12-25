@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
-import { test, expect } from '../fixtures/electron-dev.fixture';
+import { test, expect } from '../fixtures/electron.fixture';
+
+const APP_ROOT_SELECTOR = '[data-testid="app-root"]';
 
 test.describe('Smoke Tests', () => {
   test('should launch app without console errors', async ({ app }) => {
@@ -19,9 +21,8 @@ test.describe('Smoke Tests', () => {
       }
     });
 
-    // Wait for app to fully initialize
-    await window.waitForLoadState('domcontentloaded');
-    await window.waitForTimeout(2000); // Additional wait for React hydration
+    // Wait for app to fully initialize (React app rendered)
+    await window.waitForSelector(APP_ROOT_SELECTOR);
 
     // Check for critical errors (including process.env errors)
     expect(
@@ -51,10 +52,10 @@ test.describe('Smoke Tests', () => {
     const window = await app.firstWindow();
 
     // Check if React app has loaded
-    await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
+    await window.waitForSelector(APP_ROOT_SELECTOR);
 
     // Verify app is interactive
-    const appRoot = window.locator('[data-testid="app-root"]');
+    const appRoot = window.locator(APP_ROOT_SELECTOR);
     await expect(appRoot).toBeVisible();
   });
 });
@@ -72,8 +73,8 @@ test.describe('Console Error Monitoring', () => {
       }
     });
 
-    await window.waitForLoadState('domcontentloaded');
-    await window.waitForTimeout(3000); // Wait for any initialization errors
+    // Wait for app to be fully rendered
+    await window.waitForSelector(APP_ROOT_SELECTOR);
 
     // Check specifically for process.env related errors
     const processEnvErrors = errors.filter((err) => err.includes('process.env'));
@@ -82,8 +83,8 @@ test.describe('Console Error Monitoring', () => {
       console.log('Process.env errors detected:', processEnvErrors);
     }
 
-    // This test helps identify when process.env is accessed in renderer
-    expect(processEnvErrors.length).toBeGreaterThanOrEqual(0);
+    // Should not have process.env errors in renderer
+    expect(processEnvErrors).toHaveLength(0);
   });
 
   test('should detect infinite recursion', async ({ app }) => {
@@ -98,8 +99,8 @@ test.describe('Console Error Monitoring', () => {
       }
     });
 
-    await window.waitForLoadState('domcontentloaded');
-    await window.waitForTimeout(3000);
+    // Wait for app to be fully rendered
+    await window.waitForSelector(APP_ROOT_SELECTOR);
 
     // Check for stack overflow errors
     const stackOverflowErrors = errors.filter(
@@ -118,26 +119,13 @@ test.describe('Console Error Monitoring', () => {
 });
 
 test.describe('Workspace Management', () => {
-  test.skip('should load workspaces from mock data', async ({ app }) => {
+  test('should show initial app state', async ({ app, takeScreenshot }) => {
     const window = await app.firstWindow();
 
-    await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
-
-    // Take screenshot to see initial state
-    await window.screenshot({ path: 'dev-initial-state.png' });
-
-    // Check if workspace list is visible
-    const workspaceList = window.locator('[data-testid="workspace-list"]');
-    await expect(workspaceList).toBeVisible({ timeout: 5000 });
-  });
-
-  test('should show initial app state', async ({ app }) => {
-    const window = await app.firstWindow();
-
-    await window.waitForSelector('[data-testid="app-root"]', { timeout: 5000 });
+    await window.waitForSelector(APP_ROOT_SELECTOR);
 
     // Take screenshot to see what the app looks like
-    await window.screenshot({ path: 'dev-app-state.png' });
+    await takeScreenshot(window, 'dev-app-state.png');
 
     // Get page title to verify we're on the right page
     const title = await window.title();

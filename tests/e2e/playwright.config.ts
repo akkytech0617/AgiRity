@@ -16,4 +16,5 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+  outputDir: '../results/e2e/ss',
 });
