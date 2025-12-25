@@ -72,6 +72,10 @@ clean:
 build: clean
     npm run build --no-color
 
+# Build for CI (without electron-builder packaging)
+build-ci: clean
+    npx tsc && npx vite build --no-color
+
 # Package the application (create installers)
 package: build
     npm run package --no-color
