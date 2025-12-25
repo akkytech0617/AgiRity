@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # GitHub Actions のみを対象（SHA pinning の自動更新）
+  # npm 依存関係は Snyk が管理するため除外
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "dependencies"
+      - "github-actions"

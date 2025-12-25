@@ -325,7 +325,29 @@ env:
 | `SONAR_ORG`         | SonarCloud 組織名           | Yes  |
 | `SONAR_PROJECT_KEY` | SonarCloud プロジェクトキー | Yes  |
 
-### 4.6 アーティファクト
+### 4.6 アクションのバージョン管理
+
+#### SHA Pinning
+
+セキュリティのため、すべての GitHub Actions はフルコミットSHAでピン留めされています：
+
+```yaml
+# 推奨（SHA pinning）
+uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+# 非推奨（タグのみ）
+uses: actions/checkout@v4
+```
+
+これにより、サプライチェーン攻撃のリスクを軽減します。
+
+#### Dependabot による自動更新
+
+GitHub Actions の SHA 更新は Dependabot が自動で行います。設定は `.github/dependabot.yml` で管理されています。
+
+**注意**: npm 依存関係は Snyk が管理するため、Dependabot は GitHub Actions のみを対象としています。
+
+### 4.7 アーティファクト
 
 CI で生成されるアーティファクトは GitHub Actions の Artifacts に保存されます:
 
@@ -496,4 +518,4 @@ snyk auth
 
 ---
 
-最終更新: 2025-12-25
+最終更新: 2025-12-26
