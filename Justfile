@@ -74,7 +74,7 @@ build: clean
 
 # Build for CI (without electron-builder packaging)
 build-ci: clean
-    npx tsc && npx vite build --no-color
+    npx tsc && npx vite build
 
 # Package the application (create installers)
 package: build
