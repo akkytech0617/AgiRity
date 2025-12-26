@@ -88,6 +88,7 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 | ドキュメント                                                                     | 内容                                           |
 | -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [docs/development/codebase_guide.md](docs/development/codebase_guide.md)         | コードベース構造ガイド（編集箇所の早見表）     |
 | [docs/development/agent_workflow.md](docs/development/agent_workflow.md)         | AIエージェント作業ワークフロー標準             |
 | [docs/development/git_release_guide.md](docs/development/git_release_guide.md)   | Git操作・リリース管理ガイド                    |
 | [docs/development/cicd_guide.md](docs/development/cicd_guide.md)                 | CI/CD ガイド（Just、Lefthook、GitHub Actions） |
