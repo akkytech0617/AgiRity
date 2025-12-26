@@ -112,10 +112,33 @@ PRのCIチェックが全てパスしているか確認：
 gh pr checks <PR番号>
 ```
 
-確認項目：
+#### 2.1 確認すべき2種類のステータス
 
-- [ ] 全チェックがパス（success）
+GitHub PRのステータスには**2種類**あり、両方を確認する必要があります：
+
+| 種類 | 内容 | 例 |
+|------|------|-----|
+| **Check Runs** | GitHub Actions CI | build, test, lint等 |
+| **Statuses** | 外部サービス連携 | Snyk, CodeRabbit, SonarCloud等 |
+
+> **重要**: `mergeable_state: unstable`の場合、Check Runsの失敗が原因であることが多いです。Statusesのみがsuccessでも、Check Runsが失敗していればマージすべきではありません。
+
+#### 2.2 確認方法
+
+```bash
+# Check Runs と Statuses の両方を確認
+gh pr checks <PR番号>
+
+# より詳細な確認（GitHub CLI）
+gh pr view <PR番号> --json statusCheckRollup
+```
+
+#### 2.3 確認項目
+
+- [ ] **Check Runs**: 全てパス（GitHub Actions CI）
+- [ ] **Statuses**: 全てパス（外部サービス）
 - [ ] ワークフローの実行が完了している
+- [ ] `mergeable_state`が`clean`である
 
 > **Note**: Dependabot PRはワークフローファイル自体の変更なので、変更後のワークフローでCIが実行されることに注意。
 
