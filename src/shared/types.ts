@@ -7,7 +7,7 @@ export const WorkspaceItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().optional(),
   path: z.string().optional(),
-  urls: z.array(z.string().url()).optional(),
+  urls: z.array(z.url()).optional(),
   folder: z.string().optional(),
   waitTime: z.number().min(0).optional(),
   dependsOn: z.string().optional(),
@@ -20,14 +20,14 @@ export const WorkspacePresetSchema = z.object({
 });
 
 export const WorkspaceSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
   description: z.string().optional(),
   items: z.array(WorkspaceItemSchema),
   presets: z.array(WorkspacePresetSchema).optional(),
   tags: z.array(z.string()).optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 // --- TypeScript Types ---

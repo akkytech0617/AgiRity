@@ -151,7 +151,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 setName(e.target.value);
               }}
               placeholder="e.g., VS Code, GitHub Repo"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
             />
           </div>
 
@@ -168,7 +168,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 setCategory(e.target.value);
               }}
               placeholder="e.g., development, reference, communication"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
             />
             <p className="text-xs text-gray-500 mt-1">Optional label for grouping and filtering</p>
           </div>
@@ -187,7 +187,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                   setPath(e.target.value);
                 }}
                 placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {itemType === 'app' ? 'Full path to the application' : 'Path to the folder to open'}
@@ -209,7 +209,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 }}
                 placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm resize-none"
               />
               <p className="text-xs text-gray-500 mt-1">One URL per line</p>
             </div>
@@ -236,7 +236,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                     setWaitTime(e.target.value ? Number(e.target.value) : undefined);
                   }}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm"
                 />
               </div>
 
@@ -254,7 +254,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                   onChange={(e) => {
                     setDependsOn(e.target.value);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm bg-white"
                 >
                   <option value="">None</option>
                   {existingItemNames.map((itemName) => (

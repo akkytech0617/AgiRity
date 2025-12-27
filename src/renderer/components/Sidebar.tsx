@@ -28,13 +28,13 @@ export function Sidebar({
   );
 
   return (
-    <aside className="w-16 lg:w-64 h-screen bg-gray-900 text-gray-400 flex flex-col flex-shrink-0 transition-all duration-300">
+    <aside className="w-16 lg:w-64 h-screen bg-gray-900 text-gray-400 flex flex-col shrink-0 transition-all duration-300">
       {/* Logo Area */}
       <button
         onClick={() => onSelectWorkspace?.(null)}
         className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-gray-800 hover:bg-gray-800 transition-colors w-full"
       >
-        <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
           <span className="text-white font-display font-bold text-lg">A</span>
         </div>
         <span className="hidden lg:block ml-3 text-white font-display font-bold text-lg tracking-tight">
@@ -62,7 +62,7 @@ export function Sidebar({
               onChange={(e) => {
                 setSearchQuery(e.target.value);
               }}
-              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded-md pl-8 pr-3 py-1.5 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-gray-600"
+              className="w-full bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded-md pl-8 pr-3 py-1.5 focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-gray-600"
             />
           </div>
         </div>
@@ -74,7 +74,7 @@ export function Sidebar({
               onClick={() => onSelectWorkspace?.(ws.id)}
               className="flex items-center gap-3 px-3 py-2 text-sm hover:text-white hover:bg-gray-800 rounded-md transition-colors text-left truncate w-full group"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-primary transition-colors flex-shrink-0"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-700 group-hover:bg-primary transition-colors shrink-0"></span>
               <span className="truncate hidden lg:block">{ws.name}</span>
             </button>
           ))}

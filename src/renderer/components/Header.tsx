@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export function Header({ title, subtitle, tags, showEditButton, onEdit }: Readonly<HeaderProps>) {
   return (
-    <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between flex-shrink-0 bg-white">
+    <header className="h-20 border-b border-gray-200 px-6 flex items-center justify-between shrink-0 bg-white">
       <div>
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-bold text-gray-800">{title}</h1>

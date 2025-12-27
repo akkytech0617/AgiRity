@@ -91,7 +91,7 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
                   setName(e.target.value);
                 }}
                 placeholder="e.g., Morning Routine, Client Project"
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
               />
             </div>
 
@@ -105,7 +105,7 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
                 }}
                 rows={2}
                 placeholder="What is this workspace for?"
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all resize-none"
               />
             </div>
 
@@ -124,7 +124,7 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
                   );
                 }}
                 placeholder="dev, frontend, daily..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Comma separated values for organizing workspaces

@@ -53,7 +53,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     IPC_CHANNELS.WORKSPACE_GET,
     async (_event, id: unknown): Promise<WorkspaceResult> => {
       try {
-        const validatedId = z.string().uuid().parse(id);
+        const validatedId = z.uuid().parse(id);
         const workspace = await project.getWorkspace(validatedId);
         return { success: true, data: workspace };
       } catch (error) {
@@ -83,7 +83,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     IPC_CHANNELS.WORKSPACE_DELETE,
     async (_event, id: unknown): Promise<WorkspaceResult> => {
       try {
-        const validatedId = z.string().uuid().parse(id);
+        const validatedId = z.uuid().parse(id);
         const deleted = await project.deleteWorkspace(validatedId);
         return { success: true, data: deleted };
       } catch (error) {

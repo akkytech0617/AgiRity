@@ -71,7 +71,7 @@ export function WorkspaceDetail({
                     {presetItems.slice(0, 5).map((item) => (
                       <div
                         key={item.name}
-                        className="p-1 bg-surface rounded border border-border"
+                        className="p-1 bg-surface rounded-sm border border-border"
                         title={item.name}
                       >
                         {/* Small icons for preview */}
@@ -137,7 +137,7 @@ export function WorkspaceDetail({
                 </div>
                 <button
                   onClick={() => onLaunchItem?.(item)}
-                  className="p-1 text-gray-300 hover:text-primary hover:bg-primary-50 rounded transition-colors"
+                  className="p-1 text-gray-300 hover:text-primary hover:bg-primary-50 rounded-sm transition-colors"
                   title="Launch this item only"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
