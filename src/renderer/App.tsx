@@ -3,10 +3,10 @@ import { Layout } from './components/Layout';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceSettings } from './components/WorkspaceSettings';
 import { CreateWorkspace } from './components/CreateWorkspace';
-import { QuickLaunch } from './components/QuickLaunch';
 import { ToolsRegistry } from './components/ToolsRegistry';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
+import { WorkspaceList } from './components/WorkspaceList';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
 import { log } from './lib/logger';
@@ -85,7 +85,7 @@ const MOCK_WORKSPACES: Workspace[] = [
 
 // View Types
 type View =
-  | { type: 'quick-launch' }
+  | { type: 'home' }
   | { type: 'workspace'; id: string }
   | { type: 'workspace-settings'; id: string }
   | { type: 'create-workspace' }
@@ -94,7 +94,7 @@ type View =
   | { type: 'settings' };
 
 function App() {
-  const [activeView, setActiveView] = useState<View>({ type: 'quick-launch' });
+  const [activeView, setActiveView] = useState<View>({ type: 'home' });
 
   const selectedWorkspace =
     activeView.type === 'workspace' || activeView.type === 'workspace-settings'
@@ -108,21 +108,13 @@ function App() {
     }
   };
 
-  const handleEditWorkspace = (id: string) => {
-    setActiveView({ type: 'workspace-settings', id });
-  };
+
 
   const handleSaveWorkspace = (workspace: Workspace) => {
     setActiveView({ type: 'workspace', id: workspace.id });
   };
 
-  const handleLaunchItem = (workspaceId: string, itemName: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === workspaceId);
-    const item = workspace?.items.find((i) => i.name === itemName);
-    if (item) {
-      void launchItem(item);
-    }
-  };
+
 
   const launchItem = async (item: WorkspaceItem) => {
     log.info(`Launching: ${item.name}`);
@@ -141,19 +133,28 @@ function App() {
   };
 
   const handleCreateWorkspace = () => {
-    setActiveView({ type: 'quick-launch' });
+    setActiveView({ type: 'workspace', id: '1' });
   };
 
-  const handleSelectWorkspace = (id: string | null) => {
-    if (id !== null && id !== '') {
-      setActiveView({ type: 'workspace', id });
-    } else {
-      setActiveView({ type: 'quick-launch' });
-    }
+  const handleSelectWorkspace = (id: string) => {
+    setActiveView({ type: 'workspace', id });
+  };
+
+  const handleOpenHome = () => {
+    setActiveView({ type: 'home' });
   };
 
   const renderMainContent = () => {
     switch (activeView.type) {
+      case 'home':
+        return (
+          <WorkspaceList
+            workspaces={MOCK_WORKSPACES}
+            onLaunchWorkspace={(workspace) => {
+              setActiveView({ type: 'workspace', id: workspace.id });
+            }}
+          />
+        );
       case 'tools':
         return <ToolsRegistry />;
       case 'mcp':
@@ -165,7 +166,7 @@ function App() {
           <CreateWorkspace
             onSave={handleCreateWorkspace}
             onCancel={() => {
-              setActiveView({ type: 'quick-launch' });
+              setActiveView({ type: 'workspace', id: '1' });
             }}
           />
         );
@@ -182,76 +183,31 @@ function App() {
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
       case 'workspace':
+      default:
+        // Workspace view is the default
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
             onLaunch={handleLaunch}
-            onLaunchItem={(item) => void launchItem(item)}
+            onLaunchItem={(item) => {
+              void launchItem(item);
+            }}
+            onEditWorkspace={(id) => {
+              setActiveView({ type: 'workspace-settings', id });
+            }}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
-      case 'quick-launch':
-      default:
-        return (
-          <QuickLaunch
-            workspaces={MOCK_WORKSPACES}
-            onSelectWorkspace={(id) => {
-              handleSelectWorkspace(id);
-            }}
-            onLaunchItem={handleLaunchItem}
-            onLaunchWorkspace={handleLaunch}
-          />
-        );
     }
   };
 
-  const getHeaderContent = () => {
-    switch (activeView.type) {
-      case 'tools':
-        return { title: 'Tools Registry', subtitle: 'Manage installed tools' };
-      case 'mcp':
-        return { title: 'MCP Servers', subtitle: 'Model Context Protocol configuration' };
-      case 'settings':
-        return { title: 'Settings', subtitle: 'Application preferences' };
-      case 'create-workspace':
-        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
-      case 'workspace-settings':
-        return selectedWorkspace
-          ? {
-              title: 'Edit Workspace',
-              subtitle: `Configure settings for ${selectedWorkspace.name}`,
-            }
-          : { title: 'Workspace Settings', subtitle: '' };
-      case 'workspace':
-        return selectedWorkspace
-          ? {
-              title: selectedWorkspace.name,
-              subtitle: selectedWorkspace.description,
-              tags: selectedWorkspace.tags,
-              showEditButton: true,
-              onEdit: () => {
-                handleEditWorkspace(selectedWorkspace.id);
-              },
-            }
-          : { title: 'Workspace', subtitle: '' };
-      case 'quick-launch':
-      default:
-        return {
-          title: 'Quick Launch',
-          subtitle: 'Start your work in seconds',
-          showEditButton: true,
-          onEdit: () => {
-            // Edit Quick Launch settings
-          },
-        };
-    }
-  };
+
 
   return (
     <Layout
       workspaces={MOCK_WORKSPACES}
-      header={getHeaderContent()}
+      activeWorkspaceId={activeView.type === 'workspace' ? activeView.id : null}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
       onOpenSettings={() => {
@@ -263,6 +219,7 @@ function App() {
       onOpenMCP={() => {
         setActiveView({ type: 'mcp' });
       }}
+      onOpenHome={handleOpenHome}
     >
       {renderMainContent()}
     </Layout>

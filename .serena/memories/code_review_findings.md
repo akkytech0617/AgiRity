@@ -27,7 +27,7 @@
 
 #### 3. Duplicated Logic
 
-- **getItemIcon**: Duplicated in 4 files (QuickLaunch, WorkspaceDetail, WorkspaceRow, WorkspaceCard)
+- **getItemIcon**: Duplicated in multiple files (WorkspaceDetail, WorkspaceRow, WorkspaceCard)
 - **Item CRUD handlers**: Duplicated in WorkspaceSettings and CreateWorkspace
 - **spawn Promise wrapper**: Duplicated 3 times in LauncherService
 - **Action**: Extract to shared utilities/hooks

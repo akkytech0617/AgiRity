@@ -6,6 +6,8 @@ import { WorkspaceItem, Workspace, IPC_CHANNELS } from '../shared/types';
 
 const launcherApi = {
   launchItem: (item: WorkspaceItem) => ipcRenderer.invoke(IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM, item),
+  getItemIcon: (item: WorkspaceItem) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAUNCHER_GET_ITEM_ICON, item),
 };
 
 const workspaceApi = {
