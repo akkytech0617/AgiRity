@@ -4,6 +4,7 @@ import {
   WorkspaceSchema,
   LaunchResult,
   WorkspaceResult,
+  IconResult,
   IPC_CHANNELS,
 } from '../../shared/types';
 import type { ServiceContainer } from '../container';
@@ -33,6 +34,21 @@ export function setupIpcHandlers(container: ServiceContainer): void {
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid input data');
         log.error('Launch failed:', message);
+        return { success: false, error: message };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.LAUNCHER_GET_ITEM_ICON,
+    async (_event, item: unknown): Promise<IconResult> => {
+      try {
+        const validatedItem = WorkspaceItemSchema.parse(item);
+        const result = await launcher.getItemIcon(validatedItem);
+        return result;
+      } catch (error) {
+        const message = getErrorMessage(error, 'Invalid input data');
+        log.error('Get icon failed:', message);
         return { success: false, error: message };
       }
     }

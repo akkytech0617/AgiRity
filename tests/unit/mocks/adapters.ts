@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from '@/main/adapters/interfaces';
 import type { IConfigService, IProjectService, ILauncherService } from '@/main/services/interfaces';
+import type { IconResult } from '@/shared/types';
 
 /**
 
@@ -75,5 +76,6 @@ export function createMockProjectService(): IProjectService {
 export function createMockLauncherService(): ILauncherService {
   return {
     launchItem: vi.fn().mockResolvedValue(undefined),
+    getItemIcon: vi.fn().mockResolvedValue({ success: true } as IconResult),
   };
 }

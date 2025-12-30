@@ -16,9 +16,7 @@ describe('Layout', () => {
 
   const defaultProps = {
     workspaces: mockWorkspaces,
-    header: {
-      title: 'Test Header',
-    },
+    activeWorkspaceId: null,
     onSelectWorkspace: vi.fn(),
     onNewWorkspace: vi.fn(),
     onOpenSettings: vi.fn(),
@@ -35,21 +33,21 @@ describe('Layout', () => {
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
-  it('renders header with title', () => {
+  it('renders header with workspace tabs', () => {
     render(
       <Layout {...defaultProps}>
         <div>Test Content</div>
       </Layout>
     );
-    expect(screen.getByText('Test Header')).toBeInTheDocument();
+    expect(screen.getByText('Test Workspace')).toBeInTheDocument();
   });
 
-  it('renders header with subtitle', () => {
+  it('renders logo in header', () => {
     render(
-      <Layout {...defaultProps} header={{ title: 'Test Header', subtitle: 'Test Subtitle' }}>
+      <Layout {...defaultProps}>
         <div>Test Content</div>
       </Layout>
     );
-    expect(screen.getByText('Test Subtitle')).toBeInTheDocument();
+    expect(screen.getByText('A')).toBeInTheDocument();
   });
 });

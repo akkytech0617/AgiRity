@@ -2,6 +2,8 @@ import {
   WorkspaceItem,
   LaunchResult,
   LaunchResultSchema,
+  IconResult,
+  IconResultSchema,
   Workspace,
   WorkspaceResult,
   WorkspaceResultSchema,
@@ -11,6 +13,10 @@ export const launcherApi = {
   launchItem: async (item: WorkspaceItem): Promise<LaunchResult> => {
     const result = await window.launcherApi.launchItem(item);
     return LaunchResultSchema.parse(result);
+  },
+  getItemIcon: async (item: WorkspaceItem): Promise<IconResult> => {
+    const result = await window.launcherApi.getItemIcon(item);
+    return IconResultSchema.parse(result);
   },
 };
 
