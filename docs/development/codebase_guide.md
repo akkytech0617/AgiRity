@@ -35,11 +35,9 @@ src/
 │   ├── index.tsx      # Rendererエントリーポイント
 │   ├── App.tsx        # メインアプリコンポーネント ⭐重要
 │   ├── components/    # UIコンポーネント
-│   │   ├── Layout.tsx           # 全体レイアウト
-│   │   ├── Header.tsx           # ヘッダー
-│   │   ├── Sidebar.tsx          # サイドバー
-│   │   ├── QuickLaunch.tsx      # クイック起動画面
-│   │   ├── WorkspaceDetail.tsx  # ワークスペース詳細
+│   │   ├── Layout.tsx           # メインレイアウト（Header + Content）
+│   │   ├── Header.tsx           # ブラウザライクなタブバー（ロゴ + ワークスペースタブ + メニュー）
+│   │   ├── WorkspaceDetail.tsx  # ワークスペース詳細（ヘッダー + 2カラムレイアウト）
 │   │   ├── WorkspaceSettings.tsx # ワークスペース設定
 │   │   ├── CreateWorkspace.tsx  # ワークスペース作成
 │   │   ├── ItemEditor.tsx       # アイテム編集
@@ -85,13 +83,12 @@ src/
 
 | やりたいこと | 編集ファイル |
 |-------------|-------------|
-| 画面のレイアウト変更 | `src/renderer/components/Layout.tsx` |
-| サイドバーの変更 | `src/renderer/components/Sidebar.tsx` |
-| ヘッダーの変更 | `src/renderer/components/Header.tsx` |
-| ワークスペース詳細画面 | `src/renderer/components/WorkspaceDetail.tsx` |
+| 全体レイアウト変更（Header + Content） | `src/renderer/components/Layout.tsx` |
+| ブラウザライクなタブバー・メニュー | `src/renderer/components/Header.tsx` |
+| ワークスペース詳細（ヘッダー + 2カラム） | `src/renderer/components/WorkspaceDetail.tsx` |
 | 新規ワークスペース作成画面 | `src/renderer/components/CreateWorkspace.tsx` |
 | アイテム編集UI | `src/renderer/components/ItemEditor.tsx` |
-| ルーティング・画面遷移 | `src/renderer/App.tsx` |
+| ビュータイプ・状態管理・遷移 | `src/renderer/App.tsx` |
 
 ### 2. バックエンドのロジック変更
 
@@ -212,4 +209,36 @@ npm run build
 
 ---
 
-_Last updated: 2025-12-26_
+## UI構造の最新状況
+
+### ブラウザライクなタブUI
+
+アプリはデフォルトで最初のワークスペース（id:'1'）を表示します。ヘッダーにはロゴ、全ワークスペースのタブ、ハンバーガーメニューが配置されています。
+
+```
+Header: [Logo] [Tab1] [Tab2] [Tab3] [+] ... [≡ Menu]
+Content: WorkspaceDetail（またはその他ビュー）
+```
+
+### WorkspaceDetail の2カラムレイアウト
+
+- **ヘッダー**（全幅）: ワークスペース名、説明、タグ、編集ボタン
+- **左カラム**: Launch Presetsをカード縦並び
+- **右カラム**: Workspace Toolsをリスト縦並び
+- 各カラムの見出し（タイトル）はカード/リスト内に統合
+
+### View型の構成
+
+```typescript
+type View =
+  | { type: 'workspace'; id: string }           // ワークスペース詳細
+  | { type: 'workspace-settings'; id: string }  // ワークスペース編集
+  | { type: 'create-workspace' }                // 新規作成
+  | { type: 'tools' }                           // ツール登録（Phase 2）
+  | { type: 'mcp' }                             // MCPサーバー設定（Phase 2）
+  | { type: 'settings' };                       // アプリ設定
+```
+
+---
+
+_Last updated: 2025-12-30_

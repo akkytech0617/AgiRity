@@ -1,4 +1,4 @@
-import type { WorkspaceItem } from '../../shared/types';
+import type { WorkspaceItem, IconResult } from '../../shared/types';
 import type { IShellAdapter } from '../adapters/interfaces';
 import type { ILauncherService, IConfigService } from './interfaces';
 
@@ -24,6 +24,29 @@ export class LauncherService implements ILauncherService {
         throw new Error(`Unknown item type: ${unknownItem.type}`);
       }
     }
+  }
+
+  getItemIcon(item: WorkspaceItem): Promise<IconResult> {
+    let iconName: string;
+
+    switch (item.type) {
+      case 'app':
+        iconName = 'app';
+        break;
+      case 'browser':
+        iconName = 'browser';
+        break;
+      case 'folder':
+        iconName = 'folder';
+        break;
+      default:
+        iconName = 'code';
+    }
+
+    return Promise.resolve({
+      success: true,
+      data: iconName,
+    });
   }
 
   private async launchBrowser(item: WorkspaceItem): Promise<void> {
