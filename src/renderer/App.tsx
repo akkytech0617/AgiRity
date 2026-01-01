@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceSettings } from './components/WorkspaceSettings';
@@ -9,81 +9,9 @@ import { Settings as SettingsView } from './components/Settings';
 import { WorkspaceList } from './components/WorkspaceList';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
+import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
 
-// Mock Data
-const MOCK_WORKSPACES: Workspace[] = [
-  {
-    id: '1',
-    name: 'AgiRity Development',
-    description: 'Frontend & Electron setup environment',
-    items: [
-      { type: 'folder', name: 'Project Root', path: '~/workspace/AgiRity' },
-      { type: 'app', name: 'VS Code', path: '/Applications/Visual Studio Code.app' },
-      {
-        type: 'app',
-        name: 'Zed (Project)',
-        path: '/Applications/Zed.app',
-        folder: '~/workspace/tmp',
-      },
-      {
-        type: 'app',
-        name: 'Terminal',
-        path: '/System/Applications/Utilities/Terminal.app',
-        folder: '~/workspace/AgiRity',
-      },
-      { type: 'browser', name: 'Linear Board', urls: ['https://linear.app/'] },
-      { type: 'app', name: 'Docker', path: '/Applications/Docker.app' },
-      { type: 'browser', name: 'GitHub Repo', urls: ['https://github.com/agirity/agirity'] },
-    ],
-    presets: [
-      {
-        name: 'Full Development',
-        description: 'Start everything for full stack dev',
-        itemNames: ['Project Root', 'VS Code', 'Linear Board', 'Docker', 'GitHub Repo'],
-      },
-      {
-        name: 'Code Only',
-        description: 'Just the editor and terminal',
-        itemNames: ['Project Root', 'VS Code'],
-      },
-      {
-        name: 'Review Mode',
-        description: 'Browser tools for PR review',
-        itemNames: ['Linear Board', 'GitHub Repo'],
-      },
-    ],
-    tags: ['Dev', 'Electron'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Morning Routine',
-    description: 'Check emails and calendar',
-    items: [
-      { type: 'app', name: 'Slack', path: '/Applications/Slack.app' },
-      { type: 'browser', name: 'Outlook', urls: ['https://outlook.office.com'] },
-    ],
-    tags: ['Daily', 'Communication'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Design Work',
-    description: 'Figma and reference sites',
-    items: [
-      { type: 'browser', name: 'Figma', urls: ['https://figma.com'] },
-      { type: 'browser', name: 'Pinterest', urls: ['https://pinterest.com'] },
-    ],
-    tags: ['Design'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-// View Types
 type View =
   | { type: 'home' }
   | { type: 'workspace'; id: string }
@@ -95,14 +23,28 @@ type View =
 
 function App() {
   const [activeView, setActiveView] = useState<View>({ type: 'home' });
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    workspaceDataSource
+      .load()
+      .then(setWorkspaces)
+      .catch((error: unknown) => {
+        log.error('Failed to load workspaces:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const selectedWorkspace =
     activeView.type === 'workspace' || activeView.type === 'workspace-settings'
-      ? MOCK_WORKSPACES.find((w) => w.id === activeView.id)
+      ? workspaces.find((w) => w.id === activeView.id)
       : null;
 
   const handleLaunch = (id: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === id);
+    const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
     }
@@ -145,11 +87,15 @@ function App() {
   };
 
   const renderMainContent = () => {
+    if (loading) {
+      return <div className="p-8 text-center text-gray-500">Loading...</div>;
+    }
+
     switch (activeView.type) {
       case 'home':
         return (
           <WorkspaceList
-            workspaces={MOCK_WORKSPACES}
+            workspaces={workspaces}
             onLaunchWorkspace={(workspace) => {
               setActiveView({ type: 'workspace', id: workspace.id });
             }}
@@ -206,7 +152,7 @@ function App() {
 
   return (
     <Layout
-      workspaces={MOCK_WORKSPACES}
+      workspaces={workspaces}
       activeWorkspaceId={activeView.type === 'workspace' ? activeView.id : null}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
