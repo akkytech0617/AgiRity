@@ -1,4 +1,4 @@
-import { Monitor, Globe, Folder, Code, Clock, ArrowRight, Play, Zap, Edit2 } from 'lucide-react';
+import { ArrowRight, Clock, Code, Edit2, Folder, Globe, Monitor, Play, Zap } from 'lucide-react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
 
 interface WorkspaceDetailProps {
@@ -46,9 +46,7 @@ export function WorkspaceDetail({
       <div className="px-6 py-4 border-b border-border bg-white">
         <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-display font-bold text-text-primary">
-              {workspace.name}
-            </h1>
+            <h1 className="text-2xl font-display font-bold text-text-primary">{workspace.name}</h1>
             {workspace.description != null && workspace.description.length > 0 && (
               <p className="text-sm text-text-secondary mt-1">{workspace.description}</p>
             )}
@@ -102,9 +100,7 @@ export function WorkspaceDetail({
                   className="bg-white rounded-card border border-border p-4 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative"
                 >
                   <h3 className="font-display font-bold text-text-primary mb-1">{preset.name}</h3>
-                  <p className="text-xs text-text-secondary mb-3">
-                    {preset.description}
-                  </p>
+                  <p className="text-xs text-text-secondary mb-3">{preset.description}</p>
 
                   <div className="flex items-center gap-1 mb-3">
                     {presetItems.slice(0, 5).map((item) => (

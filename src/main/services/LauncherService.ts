@@ -1,6 +1,6 @@
-import type { WorkspaceItem, IconResult } from '../../shared/types';
+import type { IconResult, WorkspaceItem } from '../../shared/types';
 import type { IShellAdapter } from '../adapters/interfaces';
-import type { ILauncherService, IConfigService } from './interfaces';
+import type { IConfigService, ILauncherService } from './interfaces';
 
 export class LauncherService implements ILauncherService {
   constructor(

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import { Header } from './Header';
 import { Workspace } from '../../shared/types';
+import { Header } from './Header';
 
 interface LayoutProps {
   children: ReactNode;

@@ -1,5 +1,5 @@
-import { useState, useId } from 'react';
-import { X, Monitor, Globe, Folder, Plus } from 'lucide-react';
+import { Folder, Globe, Monitor, Plus, X } from 'lucide-react';
+import { useId, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface AddItemModalProps {
@@ -27,41 +27,38 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
   const waitTimeId = `${baseId}-wait-time`;
   const dependsOnId = `${baseId}-depends-on`;
 
-  const handleSubmit = () => {
-    if (!name.trim()) return;
+  const parseUrls = (input: string): string[] => {
+    return input
+      .split('\n')
+      .map((u) => u.trim())
+      .filter(Boolean);
+  };
 
+  const isValidSubmission = (): boolean => {
+    if (!name.trim()) return false;
+    if ((itemType === 'app' || itemType === 'folder') && !path.trim()) return false;
+    if (itemType === 'browser' && parseUrls(urls).length === 0) return false;
+    return true;
+  };
+
+  const buildWorkspaceItem = (): WorkspaceItem => {
     const item: WorkspaceItem = {
       type: itemType,
       name: name.trim(),
     };
 
-    if (category.trim()) {
-      item.category = category.trim();
-    }
+    if (category.trim()) item.category = category.trim();
+    if (itemType === 'app' || itemType === 'folder') item.path = path.trim();
+    if (itemType === 'browser') item.urls = parseUrls(urls);
+    if (waitTime != null && waitTime > 0) item.waitTime = waitTime;
+    if (dependsOn) item.dependsOn = dependsOn;
 
-    if (itemType === 'app' || itemType === 'folder') {
-      if (!path.trim()) return;
-      item.path = path.trim();
-    }
+    return item;
+  };
 
-    if (itemType === 'browser') {
-      const urlList = urls
-        .split('\n')
-        .map((u) => u.trim())
-        .filter(Boolean);
-      if (urlList.length === 0) return;
-      item.urls = urlList;
-    }
-
-    if (waitTime != null && waitTime > 0) {
-      item.waitTime = waitTime;
-    }
-
-    if (dependsOn) {
-      item.dependsOn = dependsOn;
-    }
-
-    onAdd(item);
+  const handleSubmit = () => {
+    if (!isValidSubmission()) return;
+    onAdd(buildWorkspaceItem());
   };
 
   const typeOptions: {

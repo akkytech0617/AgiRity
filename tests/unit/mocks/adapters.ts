@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from '@/main/adapters/interfaces';
-import type { IConfigService, IProjectService, ILauncherService } from '@/main/services/interfaces';
+import type { IConfigService, ILauncherService, IProjectService } from '@/main/services/interfaces';
 import type { IconResult } from '@/shared/types';
 
 /**

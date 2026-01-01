@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Workspace } from '../../shared/types';
-import { workspaceApi, launcherApi } from '../api';
+import { launcherApi, workspaceApi } from '../api';
 import { log } from '../lib/logger';
 
 interface UseWorkspacesState {
@@ -28,21 +28,21 @@ export function useWorkspaces(): UseWorkspacesReturn {
   });
 
   const loadWorkspaces = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const result = await workspaceApi.load();
       if (result.success && Array.isArray(result.data)) {
         const workspacesData: Workspace[] = result.data;
-        setState(prev => ({ ...prev, workspaces: workspacesData, loading: false, error: null }));
+        setState((prev) => ({ ...prev, workspaces: workspacesData, loading: false, error: null }));
         log.info(`Loaded ${workspacesData.length} workspaces`);
       } else {
         const errorMessage = result.error ?? 'Failed to load workspaces';
-        setState(prev => ({ ...prev, loading: false, error: errorMessage }));
+        setState((prev) => ({ ...prev, loading: false, error: errorMessage }));
         log.error('Load workspaces failed:', errorMessage);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      setState(prev => ({ ...prev, loading: false, error: errorMessage }));
+      setState((prev) => ({ ...prev, loading: false, error: errorMessage }));
       log.error('Load workspaces error:', errorMessage);
     }
   }, []);

@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Layout } from './components/Layout';
-import { WorkspaceDetail } from './components/WorkspaceDetail';
-import { WorkspaceSettings } from './components/WorkspaceSettings';
-import { CreateWorkspace } from './components/CreateWorkspace';
-import { ToolsRegistry } from './components/ToolsRegistry';
-import { MCPServers } from './components/MCPServers';
-import { Settings as SettingsView } from './components/Settings';
-import { WorkspaceList } from './components/WorkspaceList';
+import { useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
+import { CreateWorkspace } from './components/CreateWorkspace';
+import { Layout } from './components/Layout';
+import { MCPServers } from './components/MCPServers';
+import { Settings as SettingsView } from './components/Settings';
+import { ToolsRegistry } from './components/ToolsRegistry';
+import { WorkspaceDetail } from './components/WorkspaceDetail';
+import { WorkspaceList } from './components/WorkspaceList';
+import { WorkspaceSettings } from './components/WorkspaceSettings';
 import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
 
@@ -50,13 +50,9 @@ function App() {
     }
   };
 
-
-
   const handleSaveWorkspace = (workspace: Workspace) => {
     setActiveView({ type: 'workspace', id: workspace.id });
   };
-
-
 
   const launchItem = async (item: WorkspaceItem) => {
     log.info(`Launching: ${item.name}`);
@@ -147,8 +143,6 @@ function App() {
         );
     }
   };
-
-
 
   return (
     <Layout

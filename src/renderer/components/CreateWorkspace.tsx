@@ -1,9 +1,10 @@
 /* eslint-disable security/detect-object-injection */
+
+import { AlertCircle, Plus, Save, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
-import { Save, X, Plus, AlertCircle, Sparkles } from 'lucide-react';
-import { ItemEditor } from './ItemEditor';
 import { AddItemModal } from './AddItemModal';
+import { ItemEditor } from './ItemEditor';
 
 interface CreateWorkspaceProps {
   onSave: (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => void;

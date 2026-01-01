@@ -1,14 +1,14 @@
 import { ipcMain } from 'electron';
+import { z } from 'zod';
 import {
-  WorkspaceItemSchema,
-  WorkspaceSchema,
-  LaunchResult,
-  WorkspaceResult,
   IconResult,
   IPC_CHANNELS,
+  LaunchResult,
+  WorkspaceItemSchema,
+  WorkspaceResult,
+  WorkspaceSchema,
 } from '../../shared/types';
 import type { ServiceContainer } from '../container';
-import { z } from 'zod';
 import { log } from '../lib/logger';
 
 function getErrorMessage(error: unknown, zodErrorMessage: string): string {

@@ -1,4 +1,4 @@
-import type { Workspace, WorkspaceItem, IconResult } from '../../shared/types';
+import type { IconResult, Workspace, WorkspaceItem } from '../../shared/types';
 
 /**
  * Service interfaces for dependency injection

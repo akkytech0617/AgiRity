@@ -1,6 +1,6 @@
-import { Monitor, Globe, Folder, Code, Play, RotateCcw, AlertCircle } from 'lucide-react';
-import { cn } from '../utils';
+import { AlertCircle, Code, Folder, Globe, Monitor, Play, RotateCcw } from 'lucide-react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
+import { cn } from '../utils';
 
 interface WorkspaceListProps {
   workspaces: Workspace[];
@@ -33,7 +33,11 @@ export function WorkspaceList({
   // Loading State
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-surface" role="status" aria-live="polite">
+      <div
+        className="flex-1 flex items-center justify-center bg-surface"
+        role="status"
+        aria-live="polite"
+      >
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-text-secondary">Loading workspaces...</p>

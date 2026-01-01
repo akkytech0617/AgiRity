@@ -1,15 +1,15 @@
-import { useState, useId } from 'react';
 import {
-  Monitor,
-  Globe,
-  Folder,
-  Clock,
   ArrowRight,
-  Trash2,
   ChevronDown,
   ChevronUp,
+  Clock,
+  Folder,
+  Globe,
+  Monitor,
   Pencil,
+  Trash2,
 } from 'lucide-react';
+import { useId, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface ItemEditorProps {

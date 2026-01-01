@@ -33,7 +33,7 @@ export class FileSystemAdapter implements IFileSystemAdapter {
   async mkdir(filePath: string, options?: { recursive?: boolean }): Promise<undefined | string> {
     const validPath = this.validatePath(filePath);
     // eslint-disable-next-line security/detect-non-literal-fs-filename
-    return fs.mkdir(validPath, options);
+    return await fs.mkdir(validPath, options);
   }
 
   async readFile(path: string, encoding: BufferEncoding): Promise<string>;
@@ -42,7 +42,7 @@ export class FileSystemAdapter implements IFileSystemAdapter {
   async readFile(filePath: string, encoding?: BufferEncoding | null): Promise<string | Buffer> {
     const validPath = this.validatePath(filePath);
     // eslint-disable-next-line security/detect-non-literal-fs-filename
-    return fs.readFile(validPath, { encoding });
+    return await fs.readFile(validPath, { encoding });
   }
 
   async writeFile(filePath: string, content: string, encoding?: BufferEncoding): Promise<void> {

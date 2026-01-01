@@ -1,6 +1,6 @@
-import { MOCK_WORKSPACES } from '../mocks/workspaces';
-import { workspaceApi } from '../api';
 import { Workspace } from '../../shared/types';
+import { workspaceApi } from '../api';
+import { MOCK_WORKSPACES } from '../mocks/workspaces';
 
 const useMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 

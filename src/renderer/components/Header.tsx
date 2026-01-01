@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Settings, Box, Database, Menu, X, Plus, Home } from 'lucide-react';
+import { Box, Database, Home, Menu, Plus, Settings, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Workspace } from '../../shared/types';
 
 interface HeaderProps {

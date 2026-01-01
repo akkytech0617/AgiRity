@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import { app, BrowserWindow } from 'electron';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { initMainLogger, log } from './lib/logger';
-import { flushSentry } from './lib/sentry';
+import { app, BrowserWindow } from 'electron';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
+import { initMainLogger, log } from './lib/logger';
+import { flushSentry } from './lib/sentry';
 
 // Initialize logger first
 initMainLogger();

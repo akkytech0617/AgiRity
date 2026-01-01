@@ -1,9 +1,10 @@
 /// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
+
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import electron from 'vite-plugin-electron/simple';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import electron from 'vite-plugin-electron/simple';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

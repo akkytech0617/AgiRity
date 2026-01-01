@@ -1,9 +1,10 @@
 /* eslint-disable security/detect-object-injection */
+
+import { AlertCircle, Plus, Save, X } from 'lucide-react';
 import { useState } from 'react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
-import { Save, X, Plus, AlertCircle } from 'lucide-react';
-import { ItemEditor } from './ItemEditor';
 import { AddItemModal } from './AddItemModal';
+import { ItemEditor } from './ItemEditor';
 
 interface WorkspaceSettingsProps {
   workspace: Workspace;
