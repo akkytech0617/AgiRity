@@ -49,10 +49,10 @@ export function Header({
   ];
 
   return (
-    <header className="h-14 bg-gray-900 flex items-center shrink-0 select-none">
+    <header className="h-10 bg-gray-900 flex items-center shrink-0 select-none">
       {/* Logo */}
-      <div className="h-full flex items-center px-4 border-r border-gray-800">
-        <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center">
+      <div className="h-full flex items-center px-2 border-r border-gray-800">
+        <div className="bg-primary w-7 h-7 rounded-lg flex items-center justify-center">
           <span className="text-white font-display font-bold text-lg">A</span>
         </div>
       </div>
@@ -63,14 +63,14 @@ export function Header({
           {/* Home Tab */}
           <button
             onClick={onOpenHome}
-            className={`h-full px-4 flex items-center gap-2 border-r border-gray-800 transition-colors ${
+            className={`h-full px-2 flex items-center gap-1 border-r border-gray-800 transition-colors ${
               activeWorkspaceId === null
                 ? 'bg-white text-gray-800'
                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
             }`}
             type="button"
           >
-            <Home className="w-4 h-4" />
+            <Home className="w-3 h-3" />
             <span className="text-sm font-medium">Home</span>
           </button>
 
@@ -80,7 +80,7 @@ export function Header({
               onClick={() => {
                 onSelectWorkspace(workspace.id);
               }}
-              className={`h-full px-4 flex items-center gap-2 border-r border-gray-800 transition-colors min-w-0 max-w-[200px] group ${
+              className={`h-full px-2 flex items-center gap-2 border-r border-gray-800 transition-colors min-w-0 max-w-50 group ${
                 activeWorkspaceId === workspace.id
                   ? 'bg-white text-gray-800'
                   : 'text-gray-400 hover:bg-gray-800 hover:text-white'
@@ -98,10 +98,10 @@ export function Header({
           {/* New Tab Button */}
           <button
             onClick={onNewWorkspace}
-            className="h-full px-3 flex items-center text-gray-500 hover:text-white hover:bg-gray-800 transition-colors"
+            className="h-full px-2 flex items-center text-gray-500 hover:text-white hover:bg-gray-800 transition-colors"
             title="New Workspace"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3 h-3" />
           </button>
         </div>
       </div>
@@ -112,12 +112,12 @@ export function Header({
           onClick={() => {
             setIsMenuOpen(!isMenuOpen);
           }}
-          className={`h-full px-4 flex items-center text-gray-400 hover:text-white hover:bg-gray-800 transition-colors ${
+          className={`h-full px-2 flex items-center text-gray-400 hover:text-white hover:bg-gray-800 transition-colors ${
             isMenuOpen ? 'bg-gray-800 text-white' : ''
           }`}
           type="button"
         >
-          {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </button>
 
         {/* Dropdown Menu */}
