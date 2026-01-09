@@ -101,7 +101,7 @@ export function Header({
             className="h-full px-2 flex items-center text-gray-500 hover:text-white hover:bg-gray-800 transition-colors"
             title="New Workspace"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-2 h-2" />
           </button>
         </div>
       </div>
@@ -117,7 +117,7 @@ export function Header({
           }`}
           type="button"
         >
-          {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          {isMenuOpen ? <X className="w-3 h-3" /> : <Menu className="w-3 h-3" />}
         </button>
 
         {/* Dropdown Menu */}
