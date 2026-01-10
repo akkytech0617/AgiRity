@@ -44,6 +44,7 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'AgiRity - Workspace Manager',
     icon: path.join(publicDir, 'favicon.ico'),
+    minWidth: 640,
     webPreferences: {
       preload,
       nodeIntegration: false,
