@@ -1,5 +1,6 @@
-import { Edit2, Folder, Globe, Monitor, Play } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 import { Workspace, WorkspaceItem } from '../../shared/types';
+import { PresetCard } from './PresetCard';
 import { ToolCard } from './ToolCard';
 
 interface WorkspaceDetailProps {
@@ -58,58 +59,22 @@ export function WorkspaceDetail({
         {/* Left Column: Presets */}
         <div className="flex-1 flex flex-col border-r border-border overflow-hidden">
           <div className="flex-1 overflow-y-auto p-3 space-y-3 flex flex-col">
-            <h2 className="text-lg font-display font-bold text-text-primary flex items-center gap-2 mb-3">
-              Launch Presets
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-display font-bold text-text-primary">Launch Presets</h2>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                {presets.length} presets
+              </span>
+            </div>
             {presets.map((preset) => {
               const presetItems = getItemsForPreset(preset.itemNames);
-              const appCount = presetItems.filter((i) => i.type === 'app').length;
-              const browserCount = presetItems.filter((i) => i.type === 'browser').length;
 
               return (
-                <div
+                <PresetCard
                   key={preset.name}
-                  className="bg-white rounded-card border border-border p-4 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative"
-                >
-                  <h3 className="font-display font-bold text-text-primary mb-1">{preset.name}</h3>
-                  <p className="text-xs text-text-secondary mb-3">{preset.description}</p>
-
-                  <div className="flex items-center gap-1 mb-3">
-                    {presetItems.slice(0, 5).map((item) => (
-                      <div
-                        key={item.name}
-                        className="p-1 bg-surface rounded-sm border border-border"
-                        title={item.name}
-                      >
-                        {item.type === 'app' && <Monitor className="w-3 h-3 text-primary" />}
-                        {item.type === 'browser' && <Globe className="w-3 h-3 text-success" />}
-                        {item.type === 'folder' && <Folder className="w-3 h-3 text-warning" />}
-                      </div>
-                    ))}
-                    {presetItems.length > 5 && (
-                      <span className="text-[10px] text-gray-400 font-medium">
-                        +{presetItems.length - 5}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500">
-                      {appCount > 0 && <span>{appCount} apps</span>}
-                      {appCount > 0 && browserCount > 0 && <span className="mx-1">•</span>}
-                      {browserCount > 0 && <span>{browserCount} tabs</span>}
-                    </div>
-                    <button
-                      onClick={() => {
-                        onLaunch(workspace.id);
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-600 text-white rounded-button text-xs font-bold shadow-sm transition-colors"
-                    >
-                      <Play className="w-3 h-3 fill-current" />
-                      Launch
-                    </button>
-                  </div>
-                </div>
+                  preset={preset}
+                  items={presetItems}
+                  onLaunch={() => onLaunch(workspace.id)}
+                />
               );
             })}
           </div>

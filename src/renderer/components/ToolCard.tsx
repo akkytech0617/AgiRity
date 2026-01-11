@@ -29,9 +29,13 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
   return (
     <div
       onClick={handleClick}
-      className="w-[85px] h-[85px] bg-white rounded-card border border-border shadow-sm hover:shadow-md hover:border-primary-200 transition-all cursor-pointer group flex flex-col items-center justify-center p-1.5 overflow-hidden"
-      title={item.name}
+      className="w-[85px] h-[85px] bg-white rounded-card border border-border shadow-sm hover:shadow-md hover:border-primary-200 transition-all cursor-pointer group flex flex-col items-center justify-center p-1.5 relative"
     >
+      {/* Tooltip - shown on hover */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+        {item.name}
+      </div>
+
       {/* Icon - Top Center */}
       <div className="flex items-center justify-center">
         <div className="p-1 bg-gray-50 rounded-md border border-gray-100 group-hover:bg-white group-hover:shadow-sm transition-all">
