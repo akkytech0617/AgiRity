@@ -58,7 +58,7 @@ export function WorkspaceDetail({
       <div className="flex-1 flex overflow-hidden">
         {/* Left Column: Presets */}
         <div className="flex-1 flex flex-col border-r border-border overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-3 space-y-3 flex flex-col">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2 flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-display font-bold text-text-primary">Launch Presets</h2>
               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
