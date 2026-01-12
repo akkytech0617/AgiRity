@@ -6,18 +6,51 @@ AgiRity では以下のツールでコード品質を担保しています:
 
 | ツール         | 役割                             | 実行タイミング         |
 | -------------- | -------------------------------- | ---------------------- |
-| **ESLint**     | コード品質・セキュリティチェック | 開発時、pre-commit、CI |
-| **Prettier**   | コードフォーマット               | 開発時、pre-commit     |
+| **Biome**      | コード品質・セキュリティチェック・コードフォーマット | 開発時、pre-commit、CI |
 | **TypeScript** | 型チェック                       | 開発時、pre-commit、CI |
 | **SonarCloud** | 継続的コード品質分析             | CI                     |
 
+**注**: Biome は ESLint/Prettier に代わる正規のツールとして採用されています。過去のドキュメントや設定ファイルで ESLint/Prettier への言及がある場合、Biome を優先してください。
+
 ---
 
-## 2. ESLint
+## 2. Biome
+
+Biome は AgiRity で使用する正規のリンティング・フォーマットツールです。ESLint と Prettier の機能を統合した高速で一貫性のあるツールです。
 
 ### 2.1 設定ファイル
 
-`eslint.config.mjs` (Flat Config 形式)
+`biome.json`
+
+### 2.2 主な機能
+
+| 機能           | 説明                             |
+| -------------- | -------------------------------- |
+| **Linting**     | コード品質・セキュリティチェック      |
+| **Formatting**   | 一貫性のあるコードフォーマット      |
+| **Import Sort** | import 文の自動ソート              |
+
+### 2.3 実行方法
+
+```bash
+# Lint チェック
+just lint
+
+# Lint 自動修正
+just lint:fix
+
+# フォーマットチェック
+just format:check
+
+# フォーマット実行
+just format
+
+# すべてチェック (Lint + Format)
+just check
+
+# 自動修正すべて
+just check:fix
+```
 
 ### 2.2 採用プラグイン
 
@@ -138,58 +171,57 @@ const value = obj[key];
 
 ---
 
-## 3. Prettier
-
-### 3.1 設定ファイル
-
-`.prettierrc`:
-
-```json
-{
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5",
-  "printWidth": 100,
-  "bracketSpacing": true,
-  "arrowParens": "always",
-  "endOfLine": "lf"
-}
-```
-
-### 3.2 ルール詳細
-
-| ルール           | 値       | 説明                           |
-| ---------------- | -------- | ------------------------------ |
-| `semi`           | `true`   | セミコロンを付ける             |
-| `singleQuote`    | `true`   | シングルクォートを使用         |
-| `tabWidth`       | `2`      | インデント幅 2 スペース        |
-| `trailingComma`  | `es5`    | ES5 互換の末尾カンマ           |
-| `printWidth`     | `100`    | 1行の最大文字数                |
-| `bracketSpacing` | `true`   | オブジェクトリテラルのスペース |
-| `arrowParens`    | `always` | アロー関数の引数に常に括弧     |
-| `endOfLine`      | `lf`     | 改行コード LF                  |
-
-### 3.3 除外設定
-
-`.prettierignore`:
-
-```
-node_modules
-dist
-dist-electron
-coverage
-.idea
-.vscode
-.DS_Store
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-```
+## 3. TypeScript
 
 ---
 
-## 4. TypeScript
+## 4. ESLint (レガシーツール)
+
+> **重要**: ESLint はレガシーツールです。新規コードでは Biome の使用を推奨します。
+
+### 4.1 設定ファイル
+
+`eslint.config.mjs` (Flat Config 形式)
+
+### 4.2 採用プラグイン
+
+| プラグイン                     | 目的                       | 設定                                        |
+| ------------------------------ | -------------------------- | ------------------------------------------- |
+| `@eslint/js`                   | JavaScript 基本ルール      | `recommended`                               |
+| `typescript-eslint`            | TypeScript 厳格ルール      | `strictTypeChecked`, `stylisticTypeChecked` |
+| `eslint-plugin-react-hooks`    | React Hooks ルール         | `recommended`                               |
+| `eslint-plugin-react-refresh`  | React Fast Refresh 対応    | カスタム                                    |
+| `eslint-plugin-security`       | セキュリティ脆弱性検出     | `recommended`                               |
+| `eslint-plugin-sonarjs`        | コード品質・複雑度         | `recommended`                               |
+| `@microsoft/eslint-plugin-sdl` | Microsoft SDL セキュリティ | `common`, `electron`, `react`               |
+
+### 4.3 TypeScript 厳格ルール
+
+> **ADR**: [ADR-001: Strict ESLint/TypeScript Rules](../adr/001-strict-eslint-typescript-rules.md)
+
+AI コード生成の品質ゲートとして、以下のルールを `error` レベルで適用:
+
+| ルール                                             | 目的                           |
+| -------------------------------------------------- | ------------------------------ |
+| `@typescript-eslint/no-explicit-any`               | `any` 型の禁止                 |
+| `@typescript-eslint/no-unsafe-assignment`          | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-call`                | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-member-access`       | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-unsafe-return`              | 暗黙の `any` 伝播防止          |
+| `@typescript-eslint/no-floating-promises`          | 未処理の Promise 検出          |
+| `@typescript-eslint/await-thenable`                | 不要な `await` 検出            |
+| `@typescript-eslint/no-misused-promises`           | Promise 誤用検出               |
+| `@typescript-eslint/require-await`                 | 不要な `async` 検出            |
+| `@typescript-eslint/strict-boolean-expressions`    | 曖昧な条件式の禁止             |
+| `@typescript-eslint/no-unnecessary-condition`      | 到達不能コード検出             |
+| `@typescript-eslint/restrict-template-expressions` | テンプレートリテラルの型安全性 |
+
+**採用理由**:
+
+- AI は「動くコード」を生成するが、「最適なコード」とは限らない
+- 過剰な防御的コード（不要な null チェック）が生成されやすい
+- 曖昧な条件式が混在しやすい
+- 人間のレビュー負荷を軽減
 
 ### 4.1 設定ファイル
 
@@ -230,7 +262,58 @@ import { ConfigService } from '@/main/services/ConfigService';
 
 ---
 
-## 5. Snyk
+## 5. Prettier (レガシーツール)
+
+> **重要**: Prettier はレガシーツールです。新規コードでは Biome のフォーマット機能を使用してください。
+
+### 5.1 設定ファイル
+
+`.prettierrc`:
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "endOfLine": "lf"
+}
+```
+
+### 5.2 ルール詳細
+
+| ルール           | 値       | 説明                           |
+| ---------------- | -------- | ------------------------------ |
+| `semi`           | `true`   | セミコロンを付ける             |
+| `singleQuote`    | `true`   | シングルクォートを使用         |
+| `tabWidth`       | `2`      | インデント幅 2 スペース        |
+| `trailingComma`  | `es5`    | ES5 互換の末尾カンマ           |
+| `printWidth`     | `100`    | 1行の最大文字数                |
+| `bracketSpacing` | `true`   | オブジェクトリテラルのスペース |
+| `arrowParens`    | `always` | アロー関数の引数に常に括弧     |
+| `endOfLine`      | `lf`     | 改行コード LF                  |
+
+### 5.3 除外設定
+
+`.prettierignore`:
+
+```
+node_modules
+dist
+dist-electron
+coverage
+.idea
+.vscode
+.DS_Store
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+```
+
+## 6. Snyk
 
 ### 5.1 概要
 
@@ -409,37 +492,51 @@ SonarCloud は継続的なコード品質分析ツールです。
 
 ---
 
-## 6. コマンド
+## 7. コマンド
 
-### 6.1 Lint
+### 7.1 Biome (推奨)
 
 ```bash
-# ESLint 実行
+# Lint 実行
 just lint
 
-# ESLint 自動修正
-just fix
+# Lint 自動修正
+just lint:fix
 
-# npm script 直接実行
-npm run lint
-npm run lint:fix
-```
-
-### 6.2 Format
-
-```bash
 # フォーマットチェック
-just format-check
+just format:check
 
 # フォーマット実行
 just format
 
-# npm script 直接実行
+# すべてチェック (Lint + Format)
+just check
+
+# 自動修正すべて
+just check:fix
+```
+
+### 7.2 ESLint (レガシー)
+
+```bash
+# ESLint 実行
+npm run lint
+
+# ESLint 自動修正
+npm run lint:fix
+```
+
+### 7.3 Prettier (レガシー)
+
+```bash
+# フォーマットチェック
 npm run format:check
+
+# フォーマット実行
 npm run format
 ```
 
-### 6.3 型チェック
+### 7.4 型チェック
 
 ```bash
 # TypeScript 型チェック
@@ -449,43 +546,35 @@ just type-check
 npm run type-check
 ```
 
-### 6.4 全チェック
-
-```bash
-# type-check + format-check + lint
-just check
-```
-
 ---
 
-## 7. エディタ設定
+## 8. エディタ設定
 
-### 7.1 VS Code 推奨設定
+### 8.1 VS Code 推奨設定
 
 `.vscode/settings.json` (推奨):
 
 ```json
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "quickfix.biome": "explicit"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
 ```
 
-### 7.2 推奨拡張機能
+### 8.2 推奨拡張機能
 
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) (推奨)
 - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens) (エラー表示強化)
 
 ---
 
-## 8. トラブルシューティング
+## 9. トラブルシューティング
 
-### 8.1 ESLint エラーが解決できない
+### 9.1 Biome エラーが解決できない
 
 ```bash
 # キャッシュクリア
@@ -496,19 +585,7 @@ rm -rf node_modules
 npm install
 ```
 
-### 8.2 Prettier と ESLint が競合する
-
-`eslint-config-prettier` が最後に読み込まれていることを確認:
-
-```javascript
-// eslint.config.mjs
-export default tseslint.config(
-  // ... 他の設定 ...
-  eslintConfigPrettier // 最後に配置
-);
-```
-
-### 8.3 型エラーが IDE に表示されない
+### 9.2 型エラーが IDE に表示されない
 
 ```bash
 # TypeScript 言語サーバー再起動 (VS Code)
@@ -517,7 +594,7 @@ Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
 
 ---
 
-## 9. 関連ドキュメント
+## 10. 関連ドキュメント
 
 | ドキュメント                                                                            | 内容                               |
 | --------------------------------------------------------------------------------------- | ---------------------------------- |
@@ -526,11 +603,22 @@ Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
 | [CI/CD ガイド](./cicd_guide.md)                                                         | CI/CD パイプラインでのチェック実行 |
 | [テスト戦略](../implementation/testing_strategy.md)                                     | テスト品質基準                     |
 
+### 注: ESLint/Prettier から Biome への移行について
+
+Biome は ESLint と Prettier の機能を統合し、より高速で一貫性のある開発体験を提供します。
+既存の ESLint/Prettier 設定は維持されていますが、新規開発では Biome を優先してください。
+
+主な変更点:
+- **Linting**: ESLint → Biome
+- **Formatting**: Prettier → Biome
+- **コマンド**: `eslint` → `just lint`, `prettier` → `just format`
+- **設定ファイル**: `eslint.config.mjs`/`.prettierrc` → `biome.json`
+
 ---
 
-## 10. ルール変更時の手順
+## 11. ルール変更時の手順
 
-1. `eslint.config.mjs` または `.prettierrc` を変更
+1. `biome.json` を変更
 2. `just check` で全ファイルをチェック
 3. 必要に応じて既存コードを修正
 4. ADR を作成（大きな変更の場合）
@@ -538,4 +626,4 @@ Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
 
 ---
 
-_最終更新: 2025-12-23_
+_最終更新: 2026-01-12_

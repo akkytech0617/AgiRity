@@ -275,11 +275,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
           </button>
           <button
             onClick={handleSubmit}
-            disabled={
-              !name.trim() ||
-              (itemType !== 'browser' && !path.trim()) ||
-              (itemType === 'browser' && !urls.trim())
-            }
+            disabled={!isValidSubmission()}
             className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />

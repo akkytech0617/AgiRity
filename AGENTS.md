@@ -132,7 +132,7 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ```
 1. 理解    → 要求分析、不明点は質問、codebase-explorer で現状把握
-2. 計画    → タスク分解、TodoWrite で記録、ユーザーに提示。memoory-managerで保存
+2. 計画    → タスク分解、TodoWrite で記録、ユーザーに提示。memory-managerで保存
 3. 実装    → feature-developer に委任
 4. 検証    → code-reviewer でレビュー、問題あれば修正委任
 5. 報告    → サマリー、変更ファイル一覧、残課題

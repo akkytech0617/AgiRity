@@ -33,7 +33,7 @@ export function WorkspaceList({
   // Loading State
   if (loading) {
     return (
-      <div
+      <output
         className="flex-1 flex items-center justify-center bg-surface"
         role="status"
         aria-live="polite"
@@ -42,7 +42,7 @@ export function WorkspaceList({
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-text-secondary">Loading workspaces...</p>
         </div>
-      </div>
+      </output>
     );
   }
 
@@ -140,9 +140,9 @@ export function WorkspaceList({
                   Items ({workspace.items.length})
                 </h4>
                 <div className="space-y-2">
-                  {workspace.items.slice(0, 6).map((item) => (
+                  {workspace.items.slice(0, 6).map((item, index) => (
                     <div
-                      key={`${item.type}-${item.name}`}
+                      key={`${item.type}-${item.name}-${index}`}
                       className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <div className="p-1.5 bg-gray-50 rounded-md border border-gray-100 shrink-0">

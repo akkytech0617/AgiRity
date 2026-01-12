@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@utility rounded-card {
+  border-radius: var(--radius-card);
+}
+
+@utility border-border {
+  border-color: var(--color-border);
+}
+
 @theme {
   --color-primary-50: #ebf3fc;
   --color-primary-100: #d7e7f9;
@@ -57,6 +65,6 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-border);
   }
 }

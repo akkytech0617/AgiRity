@@ -48,7 +48,7 @@ export function WorkspaceDetail({
               className="flex items-center gap-2 px-2 py-2 bg-gray-100 hover:bg-gray-200 text-text-primary rounded-button text-sm font-medium transition-colors shrink-0"
               title="Edit workspace"
             >
-              <Edit2 className="w-2 h-2" />
+              <Edit2 className="w-4 h-4" />
             </button>
           )}
         </div>
@@ -90,8 +90,8 @@ export function WorkspaceDetail({
               </span>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-              {workspace.items.map((item) => (
-                <ToolCard key={item.name} item={item} onLaunch={onLaunchItem} />
+              {workspace.items.map((item, index) => (
+                <ToolCard key={`${item.name}-${index}`} item={item} onLaunch={onLaunchItem} />
               ))}
             </div>
           </div>

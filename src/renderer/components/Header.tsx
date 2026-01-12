@@ -101,7 +101,7 @@ export function Header({
             className="h-full px-2 flex items-center text-gray-500 hover:text-white hover:bg-gray-800 transition-colors"
             title="New Workspace"
           >
-            <Plus className="w-2 h-2" />
+            <Plus className="w-3 h-3" />
           </button>
         </div>
       </div>

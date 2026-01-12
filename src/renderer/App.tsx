@@ -25,13 +25,18 @@ function App() {
   const [activeView, setActiveView] = useState<View>({ type: 'home' });
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     workspaceDataSource
       .load()
-      .then(setWorkspaces)
+      .then((data) => {
+        setWorkspaces(data);
+        setError(null);
+      })
       .catch((error: unknown) => {
         log.error('Failed to load workspaces:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load workspaces');
       })
       .finally(() => {
         setLoading(false);
@@ -71,7 +76,7 @@ function App() {
   };
 
   const handleCreateWorkspace = () => {
-    setActiveView({ type: 'workspace', id: '1' });
+    setActiveView({ type: 'home' });
   };
 
   const handleSelectWorkspace = (id: string) => {
@@ -92,6 +97,7 @@ function App() {
         return (
           <WorkspaceList
             workspaces={workspaces}
+            error={error}
             onLaunchWorkspace={(workspace) => {
               setActiveView({ type: 'workspace', id: workspace.id });
             }}
@@ -108,7 +114,7 @@ function App() {
           <CreateWorkspace
             onSave={handleCreateWorkspace}
             onCancel={() => {
-              setActiveView({ type: 'workspace', id: '1' });
+              setActiveView({ type: 'home' });
             }}
           />
         );

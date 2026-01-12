@@ -15,6 +15,14 @@ export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps
   return (
     <div
       onClick={onLaunch}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onLaunch();
+        }
+      }}
       className="bg-white rounded-card border border-border p-2 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative cursor-pointer"
     >
       {/* Tooltip - shown on hover */}

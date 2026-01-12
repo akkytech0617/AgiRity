@@ -92,7 +92,7 @@ export function WorkspaceSettings({
                 onChange={(e) => {
                   handleFieldChange('name', e.target.value);
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 outline-hidden transition-all"
               />
             </div>
 
@@ -105,7 +105,7 @@ export function WorkspaceSettings({
                   handleFieldChange('description', e.target.value);
                 }}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 outline-hidden transition-all resize-none"
               />
             </div>
 
@@ -125,7 +125,7 @@ export function WorkspaceSettings({
                   );
                 }}
                 placeholder="dev, frontend, react..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 outline-hidden transition-all"
               />
               <p className="text-xs text-gray-500 mt-1">Comma separated values</p>
             </div>

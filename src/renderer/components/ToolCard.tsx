@@ -29,6 +29,14 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
   return (
     <div
       onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onLaunch?.(item);
+        }
+      }}
       className="w-[85px] h-[85px] bg-white rounded-card border border-border shadow-sm hover:shadow-md hover:border-primary-200 transition-all cursor-pointer group flex flex-col items-center justify-center p-1.5 relative"
     >
       {/* Tooltip - shown on hover */}

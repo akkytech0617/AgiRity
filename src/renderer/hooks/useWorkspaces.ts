@@ -75,7 +75,7 @@ export function useWorkspaces(): UseWorkspacesReturn {
   );
 
   const retry = useCallback(() => {
-    void loadWorkspaces();
+    loadWorkspaces();
   }, [loadWorkspaces]);
 
   return {
