@@ -13,16 +13,9 @@ interface PresetCardProps {
 
 export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps>) {
   return (
-    <div
+    <button
       onClick={onLaunch}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onLaunch();
-        }
-      }}
+      type="button"
       className="bg-white rounded-card border border-border p-2 shadow-sm hover:shadow-md hover:border-primary-300 transition-all group relative cursor-pointer"
     >
       {/* Tooltip - shown on hover */}
@@ -50,6 +43,6 @@ export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps
           <span className="text-[10px] text-gray-400 font-medium">+{items.length - 5}</span>
         )}
       </div>
-    </div>
+    </button>
   );
 }

@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
-@utility rounded-card {
-  border-radius: var(--radius-card);
-}
+@layer utilities {
+  .rounded-card {
+    border-radius: var(--radius-card);
+  }
 
-@utility border-border {
-  border-color: var(--color-border);
+  .border-border {
+    border-color: var(--color-border);
+  }
 }
 
 @theme {

@@ -412,8 +412,8 @@ just test
 - [x] Task 4: App.tsx (error状態/hardcoded id)
 - [x] Task 5: UI/スタイル (icon/key/utility/css変数)
 - [x] Task 6: その他 (typo/docs/最適化)
-- [ ] 全テスト実行
-- [ ] Git commit
+- [x] 全テスト実行
+- [x] Git commit (d3ca14d)
 
 ---
 

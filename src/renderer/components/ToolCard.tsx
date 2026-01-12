@@ -21,22 +21,15 @@ const getItemIcon = (type: WorkspaceItem['type']) => {
 };
 
 export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onLaunch?.(item);
   };
 
   return (
-    <div
+    <button
       onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onLaunch?.(item);
-        }
-      }}
+      type="button"
       className="w-[85px] h-[85px] bg-white rounded-card border border-border shadow-sm hover:shadow-md hover:border-primary-200 transition-all cursor-pointer group flex flex-col items-center justify-center p-1.5 relative"
     >
       {/* Tooltip - shown on hover */}
@@ -57,6 +50,6 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
           {item.name}
         </p>
       </div>
-    </div>
+    </button>
   );
 };
