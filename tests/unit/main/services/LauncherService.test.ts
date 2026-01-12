@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { WorkspaceItem } from '@/shared/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IConfigService } from '@/main/services/interfaces';
 import { LauncherService } from '@/main/services/LauncherService';
+import type { WorkspaceItem } from '@/shared/types';
 import { createMockShellAdapter } from '../../mocks/adapters';
 
 describe('LauncherService', () => {

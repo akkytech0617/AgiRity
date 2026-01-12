@@ -1,13 +1,14 @@
 import { ipcMain } from 'electron';
+import { z } from 'zod';
 import {
-  WorkspaceItemSchema,
-  WorkspaceSchema,
-  LaunchResult,
-  WorkspaceResult,
+  IconResult,
   IPC_CHANNELS,
+  LaunchResult,
+  WorkspaceItemSchema,
+  WorkspaceResult,
+  WorkspaceSchema,
 } from '../../shared/types';
 import type { ServiceContainer } from '../container';
-import { z } from 'zod';
 import { log } from '../lib/logger';
 
 function getErrorMessage(error: unknown, zodErrorMessage: string): string {
@@ -38,6 +39,21 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     }
   );
 
+  ipcMain.handle(
+    IPC_CHANNELS.LAUNCHER_GET_ITEM_ICON,
+    async (_event, item: unknown): Promise<IconResult> => {
+      try {
+        const validatedItem = WorkspaceItemSchema.parse(item);
+        const result = await launcher.getItemIcon(validatedItem);
+        return result;
+      } catch (error) {
+        const message = getErrorMessage(error, 'Invalid input data');
+        log.error('Get icon failed:', message);
+        return { success: false, error: message };
+      }
+    }
+  );
+
   ipcMain.handle(IPC_CHANNELS.WORKSPACE_LOAD, async (): Promise<WorkspaceResult> => {
     try {
       const workspaces = await project.loadWorkspaces();
@@ -53,7 +69,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     IPC_CHANNELS.WORKSPACE_GET,
     async (_event, id: unknown): Promise<WorkspaceResult> => {
       try {
-        const validatedId = z.string().uuid().parse(id);
+        const validatedId = z.uuid().parse(id);
         const workspace = await project.getWorkspace(validatedId);
         return { success: true, data: workspace };
       } catch (error) {
@@ -83,7 +99,7 @@ export function setupIpcHandlers(container: ServiceContainer): void {
     IPC_CHANNELS.WORKSPACE_DELETE,
     async (_event, id: unknown): Promise<WorkspaceResult> => {
       try {
-        const validatedId = z.string().uuid().parse(id);
+        const validatedId = z.uuid().parse(id);
         const deleted = await project.deleteWorkspace(validatedId);
         return { success: true, data: deleted };
       } catch (error) {

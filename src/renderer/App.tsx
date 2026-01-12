@@ -1,91 +1,19 @@
-import { useState } from 'react';
-import { Layout } from './components/Layout';
-import { WorkspaceDetail } from './components/WorkspaceDetail';
-import { WorkspaceSettings } from './components/WorkspaceSettings';
-import { CreateWorkspace } from './components/CreateWorkspace';
-import { QuickLaunch } from './components/QuickLaunch';
-import { ToolsRegistry } from './components/ToolsRegistry';
-import { MCPServers } from './components/MCPServers';
-import { Settings as SettingsView } from './components/Settings';
+import { useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
+import { CreateWorkspace } from './components/CreateWorkspace';
+import { Layout } from './components/Layout';
+import { MCPServers } from './components/MCPServers';
+import { Settings as SettingsView } from './components/Settings';
+import { ToolsRegistry } from './components/ToolsRegistry';
+import { WorkspaceDetail } from './components/WorkspaceDetail';
+import { WorkspaceList } from './components/WorkspaceList';
+import { WorkspaceSettings } from './components/WorkspaceSettings';
+import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
 
-// Mock Data
-const MOCK_WORKSPACES: Workspace[] = [
-  {
-    id: '1',
-    name: 'AgiRity Development',
-    description: 'Frontend & Electron setup environment',
-    items: [
-      { type: 'folder', name: 'Project Root', path: '~/workspace/AgiRity' },
-      { type: 'app', name: 'VS Code', path: '/Applications/Visual Studio Code.app' },
-      {
-        type: 'app',
-        name: 'Zed (Project)',
-        path: '/Applications/Zed.app',
-        folder: '~/workspace/tmp',
-      },
-      {
-        type: 'app',
-        name: 'Terminal',
-        path: '/System/Applications/Utilities/Terminal.app',
-        folder: '~/workspace/AgiRity',
-      },
-      { type: 'browser', name: 'Linear Board', urls: ['https://linear.app/'] },
-      { type: 'app', name: 'Docker', path: '/Applications/Docker.app' },
-      { type: 'browser', name: 'GitHub Repo', urls: ['https://github.com/agirity/agirity'] },
-    ],
-    presets: [
-      {
-        name: 'Full Development',
-        description: 'Start everything for full stack dev',
-        itemNames: ['Project Root', 'VS Code', 'Linear Board', 'Docker', 'GitHub Repo'],
-      },
-      {
-        name: 'Code Only',
-        description: 'Just the editor and terminal',
-        itemNames: ['Project Root', 'VS Code'],
-      },
-      {
-        name: 'Review Mode',
-        description: 'Browser tools for PR review',
-        itemNames: ['Linear Board', 'GitHub Repo'],
-      },
-    ],
-    tags: ['Dev', 'Electron'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Morning Routine',
-    description: 'Check emails and calendar',
-    items: [
-      { type: 'app', name: 'Slack', path: '/Applications/Slack.app' },
-      { type: 'browser', name: 'Outlook', urls: ['https://outlook.office.com'] },
-    ],
-    tags: ['Daily', 'Communication'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Design Work',
-    description: 'Figma and reference sites',
-    items: [
-      { type: 'browser', name: 'Figma', urls: ['https://figma.com'] },
-      { type: 'browser', name: 'Pinterest', urls: ['https://pinterest.com'] },
-    ],
-    tags: ['Design'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-// View Types
 type View =
-  | { type: 'quick-launch' }
+  | { type: 'home' }
   | { type: 'workspace'; id: string }
   | { type: 'workspace-settings'; id: string }
   | { type: 'create-workspace' }
@@ -94,34 +22,41 @@ type View =
   | { type: 'settings' };
 
 function App() {
-  const [activeView, setActiveView] = useState<View>({ type: 'quick-launch' });
+  const [activeView, setActiveView] = useState<View>({ type: 'home' });
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    workspaceDataSource
+      .load()
+      .then((data) => {
+        setWorkspaces(data);
+        setError(null);
+      })
+      .catch((error: unknown) => {
+        log.error('Failed to load workspaces:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load workspaces');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const selectedWorkspace =
     activeView.type === 'workspace' || activeView.type === 'workspace-settings'
-      ? MOCK_WORKSPACES.find((w) => w.id === activeView.id)
+      ? workspaces.find((w) => w.id === activeView.id)
       : null;
 
   const handleLaunch = (id: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === id);
+    const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
     }
   };
 
-  const handleEditWorkspace = (id: string) => {
-    setActiveView({ type: 'workspace-settings', id });
-  };
-
   const handleSaveWorkspace = (workspace: Workspace) => {
     setActiveView({ type: 'workspace', id: workspace.id });
-  };
-
-  const handleLaunchItem = (workspaceId: string, itemName: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === workspaceId);
-    const item = workspace?.items.find((i) => i.name === itemName);
-    if (item) {
-      void launchItem(item);
-    }
   };
 
   const launchItem = async (item: WorkspaceItem) => {
@@ -141,19 +76,33 @@ function App() {
   };
 
   const handleCreateWorkspace = () => {
-    setActiveView({ type: 'quick-launch' });
+    setActiveView({ type: 'home' });
   };
 
-  const handleSelectWorkspace = (id: string | null) => {
-    if (id !== null && id !== '') {
-      setActiveView({ type: 'workspace', id });
-    } else {
-      setActiveView({ type: 'quick-launch' });
-    }
+  const handleSelectWorkspace = (id: string) => {
+    setActiveView({ type: 'workspace', id });
+  };
+
+  const handleOpenHome = () => {
+    setActiveView({ type: 'home' });
   };
 
   const renderMainContent = () => {
+    if (loading) {
+      return <div className="p-8 text-center text-gray-500">Loading...</div>;
+    }
+
     switch (activeView.type) {
+      case 'home':
+        return (
+          <WorkspaceList
+            workspaces={workspaces}
+            error={error}
+            onLaunchWorkspace={(workspace) => {
+              setActiveView({ type: 'workspace', id: workspace.id });
+            }}
+          />
+        );
       case 'tools':
         return <ToolsRegistry />;
       case 'mcp':
@@ -165,7 +114,7 @@ function App() {
           <CreateWorkspace
             onSave={handleCreateWorkspace}
             onCancel={() => {
-              setActiveView({ type: 'quick-launch' });
+              setActiveView({ type: 'home' });
             }}
           />
         );
@@ -182,76 +131,29 @@ function App() {
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
       case 'workspace':
+      default:
+        // Workspace view is the default
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
             onLaunch={handleLaunch}
-            onLaunchItem={(item) => void launchItem(item)}
+            onLaunchItem={(item) => {
+              void launchItem(item);
+            }}
+            onEditWorkspace={(id) => {
+              setActiveView({ type: 'workspace-settings', id });
+            }}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
-      case 'quick-launch':
-      default:
-        return (
-          <QuickLaunch
-            workspaces={MOCK_WORKSPACES}
-            onSelectWorkspace={(id) => {
-              handleSelectWorkspace(id);
-            }}
-            onLaunchItem={handleLaunchItem}
-            onLaunchWorkspace={handleLaunch}
-          />
-        );
-    }
-  };
-
-  const getHeaderContent = () => {
-    switch (activeView.type) {
-      case 'tools':
-        return { title: 'Tools Registry', subtitle: 'Manage installed tools' };
-      case 'mcp':
-        return { title: 'MCP Servers', subtitle: 'Model Context Protocol configuration' };
-      case 'settings':
-        return { title: 'Settings', subtitle: 'Application preferences' };
-      case 'create-workspace':
-        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
-      case 'workspace-settings':
-        return selectedWorkspace
-          ? {
-              title: 'Edit Workspace',
-              subtitle: `Configure settings for ${selectedWorkspace.name}`,
-            }
-          : { title: 'Workspace Settings', subtitle: '' };
-      case 'workspace':
-        return selectedWorkspace
-          ? {
-              title: selectedWorkspace.name,
-              subtitle: selectedWorkspace.description,
-              tags: selectedWorkspace.tags,
-              showEditButton: true,
-              onEdit: () => {
-                handleEditWorkspace(selectedWorkspace.id);
-              },
-            }
-          : { title: 'Workspace', subtitle: '' };
-      case 'quick-launch':
-      default:
-        return {
-          title: 'Quick Launch',
-          subtitle: 'Start your work in seconds',
-          showEditButton: true,
-          onEdit: () => {
-            // Edit Quick Launch settings
-          },
-        };
     }
   };
 
   return (
     <Layout
-      workspaces={MOCK_WORKSPACES}
-      header={getHeaderContent()}
+      workspaces={workspaces}
+      activeWorkspaceId={activeView.type === 'workspace' ? activeView.id : null}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
       onOpenSettings={() => {
@@ -263,6 +165,7 @@ function App() {
       onOpenMCP={() => {
         setActiveView({ type: 'mcp' });
       }}
+      onOpenHome={handleOpenHome}
     >
       {renderMainContent()}
     </Layout>

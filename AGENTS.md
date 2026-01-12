@@ -13,6 +13,7 @@
 ### 1. 実装禁止
 
 コードを直接書かない。Write, Edit, Bash ツールは使わない。どんなに簡単でもサブエージェントに委任する。
+ただしユーザーに許可された場合は例外として自身で実施してよい。
 
 ### 2. 曖昧なら質問
 
@@ -88,6 +89,7 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 | ドキュメント                                                                     | 内容                                           |
 | -------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [docs/development/codebase_guide.md](docs/development/codebase_guide.md)         | コードベース構造ガイド（編集箇所の早見表）     |
 | [docs/development/agent_workflow.md](docs/development/agent_workflow.md)         | AIエージェント作業ワークフロー標準             |
 | [docs/development/git_release_guide.md](docs/development/git_release_guide.md)   | Git操作・リリース管理ガイド                    |
 | [docs/development/cicd_guide.md](docs/development/cicd_guide.md)                 | CI/CD ガイド（Just、Lefthook、GitHub Actions） |
@@ -115,6 +117,7 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 | エージェント                 | 用途                 | いつ使うか                       |
 | ---------------------------- | -------------------- | -------------------------------- |
 | codebase-explorer            | プロジェクト構造把握 | コードベースの調査を行いたい時   |
+| memory-manager               | メモリ管理           | 外部記憶を操作する時 |
 | feature-developer            | コード実装           | 機能追加・修正・バグ修正         |
 | code-reviewer                | コードレビュー       | 実装完了後の品質確認             |
 | requirements-loophole-finder | 要件の抜け穴発見     | 要件定義・ポリシー策定時         |
@@ -129,13 +132,21 @@ TodoWrite で計画を記録し、常に全体計画をコンテキストの前�
 
 ```
 1. 理解    → 要求分析、不明点は質問、codebase-explorer で現状把握
-2. 計画    → タスク分解、TodoWrite で記録、ユーザーに提示
+2. 計画    → タスク分解、TodoWrite で記録、ユーザーに提示。memory-managerで保存
 3. 実装    → feature-developer に委任
 4. 検証    → code-reviewer でレビュー、問題あれば修正委任
 5. 報告    → サマリー、変更ファイル一覧、残課題
 ```
 
 ※ **Linearチケットの場合**: 開始時に「In Progress」、完了時に「In Review」に更新
+
+## ワークフローとメモリ管理
+各ステップで**memory-manager**を活用し、以下のような場合に外部記憶を活用、保存や記憶の呼び出しを利用し確実な記憶の実行と効率的なコンテキスト管理を行ってください。
+- 作業計画を外部記憶にも保存
+- 進捗状況の定期的な更新
+- サブエージェントの出力やツール実行結果の要約保存、記憶再呼び出し
+- タスク完了時の振り返り・学びの記録
+- 実施タスクに関連する学びや振り返りを必要に応じて参照
 
 ---
 

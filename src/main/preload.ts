@@ -1,11 +1,13 @@
 import '@sentry/electron/preload';
 import { contextBridge, ipcRenderer } from 'electron';
-import { WorkspaceItem, Workspace, IPC_CHANNELS } from '../shared/types';
+import { IPC_CHANNELS, Workspace, WorkspaceItem } from '../shared/types';
 
 // --------- Expose Scoped APIs to the Renderer process ---------
 
 const launcherApi = {
   launchItem: (item: WorkspaceItem) => ipcRenderer.invoke(IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM, item),
+  getItemIcon: (item: WorkspaceItem) =>
+    ipcRenderer.invoke(IPC_CHANNELS.LAUNCHER_GET_ITEM_ICON, item),
 };
 
 const workspaceApi = {

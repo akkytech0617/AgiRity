@@ -1,4 +1,4 @@
-import { Shield, Laptop } from 'lucide-react';
+import { Laptop, Shield } from 'lucide-react';
 
 export function Settings() {
   return (

@@ -61,18 +61,16 @@ export default defineConfig({
 
 | コンポーネントタイプ   | テストアプローチ                    | 例                   |
 | ---------------------- | ----------------------------------- | -------------------- |
-| **プレゼンテーション** | Props → レンダリング確認            | Header, Layout       |
-| **インタラクティブ**   | ユーザーイベント → コールバック確認 | Sidebar, QuickLaunch |
+| **プレゼンテーション** | Props → レンダリング確認            | Layout               |
+| **インタラクティブ**   | ユーザーイベント → コールバック確認 | Header               |
 | **フォーム**           | 入力 → バリデーション → 送信        | AddItemModal         |
 
 ### 初期テストカバレッジ
 
 | コンポーネント | テスト数 | カバレッジ         |
 | -------------- | -------- | ------------------ |
-| Header         | 8        | 基本機能           |
+| Header         | 6        | タブ・メニュー操作 |
 | Layout         | 3        | 統合               |
-| Sidebar        | 7        | 検索・フィルタ     |
-| QuickLaunch    | 5        | ワークスペース表示 |
 | AddItemModal   | 5        | フォーム動作       |
 
 ## Consequences
@@ -106,6 +104,28 @@ export default defineConfig({
 3. **実装詳細を避ける**:
    - State、Props、クラス名に依存しない
    - ユーザーが見えるものでテスト
+
+## テスト実行方法
+
+### 全テスト実行
+```bash
+npm run test
+```
+
+### 特定のコンポーネントテストのみ実行
+```bash
+npm run test -- tests/unit/renderer/components/Header.test.tsx tests/unit/renderer/components/Layout.test.tsx
+```
+
+### ウォッチモード
+```bash
+npm run test:watch
+```
+
+### カバレッジ付き実行
+```bash
+npm run test:coverage
+```
 
 ## テスト結果
 

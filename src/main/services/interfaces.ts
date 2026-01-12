@@ -1,4 +1,4 @@
-import type { Workspace, WorkspaceItem } from '../../shared/types';
+import type { IconResult, Workspace, WorkspaceItem } from '../../shared/types';
 
 /**
  * Service interfaces for dependency injection
@@ -32,4 +32,5 @@ export interface IProjectService {
  */
 export interface ILauncherService {
   launchItem(item: WorkspaceItem): Promise<void>;
+  getItemIcon(item: WorkspaceItem): Promise<IconResult>;
 }

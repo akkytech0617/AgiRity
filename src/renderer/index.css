@@ -1,3 +1,72 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer utilities {
+  .rounded-card {
+    border-radius: var(--radius-card);
+  }
+
+  .border-border {
+    border-color: var(--color-border);
+  }
+}
+
+@theme {
+  --color-primary-50: #ebf3fc;
+  --color-primary-100: #d7e7f9;
+  --color-primary-200: #afcff3;
+  --color-primary-300: #87b7ed;
+  --color-primary-400: #5fa3e8;
+  --color-primary-500: #4a90e2;
+  --color-primary-600: #2171c9;
+  --color-primary-700: #19569a;
+  --color-primary-800: #113b6a;
+  --color-primary-900: #09203b;
+  --color-primary: #4a90e2;
+
+  --color-accent-blue: #0066ff;
+  --color-accent-orange: #ff6b35;
+
+  --color-surface: #f8f9fa;
+  --color-border: #e5e7eb;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+
+  --font-display: Raleway, sans-serif;
+  --font-body: Inter, sans-serif;
+  --font-sans: Inter, sans-serif;
+
+  --radius-card: 16px;
+  --radius-button: 8px;
+
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+  }
+}

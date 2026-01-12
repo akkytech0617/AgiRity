@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/electron.fixture';
+import { expect, test } from './fixtures/electron.fixture';
 
 test.describe('Development Mode Tests', () => {
   test('should launch app in development mode', async ({ app, takeScreenshot }) => {
