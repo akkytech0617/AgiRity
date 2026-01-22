@@ -1,123 +1,90 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
-import { WorkspaceSettings } from './components/WorkspaceSettings';
-import { CreateWorkspace } from './components/CreateWorkspace';
+import { WorkspaceEditor } from './components/WorkspaceEditor';
 import { QuickLaunch } from './components/QuickLaunch';
 import { ToolsRegistry } from './components/ToolsRegistry';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { Workspace, WorkspaceItem } from '../shared/types';
-import { launcherApi } from './api';
+import { launcherApi, workspaceApi } from './api';
 import { log } from './lib/logger';
-
-// Mock Data
-const MOCK_WORKSPACES: Workspace[] = [
-  {
-    id: '1',
-    name: 'AgiRity Development',
-    description: 'Frontend & Electron setup environment',
-    items: [
-      { type: 'folder', name: 'Project Root', path: '~/workspace/AgiRity' },
-      { type: 'app', name: 'VS Code', path: '/Applications/Visual Studio Code.app' },
-      {
-        type: 'app',
-        name: 'Zed (Project)',
-        path: '/Applications/Zed.app',
-        folder: '~/workspace/tmp',
-      },
-      {
-        type: 'app',
-        name: 'Terminal',
-        path: '/System/Applications/Utilities/Terminal.app',
-        folder: '~/workspace/AgiRity',
-      },
-      { type: 'browser', name: 'Linear Board', urls: ['https://linear.app/'] },
-      { type: 'app', name: 'Docker', path: '/Applications/Docker.app' },
-      { type: 'browser', name: 'GitHub Repo', urls: ['https://github.com/agirity/agirity'] },
-    ],
-    presets: [
-      {
-        name: 'Full Development',
-        description: 'Start everything for full stack dev',
-        itemNames: ['Project Root', 'VS Code', 'Linear Board', 'Docker', 'GitHub Repo'],
-      },
-      {
-        name: 'Code Only',
-        description: 'Just the editor and terminal',
-        itemNames: ['Project Root', 'VS Code'],
-      },
-      {
-        name: 'Review Mode',
-        description: 'Browser tools for PR review',
-        itemNames: ['Linear Board', 'GitHub Repo'],
-      },
-    ],
-    tags: ['Dev', 'Electron'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Morning Routine',
-    description: 'Check emails and calendar',
-    items: [
-      { type: 'app', name: 'Slack', path: '/Applications/Slack.app' },
-      { type: 'browser', name: 'Outlook', urls: ['https://outlook.office.com'] },
-    ],
-    tags: ['Daily', 'Communication'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Design Work',
-    description: 'Figma and reference sites',
-    items: [
-      { type: 'browser', name: 'Figma', urls: ['https://figma.com'] },
-      { type: 'browser', name: 'Pinterest', urls: ['https://pinterest.com'] },
-    ],
-    tags: ['Design'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
 
 // View Types
 type View =
   | { type: 'quick-launch' }
   | { type: 'workspace'; id: string }
-  | { type: 'workspace-settings'; id: string }
-  | { type: 'create-workspace' }
+  | { type: 'workspace-editor'; id?: string }
   | { type: 'tools' }
   | { type: 'mcp' }
   | { type: 'settings' };
 
 function App() {
   const [activeView, setActiveView] = useState<View>({ type: 'quick-launch' });
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load workspaces on mount
+  useEffect(() => {
+    void loadWorkspaces();
+  }, []);
+
+  const loadWorkspaces = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await workspaceApi.load();
+      if (result.success && Array.isArray(result.data)) {
+        setWorkspaces(result.data);
+      } else {
+        throw new Error(result.error ?? 'Failed to load workspaces');
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      log.error('Failed to load workspaces', errorMsg);
+      setError(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const selectedWorkspace =
-    activeView.type === 'workspace' || activeView.type === 'workspace-settings'
-      ? MOCK_WORKSPACES.find((w) => w.id === activeView.id)
+    activeView.type === 'workspace' ||
+    (activeView.type === 'workspace-editor' && activeView.id !== undefined)
+      ? workspaces.find((w) => w.id === activeView.id)
       : null;
 
   const handleLaunch = (id: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === id);
+    const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
     }
   };
 
   const handleEditWorkspace = (id: string) => {
-    setActiveView({ type: 'workspace-settings', id });
+    setActiveView({ type: 'workspace-editor', id });
   };
 
-  const handleSaveWorkspace = (workspace: Workspace) => {
-    setActiveView({ type: 'workspace', id: workspace.id });
+  const handleSaveWorkspace = async (workspace: Workspace) => {
+    try {
+      const result = await workspaceApi.save(workspace);
+      if (result.success) {
+        await loadWorkspaces();
+        setActiveView({ type: 'workspace', id: workspace.id });
+        log.info(`Workspace saved: ${workspace.name}`);
+      } else {
+        throw new Error(result.error ?? 'Failed to save workspace');
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      log.error('Failed to save workspace', errorMsg);
+      alert(`Failed to save workspace: ${errorMsg}`);
+    }
   };
 
   const handleLaunchItem = (workspaceId: string, itemName: string) => {
-    const workspace = MOCK_WORKSPACES.find((w) => w.id === workspaceId);
+    const workspace = workspaces.find((w) => w.id === workspaceId);
     const item = workspace?.items.find((i) => i.name === itemName);
     if (item) {
       void launchItem(item);
@@ -137,15 +104,11 @@ function App() {
   };
 
   const handleNew = () => {
-    setActiveView({ type: 'create-workspace' });
-  };
-
-  const handleCreateWorkspace = () => {
-    setActiveView({ type: 'quick-launch' });
+    setActiveView({ type: 'workspace-editor' });
   };
 
   const handleSelectWorkspace = (id: string | null) => {
-    if (id !== null && id !== '') {
+    if (id !== null && id.length > 0) {
       setActiveView({ type: 'workspace', id });
     } else {
       setActiveView({ type: 'quick-launch' });
@@ -153,6 +116,34 @@ function App() {
   };
 
   const renderMainContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading workspaces...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (error !== null) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="text-red-500 mb-4">⚠️ Error loading workspaces</div>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={() => void loadWorkspaces()}
+              className="px-4 py-2 bg-primary text-white rounded-button hover:bg-primary-600"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeView.type) {
       case 'tools':
         return <ToolsRegistry />;
@@ -160,26 +151,19 @@ function App() {
         return <MCPServers />;
       case 'settings':
         return <SettingsView />;
-      case 'create-workspace':
+      case 'workspace-editor':
         return (
-          <CreateWorkspace
-            onSave={handleCreateWorkspace}
+          <WorkspaceEditor
+            workspace={activeView.id !== undefined ? (selectedWorkspace ?? undefined) : undefined}
+            onSave={(workspace) => void handleSaveWorkspace(workspace)}
             onCancel={() => {
-              setActiveView({ type: 'quick-launch' });
+              if (activeView.id !== undefined) {
+                setActiveView({ type: 'workspace', id: activeView.id });
+              } else {
+                setActiveView({ type: 'quick-launch' });
+              }
             }}
           />
-        );
-      case 'workspace-settings':
-        return selectedWorkspace ? (
-          <WorkspaceSettings
-            workspace={selectedWorkspace}
-            onSave={handleSaveWorkspace}
-            onCancel={() => {
-              setActiveView({ type: 'workspace', id: selectedWorkspace.id });
-            }}
-          />
-        ) : (
-          <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
       case 'workspace':
         return selectedWorkspace ? (
@@ -195,7 +179,7 @@ function App() {
       default:
         return (
           <QuickLaunch
-            workspaces={MOCK_WORKSPACES}
+            workspaces={workspaces}
             onSelectWorkspace={(id) => {
               handleSelectWorkspace(id);
             }}
@@ -214,15 +198,13 @@ function App() {
         return { title: 'MCP Servers', subtitle: 'Model Context Protocol configuration' };
       case 'settings':
         return { title: 'Settings', subtitle: 'Application preferences' };
-      case 'create-workspace':
-        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
-      case 'workspace-settings':
-        return selectedWorkspace
+      case 'workspace-editor':
+        return activeView.id !== undefined && selectedWorkspace !== null
           ? {
               title: 'Edit Workspace',
               subtitle: `Configure settings for ${selectedWorkspace.name}`,
             }
-          : { title: 'Workspace Settings', subtitle: '' };
+          : { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
       case 'workspace':
         return selectedWorkspace
           ? {
@@ -250,7 +232,7 @@ function App() {
 
   return (
     <Layout
-      workspaces={MOCK_WORKSPACES}
+      workspaces={workspaces}
       header={getHeaderContent()}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
