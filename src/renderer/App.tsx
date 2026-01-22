@@ -199,12 +199,13 @@ function App() {
       case 'settings':
         return { title: 'Settings', subtitle: 'Application preferences' };
       case 'workspace-editor':
-        return activeView.id !== undefined && selectedWorkspace !== null
-          ? {
-              title: 'Edit Workspace',
-              subtitle: `Configure settings for ${selectedWorkspace.name}`,
-            }
-          : { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
+        if (activeView.id !== undefined && selectedWorkspace) {
+          return {
+            title: 'Edit Workspace',
+            subtitle: `Configure settings for ${selectedWorkspace.name}`,
+          };
+        }
+        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
       case 'workspace':
         return selectedWorkspace
           ? {
