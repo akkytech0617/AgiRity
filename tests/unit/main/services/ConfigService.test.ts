@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConfigService } from '@/main/services/ConfigService';
 import { createMockFileSystemAdapter, createMockOSAdapter } from '../../mocks/adapters';
 
@@ -10,15 +10,34 @@ describe('ConfigService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.AGIRITY_CONFIG_DIR;
     mockOsAdapter = createMockOSAdapter(TEST_HOME_DIR);
     mockFsAdapter = createMockFileSystemAdapter();
     service = new ConfigService(mockOsAdapter, mockFsAdapter);
+  });
+
+  afterEach(() => {
+    delete process.env.AGIRITY_CONFIG_DIR;
   });
 
   describe('getConfigDir', () => {
     it('should return the correct config directory path', () => {
       const expected = `${TEST_HOME_DIR}/.agirity`;
       expect(service.getConfigDir()).toBe(expected);
+    });
+
+    it('should use AGIRITY_CONFIG_DIR environment variable when set', () => {
+      const customDir = '/custom/config/dir';
+      process.env.AGIRITY_CONFIG_DIR = customDir;
+      const serviceWithEnv = new ConfigService(mockOsAdapter, mockFsAdapter);
+      expect(serviceWithEnv.getConfigDir()).toBe(customDir);
+    });
+
+    it('should use AGIRITY_CONFIG_DIR for workspaces file path', () => {
+      const customDir = '/custom/config/dir';
+      process.env.AGIRITY_CONFIG_DIR = customDir;
+      const serviceWithEnv = new ConfigService(mockOsAdapter, mockFsAdapter);
+      expect(serviceWithEnv.getWorkspacesFilePath()).toBe(`${customDir}/workspaces.yaml`);
     });
   });
 
