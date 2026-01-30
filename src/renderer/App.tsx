@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi, workspaceApi } from './api';
 import { Layout } from './components/Layout';
@@ -24,11 +24,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    void loadWorkspaces();
-  }, []);
-
-  const loadWorkspaces = async () => {
+  const loadWorkspaces = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -44,7 +40,11 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void loadWorkspaces();
+  }, [loadWorkspaces]);
 
   const selectedWorkspace =
     activeView.type === 'workspace' ||

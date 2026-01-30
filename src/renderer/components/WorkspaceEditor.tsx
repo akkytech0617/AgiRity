@@ -120,7 +120,10 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
           <div className="p-6 space-y-4">
             {/* Name */}
             <div>
-              <label htmlFor="workspace-name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="workspace-name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Workspace Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -138,7 +141,12 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
 
             {/* Description */}
             <div>
-              <label htmlFor="workspace-description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label
+                htmlFor="workspace-description"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Description
+              </label>
               <textarea
                 id="workspace-description"
                 value={editedWorkspace.description ?? ''}
@@ -153,7 +161,12 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
 
             {/* Tags */}
             <div>
-              <label htmlFor="workspace-tags" className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+              <label
+                htmlFor="workspace-tags"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Tags
+              </label>
               <input
                 id="workspace-tags"
                 type="text"
