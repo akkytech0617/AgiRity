@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
-import { launcherApi, workspaceApi } from './api';
+import { launcherApi } from './api';
 import { Layout } from './components/Layout';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
@@ -8,6 +8,7 @@ import { ToolsRegistry } from './components/ToolsRegistry';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceEditor } from './components/WorkspaceEditor';
 import { WorkspaceList } from './components/WorkspaceList';
+import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
 
 type View =
@@ -28,12 +29,8 @@ function App() {
     try {
       setLoading(true);
       setError(null);
-      const result = await workspaceApi.load();
-      if (result.success && Array.isArray(result.data)) {
-        setWorkspaces(result.data);
-      } else {
-        throw new Error(result.error ?? 'Failed to load workspaces');
-      }
+      const data = await workspaceDataSource.load();
+      setWorkspaces(data);
     } catch (err) {
       log.error('Failed to load workspaces:', err);
       setError(err instanceof Error ? err.message : 'Failed to load workspaces');
@@ -64,22 +61,13 @@ function App() {
 
   const handleSaveWorkspace = async (workspace: Workspace) => {
     try {
-      const result = await workspaceApi.save(workspace);
-      if (!result.success) {
-        throw new Error(result.error ?? 'Failed to save workspace');
-      }
-
+      await workspaceDataSource.save(workspace);
       log.info(`Workspace saved: ${workspace.name}`);
 
-      // Reload workspaces and only navigate on success
-      const reloadResult = await workspaceApi.load();
-      if (reloadResult.success && Array.isArray(reloadResult.data)) {
-        setWorkspaces(reloadResult.data);
-        setActiveView({ type: 'workspace', id: workspace.id });
-      } else {
-        log.error('Failed to reload workspaces after save', reloadResult.error);
-        alert('Workspace saved, but failed to refresh the list. Please reload the app.');
-      }
+      // Reload workspaces and navigate on success
+      const data = await workspaceDataSource.load();
+      setWorkspaces(data);
+      setActiveView({ type: 'workspace', id: workspace.id });
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
       log.error('Failed to save workspace', errorMsg);
