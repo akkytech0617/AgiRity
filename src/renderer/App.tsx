@@ -1,22 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
-import { CreateWorkspace } from './components/CreateWorkspace';
 import { Layout } from './components/Layout';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { ToolsRegistry } from './components/ToolsRegistry';
 import { WorkspaceDetail } from './components/WorkspaceDetail';
+import { WorkspaceEditor } from './components/WorkspaceEditor';
 import { WorkspaceList } from './components/WorkspaceList';
-import { WorkspaceSettings } from './components/WorkspaceSettings';
 import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
 
 type View =
   | { type: 'home' }
   | { type: 'workspace'; id: string }
-  | { type: 'workspace-settings'; id: string }
-  | { type: 'create-workspace' }
+  | { type: 'workspace-editor'; id?: string }
   | { type: 'tools' }
   | { type: 'mcp' }
   | { type: 'settings' };
@@ -27,36 +25,54 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    workspaceDataSource
-      .load()
-      .then((data) => {
-        setWorkspaces(data);
-        setError(null);
-      })
-      .catch((error: unknown) => {
-        log.error('Failed to load workspaces:', error);
-        setError(error instanceof Error ? error.message : 'Failed to load workspaces');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const loadWorkspaces = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await workspaceDataSource.load();
+      setWorkspaces(data);
+    } catch (err) {
+      log.error('Failed to load workspaces:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load workspaces');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    void loadWorkspaces();
+  }, [loadWorkspaces]);
+
   const selectedWorkspace =
-    activeView.type === 'workspace' || activeView.type === 'workspace-settings'
-      ? workspaces.find((w) => w.id === activeView.id)
+    activeView.type === 'workspace' ||
+    (activeView.type === 'workspace-editor' && activeView.id != null)
+      ? (workspaces.find((w) => w.id === activeView.id) ?? null)
       : null;
 
-  const handleLaunch = (id: string) => {
+  const handleLaunch = async (id: string) => {
     const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
+      for (const item of workspace.items) {
+        await launchItem(item);
+      }
     }
   };
 
-  const handleSaveWorkspace = (workspace: Workspace) => {
-    setActiveView({ type: 'workspace', id: workspace.id });
+  const handleSaveWorkspace = async (workspace: Workspace) => {
+    try {
+      await workspaceDataSource.save(workspace);
+      log.info(`Workspace saved: ${workspace.name}`);
+
+      // Reload workspaces and navigate on success
+      const data = await workspaceDataSource.load();
+      setWorkspaces(data);
+      setActiveView({ type: 'workspace', id: workspace.id });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+      log.error('Failed to save workspace', errorMsg);
+      alert(`Failed to save workspace: ${errorMsg}`);
+    }
   };
 
   const launchItem = async (item: WorkspaceItem) => {
@@ -72,11 +88,7 @@ function App() {
   };
 
   const handleNew = () => {
-    setActiveView({ type: 'create-workspace' });
-  };
-
-  const handleCreateWorkspace = () => {
-    setActiveView({ type: 'home' });
+    setActiveView({ type: 'workspace-editor' });
   };
 
   const handleSelectWorkspace = (id: string) => {
@@ -99,7 +111,7 @@ function App() {
             workspaces={workspaces}
             error={error}
             onLaunchWorkspace={(workspace) => {
-              setActiveView({ type: 'workspace', id: workspace.id });
+              void handleLaunch(workspace.id);
             }}
           />
         );
@@ -109,39 +121,31 @@ function App() {
         return <MCPServers />;
       case 'settings':
         return <SettingsView />;
-      case 'create-workspace':
+      case 'workspace-editor':
         return (
-          <CreateWorkspace
-            onSave={handleCreateWorkspace}
+          <WorkspaceEditor
+            workspace={activeView.id != null ? (selectedWorkspace ?? undefined) : undefined}
+            onSave={(workspace) => void handleSaveWorkspace(workspace)}
             onCancel={() => {
-              setActiveView({ type: 'home' });
+              if (activeView.id != null) {
+                setActiveView({ type: 'workspace', id: activeView.id });
+              } else {
+                setActiveView({ type: 'home' });
+              }
             }}
           />
-        );
-      case 'workspace-settings':
-        return selectedWorkspace ? (
-          <WorkspaceSettings
-            workspace={selectedWorkspace}
-            onSave={handleSaveWorkspace}
-            onCancel={() => {
-              setActiveView({ type: 'workspace', id: selectedWorkspace.id });
-            }}
-          />
-        ) : (
-          <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
       case 'workspace':
       default:
-        // Workspace view is the default
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
-            onLaunch={handleLaunch}
+            onLaunch={(id) => void handleLaunch(id)}
             onLaunchItem={(item) => {
               void launchItem(item);
             }}
             onEditWorkspace={(id) => {
-              setActiveView({ type: 'workspace-settings', id });
+              setActiveView({ type: 'workspace-editor', id });
             }}
           />
         ) : (

@@ -12,6 +12,7 @@
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview",
     "test": "vitest run --no-color",
+    "test:unit": "vitest run --no-color tests/unit",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "prebuild:e2e": "VITE_USE_MOCK_DATA=false tsc && vite build",

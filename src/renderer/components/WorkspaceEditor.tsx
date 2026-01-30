@@ -6,70 +6,108 @@ import { Workspace, WorkspaceItem } from '../../shared/types';
 import { AddItemModal } from './AddItemModal';
 import { ItemEditor } from './ItemEditor';
 
-interface CreateWorkspaceProps {
-  onSave: (workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>) => void;
+interface WorkspaceEditorProps {
+  workspace?: Workspace;
+  onSave: (workspace: Workspace) => void;
   onCancel: () => void;
 }
 
-export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspaceProps>) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [items, setItems] = useState<WorkspaceItem[]>([]);
+/**
+ * Unified Workspace Editor component for creating new workspaces or editing existing ones.
+ * Handles form validation, item management, and workspace CRUD operations.
+ */
+export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<WorkspaceEditorProps>) {
+  const isEditMode = workspace != null;
+
+  const [editedWorkspace, setEditedWorkspace] = useState<Workspace>(
+    workspace ?? {
+      id: crypto.randomUUID(),
+      name: '',
+      description: '',
+      items: [],
+      presets: [],
+      tags: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+  );
+
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const handleFieldChange = (field: keyof Workspace, value: string | string[]) => {
+    setEditedWorkspace((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleAddItem = (item: WorkspaceItem) => {
-    setItems((prev) => [...prev, item]);
+    setEditedWorkspace((prev) => ({
+      ...prev,
+      items: [...prev.items, item],
+    }));
     setShowAddModal(false);
   };
 
   const handleUpdateItem = (index: number, item: WorkspaceItem) => {
-    setItems((prev) => {
-      const newItems = [...prev];
+    setEditedWorkspace((prev) => {
+      const newItems = [...prev.items];
       newItems[index] = item;
-      return newItems;
+      return { ...prev, items: newItems };
     });
   };
 
   const handleDeleteItem = (index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index));
+    setEditedWorkspace((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
   };
 
   const handleMoveItem = (index: number, direction: 'up' | 'down') => {
-    setItems((prev) => {
-      const newItems = [...prev];
+    setEditedWorkspace((prev) => {
+      const newItems = [...prev.items];
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
       if (targetIndex < 0 || targetIndex >= newItems.length) return prev;
       [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
-      return newItems;
+      return { ...prev, items: newItems };
     });
   };
 
   const handleSave = () => {
-    if (!name.trim()) return;
+    if (!editedWorkspace.name.trim()) return;
+
     onSave({
-      name: name.trim(),
-      description: description.trim() || undefined,
-      tags: tags.length > 0 ? tags : undefined,
-      items,
+      ...editedWorkspace,
+      name: editedWorkspace.name.trim(),
+      description: editedWorkspace.description?.trim() || undefined,
+      tags:
+        editedWorkspace.tags && editedWorkspace.tags.length > 0
+          ? editedWorkspace.tags.filter(Boolean)
+          : undefined,
+      updatedAt: new Date().toISOString(),
     });
   };
 
-  const existingItemNames = items.map((item) => item.name);
+  const existingItemNames = editedWorkspace.items.map((item) => item.name);
+  const isFormValid = editedWorkspace.name.trim().length > 0;
 
   return (
     <div className="max-w-4xl mx-auto p-8">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-primary-100 rounded-xl">
-            <Sparkles className="w-6 h-6 text-primary" />
+          <div className={`p-2 ${isEditMode ? 'bg-blue-100' : 'bg-primary-100'} rounded-xl`}>
+            {isEditMode ? (
+              <Save className="w-6 h-6 text-blue-600" />
+            ) : (
+              <Sparkles className="w-6 h-6 text-primary" />
+            )}
           </div>
           <h2 className="text-2xl font-display font-bold text-text-primary">
-            Create New Workspace
+            {isEditMode ? 'Edit Workspace' : 'Create New Workspace'}
           </h2>
         </div>
         <p className="text-text-secondary">
-          Set up a new workspace to launch your apps, URLs, and folders together.
+          {isEditMode
+            ? 'Configure workspace details, items, and launch behavior.'
+            : 'Set up a new workspace to launch your apps, URLs, and folders together.'}
         </p>
       </div>
 
@@ -82,27 +120,38 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
           <div className="p-6 space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="workspace-name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Workspace Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="workspace-name"
                 type="text"
-                value={name}
+                value={editedWorkspace.name}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  handleFieldChange('name', e.target.value);
                 }}
                 placeholder="e.g., Morning Routine, Client Project"
                 className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
+                autoFocus={!isEditMode}
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label
+                htmlFor="workspace-description"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Description
+              </label>
               <textarea
-                value={description}
+                id="workspace-description"
+                value={editedWorkspace.description ?? ''}
                 onChange={(e) => {
-                  setDescription(e.target.value);
+                  handleFieldChange('description', e.target.value);
                 }}
                 rows={2}
                 placeholder="What is this workspace for?"
@@ -112,12 +161,19 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+              <label
+                htmlFor="workspace-tags"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Tags
+              </label>
               <input
+                id="workspace-tags"
                 type="text"
-                value={tags.join(', ')}
+                value={editedWorkspace.tags?.join(', ') ?? ''}
                 onChange={(e) => {
-                  setTags(
+                  handleFieldChange(
+                    'tags',
                     e.target.value
                       .split(',')
                       .map((t) => t.trim())
@@ -155,7 +211,7 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
           </div>
 
           <div className="p-4">
-            {items.length === 0 ? (
+            {editedWorkspace.items.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <AlertCircle className="w-8 h-8 text-gray-400" />
@@ -176,12 +232,12 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
               </div>
             ) : (
               <div className="space-y-2">
-                {items.map((item, index) => (
+                {editedWorkspace.items.map((item, index) => (
                   <ItemEditor
                     key={`${item.name}-${index}`}
                     item={item}
                     index={index}
-                    totalItems={items.length}
+                    totalItems={editedWorkspace.items.length}
                     existingItemNames={existingItemNames}
                     onUpdate={(updatedItem) => {
                       handleUpdateItem(index, updatedItem);
@@ -201,11 +257,11 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
             )}
           </div>
 
-          {items.length > 0 && (
+          {editedWorkspace.items.length > 0 && (
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
               <p className="text-xs text-gray-500">
                 <strong>Tip:</strong> Use the arrows to reorder items. Items launch in order from
-                top to bottom.
+                top to bottom. Set "Depends On" to wait for a specific item before launching.
               </p>
             </div>
           )}
@@ -215,18 +271,19 @@ export function CreateWorkspace({ onSave, onCancel }: Readonly<CreateWorkspacePr
         <div className="flex items-center justify-end gap-3 pt-4">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 text-gray-700 font-medium hover:bg-gray-100 rounded-button transition-colors flex items-center gap-2"
           >
             <X className="w-4 h-4" />
             Cancel
           </button>
           <button
             onClick={handleSave}
-            disabled={!name.trim()}
+            disabled={!isFormValid}
             className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!isFormValid ? 'Please fill in the workspace name' : ''}
           >
             <Save className="w-4 h-4" />
-            Create Workspace
+            {isEditMode ? 'Save Changes' : 'Create Workspace'}
           </button>
         </div>
       </div>
