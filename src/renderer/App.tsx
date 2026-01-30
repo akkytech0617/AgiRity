@@ -51,8 +51,8 @@ function App() {
 
   const selectedWorkspace =
     activeView.type === 'workspace' ||
-    (activeView.type === 'workspace-editor' && activeView.id !== undefined)
-      ? workspaces.find((w) => w.id === activeView.id)
+    (activeView.type === 'workspace-editor' && activeView.id != null)
+      ? (workspaces.find((w) => w.id === activeView.id) ?? null)
       : null;
 
   const handleLaunch = (id: string) => {
@@ -154,10 +154,10 @@ function App() {
       case 'workspace-editor':
         return (
           <WorkspaceEditor
-            workspace={activeView.id !== undefined ? (selectedWorkspace ?? undefined) : undefined}
+            workspace={activeView.id != null ? (selectedWorkspace ?? undefined) : undefined}
             onSave={(workspace) => void handleSaveWorkspace(workspace)}
             onCancel={() => {
-              if (activeView.id !== undefined) {
+              if (activeView.id != null) {
                 setActiveView({ type: 'workspace', id: activeView.id });
               } else {
                 setActiveView({ type: 'quick-launch' });
@@ -199,7 +199,7 @@ function App() {
       case 'settings':
         return { title: 'Settings', subtitle: 'Application preferences' };
       case 'workspace-editor':
-        if (activeView.id !== undefined && selectedWorkspace) {
+        if (activeView.id != null && selectedWorkspace != null) {
           return {
             title: 'Edit Workspace',
             subtitle: `Configure settings for ${selectedWorkspace.name}`,

@@ -16,7 +16,7 @@ interface WorkspaceEditorProps {
  * Handles form validation, item management, and workspace CRUD operations.
  */
 export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<WorkspaceEditorProps>) {
-  const isEditMode = workspace !== undefined;
+  const isEditMode = workspace != null;
 
   const [editedWorkspace, setEditedWorkspace] = useState<Workspace>(
     workspace ?? {
@@ -76,10 +76,7 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
     onSave({
       ...editedWorkspace,
       name: editedWorkspace.name.trim(),
-      description:
-        editedWorkspace.description?.trim() !== ''
-          ? editedWorkspace.description?.trim()
-          : undefined,
+      description: editedWorkspace.description?.trim() || undefined,
       tags:
         editedWorkspace.tags && editedWorkspace.tags.length > 0
           ? editedWorkspace.tags.filter(Boolean)
@@ -122,10 +119,11 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
           <div className="p-6 space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="workspace-name" className="block text-sm font-medium text-gray-700 mb-1">
                 Workspace Name <span className="text-red-500">*</span>
               </label>
               <input
+                id="workspace-name"
                 type="text"
                 value={editedWorkspace.name}
                 onChange={(e) => {
@@ -139,8 +137,9 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label htmlFor="workspace-description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea
+                id="workspace-description"
                 value={editedWorkspace.description ?? ''}
                 onChange={(e) => {
                   handleFieldChange('description', e.target.value);
@@ -153,8 +152,9 @@ export function WorkspaceEditor({ workspace, onSave, onCancel }: Readonly<Worksp
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+              <label htmlFor="workspace-tags" className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
               <input
+                id="workspace-tags"
                 type="text"
                 value={editedWorkspace.tags?.join(', ') ?? ''}
                 onChange={(e) => {
