@@ -55,10 +55,13 @@ function App() {
       ? (workspaces.find((w) => w.id === activeView.id) ?? null)
       : null;
 
-  const handleLaunch = (id: string) => {
+  const handleLaunch = async (id: string) => {
     const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
+      for (const item of workspace.items) {
+        await launchItem(item);
+      }
     }
   };
 
@@ -69,12 +72,21 @@ function App() {
   const handleSaveWorkspace = async (workspace: Workspace) => {
     try {
       const result = await workspaceApi.save(workspace);
-      if (result.success) {
-        await loadWorkspaces();
-        setActiveView({ type: 'workspace', id: workspace.id });
-        log.info(`Workspace saved: ${workspace.name}`);
-      } else {
+      if (!result.success) {
         throw new Error(result.error ?? 'Failed to save workspace');
+      }
+
+      log.info(`Workspace saved: ${workspace.name}`);
+
+      // Reload workspaces and only navigate on success
+      const reloadResult = await workspaceApi.load();
+      if (reloadResult.success && Array.isArray(reloadResult.data)) {
+        setWorkspaces(reloadResult.data);
+        setActiveView({ type: 'workspace', id: workspace.id });
+      } else {
+        // Save succeeded but reload failed - show warning but stay on editor
+        log.error('Failed to reload workspaces after save', reloadResult.error);
+        alert('Workspace saved, but failed to refresh the list. Please reload the app.');
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
@@ -169,7 +181,7 @@ function App() {
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
-            onLaunch={handleLaunch}
+            onLaunch={(id) => void handleLaunch(id)}
             onLaunchItem={(item) => void launchItem(item)}
           />
         ) : (
@@ -184,7 +196,7 @@ function App() {
               handleSelectWorkspace(id);
             }}
             onLaunchItem={handleLaunchItem}
-            onLaunchWorkspace={handleLaunch}
+            onLaunchWorkspace={(id) => void handleLaunch(id)}
           />
         );
     }
