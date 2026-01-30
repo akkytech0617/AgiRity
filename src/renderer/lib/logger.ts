@@ -3,7 +3,7 @@
  */
 
 import logger from 'electron-log/renderer';
-import { initSentryRenderer, captureException, sendLog, captureIssue } from './sentry';
+import { captureException, captureIssue, initSentryRenderer, sendLog } from './sentry';
 
 /**
  * Initialize logging for the renderer process

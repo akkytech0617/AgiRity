@@ -288,10 +288,8 @@ src/
 │   ├── App.tsx                     # ルートコンポーネント
 │   ├── index.css                   # グローバルスタイル
 │   ├── components/                 # UI コンポーネント
-│   │   ├── Layout.tsx              # 2カラムレイアウト
-│   │   ├── Sidebar.tsx             # ナビゲーション
-│   │   ├── Header.tsx              # ページヘッダー
-│   │   ├── QuickLaunch.tsx         # ホーム画面
+│   │   ├── Layout.tsx              # メインレイアウト（Header + Content）
+│   │   ├── Header.tsx              # タブバー（ロゴ + タブ + メニュー）
 │   │   ├── WorkspaceDetail.tsx     # ワークスペース詳細
 │   │   ├── WorkspaceSettings.tsx   # ワークスペース編集
 │   │   ├── CreateWorkspace.tsx     # ワークスペース作成
@@ -318,27 +316,39 @@ src/
 
 ### 7.1 View Structure
 
-The application follows a sidebar + main content layout pattern.
+The application follows a browser-like tab UI pattern.
 
 ```
-┌────────────────────────────────────────────────────────┐
-│  Sidebar (w-64)    │  Main Content                     │
-│  ┌──────────────┐  │  ┌──────────────────────────────┐ │
-│  │ Logo/Home    │  │  │ Header (title, actions)      │ │
-│  ├──────────────┤  │  ├──────────────────────────────┤ │
-│  │ Workspaces   │  │  │                              │ │
-│  │  - AgiRity   │  │  │ Content Area                 │ │
-│  │  - Morning   │  │  │ (scrollable)                 │ │
-│  │  + Add       │  │  │                              │ │
-│  ├──────────────┤  │  │                              │ │
-│  │ Library      │  │  │                              │ │
-│  │  - Tools     │  │  │                              │ │
-│  │  - MCP       │  │  │                              │ │
-│  ├──────────────┤  │  │                              │ │
-│  │ Settings     │  │  │                              │ │
-│  └──────────────┘  │  └──────────────────────────────┘ │
-└────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ [A]  [Tab1] [Tab2] [Tab3] [+]                         [≡]  │  ← Header (タブバー + ハンバーガーメニュー)
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Workspace Header (Name / Description / Tags / Edit)       │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ Left: Presets    │     Right: Tools                 │   │  ← 2カラムレイアウト
+│  │ (Cards)          │     (List)                       │   │
+│  │                  │                                  │   │
+│  │ (Scrollable)     │     (Scrollable)                 │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+**Header構成:**
+- **左**: ロゴ (A)
+- **中央**: ワークスペースタブ（全ワークスペースを表示）+ 新規追加ボタン (+)
+- **右**: ハンバーガーメニュー (≡)（Settings, Tools Registry, MCP Servers）
+
+**WorkspaceDetail - ヘッダー行:**
+- ワークスペース名、説明
+- タグ表示
+- 編集ボタン（workspace-settings ビューへ遷移）
+
+**WorkspaceDetail - 2カラムレイアウト:**
+- **左カラム**: Launch Presetsをカード形式で縦並び
+- **右カラム**: Workspace Toolsをリスト形式で縦並び
+- 各カラムの見出しはカード/リスト内に統合（独立したヘッダー行なし）
 
 ### 7.2 View Types
 
@@ -346,7 +356,6 @@ Navigation is handled via a discriminated union `View` type:
 
 | View Type            | Description                                     |
 | -------------------- | ----------------------------------------------- |
-| `quick-launch`       | Dashboard showing all workspaces as cards       |
 | `workspace`          | Workspace detail view with presets and items    |
 | `workspace-settings` | Edit form for workspace configuration           |
 | `create-workspace`   | New workspace creation wizard                   |
@@ -354,13 +363,19 @@ Navigation is handled via a discriminated union `View` type:
 | `mcp`                | MCP Servers configuration (Phase 2 placeholder) |
 | `settings`           | Global application settings                     |
 
+> **Note:** `quick-launch` ビューは削除されました。アプリ起動時はデフォルトでワークスペースid='1'を表示します。
+
 ### 7.3 Component Responsibilities
 
-| Component                               | Responsibility                                     |
-| --------------------------------------- | -------------------------------------------------- |
-| `App.tsx`                               | View state management, routing, layout composition |
-| `Sidebar`                               | Navigation, workspace list, search/filter          |
-| `QuickLaunch`                           | Workspace cards grid, quick item launch            |
-| `WorkspaceDetail`                       | Preset cards, item grid, launch actions            |
-| `CreateWorkspace` / `WorkspaceSettings` | Form handling, item management                     |
-| `ItemEditor`                            | Individual item configuration with drag/reorder    |
+| Component                               | Responsibility                                           |
+| --------------------------------------- | -------------------------------------------------------- |
+| `App.tsx`                               | View state管理、遷移ロジック、ワークスペース初期化      |
+| `Layout`                                | 全体レイアウト (Header + Content）、コンテンツ委譲      |
+| `Header`                                | ロゴ、ワークスペースタブ、新規ボタン、ハンバーガーメニュー |
+| `WorkspaceDetail`                       | ヘッダー表示、2カラムレイアウト（プリセット＋ツール）  |
+| `CreateWorkspace` / `WorkspaceSettings` | フォーム操作、アイテム CRUD、バリデーション            |
+| `ItemEditor`                            | 個別アイテムの設定、ドラッグ&ドロップ対応              |
+
+---
+
+_Last updated: 2025-12-30_

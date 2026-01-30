@@ -8,9 +8,10 @@ src/
 │   ├── index.ts       # Main process entry
 │   └── preload.ts     # Preload script
 ├── renderer/          # React frontend
-│   ├── components/    # UI components (14 files)
-│   │   ├── Layout.tsx, Header.tsx, Sidebar.tsx
-│   │   ├── QuickLaunch.tsx, WorkspaceDetail.tsx, WorkspaceSettings.tsx
+│   ├── components/    # UI components
+│   │   ├── Layout.tsx           # Main layout (Header + Content)
+│   │   ├── Header.tsx           # Tab bar (Logo + Tabs + Menu)
+│   │   ├── WorkspaceDetail.tsx, WorkspaceSettings.tsx
 │   │   ├── CreateWorkspace.tsx, ItemEditor.tsx, AddItemModal.tsx
 │   │   ├── Settings.tsx, ToolsRegistry.tsx, MCPServers.tsx
 │   │   ├── WorkspaceRow.tsx (UNUSED - can be deleted)

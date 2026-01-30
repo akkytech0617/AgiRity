@@ -177,8 +177,8 @@ npm run lint
 # ユニットテスト
 npm test
 
-# E2Eテスト（設定されている場合）
-npm run test:e2e
+# E2Eテスト
+npm run test:e2e:dev
 ```
 
 確認項目：

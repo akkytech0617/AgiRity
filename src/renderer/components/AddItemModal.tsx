@@ -1,5 +1,5 @@
-import { useState, useId } from 'react';
-import { X, Monitor, Globe, Folder, Plus } from 'lucide-react';
+import { Folder, Globe, Monitor, Plus, X } from 'lucide-react';
+import { useId, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface AddItemModalProps {
@@ -27,41 +27,38 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
   const waitTimeId = `${baseId}-wait-time`;
   const dependsOnId = `${baseId}-depends-on`;
 
-  const handleSubmit = () => {
-    if (!name.trim()) return;
+  const parseUrls = (input: string): string[] => {
+    return input
+      .split('\n')
+      .map((u) => u.trim())
+      .filter(Boolean);
+  };
 
+  const isValidSubmission = (): boolean => {
+    if (!name.trim()) return false;
+    if ((itemType === 'app' || itemType === 'folder') && !path.trim()) return false;
+    if (itemType === 'browser' && parseUrls(urls).length === 0) return false;
+    return true;
+  };
+
+  const buildWorkspaceItem = (): WorkspaceItem => {
     const item: WorkspaceItem = {
       type: itemType,
       name: name.trim(),
     };
 
-    if (category.trim()) {
-      item.category = category.trim();
-    }
+    if (category.trim()) item.category = category.trim();
+    if (itemType === 'app' || itemType === 'folder') item.path = path.trim();
+    if (itemType === 'browser') item.urls = parseUrls(urls);
+    if (waitTime != null && waitTime > 0) item.waitTime = waitTime;
+    if (dependsOn) item.dependsOn = dependsOn;
 
-    if (itemType === 'app' || itemType === 'folder') {
-      if (!path.trim()) return;
-      item.path = path.trim();
-    }
+    return item;
+  };
 
-    if (itemType === 'browser') {
-      const urlList = urls
-        .split('\n')
-        .map((u) => u.trim())
-        .filter(Boolean);
-      if (urlList.length === 0) return;
-      item.urls = urlList;
-    }
-
-    if (waitTime != null && waitTime > 0) {
-      item.waitTime = waitTime;
-    }
-
-    if (dependsOn) {
-      item.dependsOn = dependsOn;
-    }
-
-    onAdd(item);
+  const handleSubmit = () => {
+    if (!isValidSubmission()) return;
+    onAdd(buildWorkspaceItem());
   };
 
   const typeOptions: {
@@ -151,7 +148,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 setName(e.target.value);
               }}
               placeholder="e.g., VS Code, GitHub Repo"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
             />
           </div>
 
@@ -168,7 +165,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 setCategory(e.target.value);
               }}
               placeholder="e.g., development, reference, communication"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
             />
             <p className="text-xs text-gray-500 mt-1">Optional label for grouping and filtering</p>
           </div>
@@ -187,7 +184,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                   setPath(e.target.value);
                 }}
                 placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {itemType === 'app' ? 'Full path to the application' : 'Path to the folder to open'}
@@ -209,7 +206,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                 }}
                 placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-mono text-sm resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm resize-none"
               />
               <p className="text-xs text-gray-500 mt-1">One URL per line</p>
             </div>
@@ -236,7 +233,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                     setWaitTime(e.target.value ? Number(e.target.value) : undefined);
                   }}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm"
                 />
               </div>
 
@@ -254,7 +251,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
                   onChange={(e) => {
                     setDependsOn(e.target.value);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm bg-white"
                 >
                   <option value="">None</option>
                   {existingItemNames.map((itemName) => (
@@ -278,11 +275,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
           </button>
           <button
             onClick={handleSubmit}
-            disabled={
-              !name.trim() ||
-              (itemType !== 'browser' && !path.trim()) ||
-              (itemType === 'browser' && !urls.trim())
-            }
+            disabled={!isValidSubmission()}
             className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />

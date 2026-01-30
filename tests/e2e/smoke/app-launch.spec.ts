@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { test, expect } from '../fixtures/electron.fixture';
+import { expect, test } from '../fixtures/electron.fixture';
 
 const APP_ROOT_SELECTOR = '[data-testid="app-root"]';
 
