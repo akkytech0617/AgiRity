@@ -1,15 +1,15 @@
-import { useState, useId } from 'react';
 import {
-  Monitor,
-  Globe,
-  Folder,
-  Clock,
   ArrowRight,
-  Trash2,
   ChevronDown,
   ChevronUp,
+  Clock,
+  Folder,
+  Globe,
+  Monitor,
   Pencil,
+  Trash2,
 } from 'lucide-react';
+import { useId, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface ItemEditorProps {
@@ -95,12 +95,12 @@ export function ItemEditor({
         </div>
 
         {/* Order Number */}
-        <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs font-bold flex items-center justify-center flex-shrink-0">
+        <div className="w-6 h-6 rounded-full bg-gray-100 text-gray-500 text-xs font-bold flex items-center justify-center shrink-0">
           {index + 1}
         </div>
 
         {/* Icon */}
-        <div className="p-1.5 bg-gray-50 rounded-md border border-gray-100 flex-shrink-0">
+        <div className="p-1.5 bg-gray-50 rounded-md border border-gray-100 shrink-0">
           {getItemIcon()}
         </div>
 
@@ -108,12 +108,12 @@ export function ItemEditor({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-medium text-gray-900 truncate">{item.name}</span>
-            <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
+            <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded-sm">
               {getTypeLabel()}
             </span>
             {item.category != null && (
               <span
-                className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded truncate"
+                className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded-sm truncate"
                 title={item.category}
               >
                 {item.category}
@@ -146,14 +146,14 @@ export function ItemEditor({
             onClick={() => {
               setIsExpanded(!isExpanded);
             }}
-            className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded transition-colors"
+            className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded-sm transition-colors"
             title="Edit"
           >
             <Pencil className="w-4 h-4" />
           </button>
           <button
             onClick={onDelete}
-            className="p-1.5 text-gray-400 hover:text-error hover:bg-red-50 rounded transition-colors"
+            className="p-1.5 text-gray-400 hover:text-error hover:bg-red-50 rounded-sm transition-colors"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />
@@ -176,7 +176,7 @@ export function ItemEditor({
               onChange={(e) => {
                 handleFieldChange('name', e.target.value);
               }}
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm"
             />
           </div>
 
@@ -193,7 +193,7 @@ export function ItemEditor({
                 handleFieldChange('category', e.target.value || undefined);
               }}
               placeholder="e.g., development"
-              className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+              className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm"
             />
           </div>
 
@@ -210,7 +210,7 @@ export function ItemEditor({
                 onChange={(e) => {
                   handleFieldChange('path', e.target.value);
                 }}
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm font-mono"
               />
             </div>
           )}
@@ -228,7 +228,7 @@ export function ItemEditor({
                   handleFieldChange('urls', e.target.value.split('\n').filter(Boolean));
                 }}
                 rows={3}
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm font-mono resize-none"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm font-mono resize-none"
               />
             </div>
           )}
@@ -251,7 +251,7 @@ export function ItemEditor({
                   );
                 }}
                 placeholder="0"
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm"
               />
             </div>
             <div>
@@ -264,7 +264,7 @@ export function ItemEditor({
                 onChange={(e) => {
                   handleFieldChange('dependsOn', e.target.value || undefined);
                 }}
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm bg-white"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-hidden transition-all text-sm bg-white"
               >
                 <option value="">None</option>
                 {existingItemNames

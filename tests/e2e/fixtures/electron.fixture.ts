@@ -1,8 +1,9 @@
 /* eslint-disable no-empty-pattern, react-hooks/rules-of-hooks */
+
+import fs from 'node:fs';
+import path from 'node:path';
 import { test as base, _electron as electron } from '@playwright/test';
 import type { ElectronApplication, Page } from 'playwright';
-import path from 'node:path';
-import fs from 'node:fs';
 
 /**
  * Screenshot helper type

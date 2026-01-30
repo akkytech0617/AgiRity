@@ -1,11 +1,11 @@
-import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from './adapters/interfaces';
-import type { IConfigService, IProjectService, ILauncherService } from './services/interfaces';
 import { FileSystemAdapter } from './adapters/FileSystemAdapter';
+import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from './adapters/interfaces';
 import { OSAdapter } from './adapters/OSAdapter';
 import { ShellAdapter } from './adapters/ShellAdapter';
 import { ConfigService } from './services/ConfigService';
-import { ProjectService } from './services/ProjectService';
+import type { IConfigService, ILauncherService, IProjectService } from './services/interfaces';
 import { LauncherService } from './services/LauncherService';
+import { ProjectService } from './services/ProjectService';
 
 /**
  * Adapter container for external dependencies

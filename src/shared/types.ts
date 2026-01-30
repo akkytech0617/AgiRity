@@ -7,7 +7,7 @@ export const WorkspaceItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().optional(),
   path: z.string().optional(),
-  urls: z.array(z.string().url()).optional(),
+  urls: z.array(z.url()).optional(),
   folder: z.string().optional(),
   waitTime: z.number().min(0).optional(),
   dependsOn: z.string().optional(),
@@ -20,14 +20,14 @@ export const WorkspacePresetSchema = z.object({
 });
 
 export const WorkspaceSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1),
   description: z.string().optional(),
   items: z.array(WorkspaceItemSchema),
   presets: z.array(WorkspacePresetSchema).optional(),
   tags: z.array(z.string()).optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 // --- TypeScript Types ---
@@ -42,6 +42,12 @@ export interface LaunchResult {
   error?: string;
 }
 
+export interface IconResult {
+  success: boolean;
+  data?: string;
+  error?: string;
+}
+
 export interface WorkspaceResult {
   success: boolean;
   data?: Workspace | Workspace[] | null | boolean;
@@ -53,6 +59,12 @@ export const LaunchResultSchema = z.object({
   error: z.string().optional(),
 });
 
+export const IconResultSchema = z.object({
+  success: z.boolean(),
+  data: z.string().optional(),
+  error: z.string().optional(),
+});
+
 export const WorkspaceResultSchema = z.object({
   success: z.boolean(),
   data: z.any().optional(), // Flexible for different data payloads
@@ -61,6 +73,7 @@ export const WorkspaceResultSchema = z.object({
 
 export const IPC_CHANNELS = {
   LAUNCHER_LAUNCH_ITEM: 'launcher:launchItem',
+  LAUNCHER_GET_ITEM_ICON: 'launcher:getItemIcon',
   WORKSPACE_LOAD: 'workspace:load',
   WORKSPACE_GET: 'workspace:get',
   WORKSPACE_SAVE: 'workspace:save',
@@ -73,6 +86,7 @@ export type IpcChannels = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];
 
 export interface ILauncherApi {
   launchItem: (item: WorkspaceItem) => Promise<LaunchResult>;
+  getItemIcon: (item: WorkspaceItem) => Promise<IconResult>;
 }
 
 export interface IWorkspaceApi {

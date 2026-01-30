@@ -50,9 +50,7 @@ tests/
 │   ├── renderer/                   # Renderer プロセステスト
 │   │   └── components/             # React コンポーネントテスト
 │   │       ├── Layout.test.tsx
-│   │       ├── Sidebar.test.tsx
 │   │       ├── Header.test.tsx
-│   │       ├── QuickLaunch.test.tsx
 │   │       └── AddItemModal.test.tsx
 │   └── shared/                     # 共有コードテスト
 │       └── types.test.ts           # Zod スキーマテスト
@@ -233,6 +231,31 @@ describe('WorkspaceItemSchema', () => {
 npm run test           # 全 Unit テスト実行
 npm run test:watch     # ウォッチモード
 npm run test:coverage  # カバレッジ付き実行
+```
+
+### テスト対象ファイルの指定
+
+Vitestで特定のテストファイルを実行する場合、ファイルパスをそのまま渡します（`--runTestsByPath` はサポートされていません）:
+
+```bash
+# 複数コンポーネントのテストを実行
+npm run test -- tests/unit/renderer/components/Layout.test.tsx tests/unit/renderer/components/Header.test.tsx
+
+# 特定のサービステスト
+npm run test -- tests/unit/main/services/ConfigService.test.ts
+```
+
+### Lint実行時の注意
+
+全体lint（`npm run lint`）を実行すると、`tests/results/e2e/html/trace/assets/` に生成された大量のファイルが警告を出力します。  
+変更確認時は対象ファイルのlintを実行することを推奨します:
+
+```bash
+# 変更したコンポーネントのみlint
+npx eslint src/renderer/components/WorkspaceDetail.tsx
+
+# 複数ファイル
+npx eslint src/renderer/components/*.tsx src/main/services/*.ts
 ```
 
 ---
@@ -502,4 +525,4 @@ vi.mock('@/renderer/api', () => ({
 
 ---
 
-_最終更新: 2025-12-23_
+_最終更新: 2025-12-30_

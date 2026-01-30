@@ -24,7 +24,7 @@ const WorkspacePresetSchema = z.object({
 });
 
 const WorkspaceSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   description: z.string().optional(),
   items: z.array(WorkspaceItemSchema),

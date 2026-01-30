@@ -34,15 +34,15 @@ lint:
 
 # Fix ESLint issues automatically
 fix:
-    npm run --silent lint:fix --no-color
+    npm run lint:fix
 
 # Check code formatting with Prettier
 format-check:
-    npx prettier --check --no-color . 2>&1 | grep -v "^Checking formatting" | grep -v "^\[" || test $? = 1
+    npm run format:check
 
 # Format code with Prettier
 format:
-    npm run --silent format --no-color
+    npm run format
 
 # --- Testing ---
 

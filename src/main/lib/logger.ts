@@ -2,17 +2,17 @@
  * Main process logger initialization and configuration
  */
 
-import logger from 'electron-log/main';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+import logger from 'electron-log/main';
 import {
-  isDevelopment,
-  FILE_ROTATION,
-  LOG_FORMAT,
   CONSOLE_FORMAT,
+  FILE_ROTATION,
+  isDevelopment,
   LOG_FILE_NAMES,
+  LOG_FORMAT,
 } from '@/shared/lib/logging/config';
-import { initSentryMain, captureException, sendLog, captureIssue } from './sentry';
+import { captureException, captureIssue, initSentryMain, sendLog } from './sentry';
 
 async function fileExists(filePath: string): Promise<boolean> {
   try {

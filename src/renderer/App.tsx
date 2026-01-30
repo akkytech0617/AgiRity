@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Layout } from './components/Layout';
-import { WorkspaceDetail } from './components/WorkspaceDetail';
-import { WorkspaceEditor } from './components/WorkspaceEditor';
-import { QuickLaunch } from './components/QuickLaunch';
-import { ToolsRegistry } from './components/ToolsRegistry';
-import { MCPServers } from './components/MCPServers';
-import { Settings as SettingsView } from './components/Settings';
+import { useEffect, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi, workspaceApi } from './api';
+import { Layout } from './components/Layout';
+import { MCPServers } from './components/MCPServers';
+import { Settings as SettingsView } from './components/Settings';
+import { ToolsRegistry } from './components/ToolsRegistry';
+import { WorkspaceDetail } from './components/WorkspaceDetail';
+import { WorkspaceEditor } from './components/WorkspaceEditor';
+import { WorkspaceList } from './components/WorkspaceList';
 import { log } from './lib/logger';
 
-// View Types
 type View =
-  | { type: 'quick-launch' }
+  | { type: 'home' }
   | { type: 'workspace'; id: string }
   | { type: 'workspace-editor'; id?: string }
   | { type: 'tools' }
@@ -20,19 +19,18 @@ type View =
   | { type: 'settings' };
 
 function App() {
-  const [activeView, setActiveView] = useState<View>({ type: 'quick-launch' });
+  const [activeView, setActiveView] = useState<View>({ type: 'home' });
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load workspaces on mount
   useEffect(() => {
     void loadWorkspaces();
   }, []);
 
   const loadWorkspaces = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
       const result = await workspaceApi.load();
       if (result.success && Array.isArray(result.data)) {
@@ -41,11 +39,10 @@ function App() {
         throw new Error(result.error ?? 'Failed to load workspaces');
       }
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Unknown error';
-      log.error('Failed to load workspaces', errorMsg);
-      setError(errorMsg);
+      log.error('Failed to load workspaces:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load workspaces');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -65,10 +62,6 @@ function App() {
     }
   };
 
-  const handleEditWorkspace = (id: string) => {
-    setActiveView({ type: 'workspace-editor', id });
-  };
-
   const handleSaveWorkspace = async (workspace: Workspace) => {
     try {
       const result = await workspaceApi.save(workspace);
@@ -84,7 +77,6 @@ function App() {
         setWorkspaces(reloadResult.data);
         setActiveView({ type: 'workspace', id: workspace.id });
       } else {
-        // Save succeeded but reload failed - show warning but stay on editor
         log.error('Failed to reload workspaces after save', reloadResult.error);
         alert('Workspace saved, but failed to refresh the list. Please reload the app.');
       }
@@ -92,14 +84,6 @@ function App() {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
       log.error('Failed to save workspace', errorMsg);
       alert(`Failed to save workspace: ${errorMsg}`);
-    }
-  };
-
-  const handleLaunchItem = (workspaceId: string, itemName: string) => {
-    const workspace = workspaces.find((w) => w.id === workspaceId);
-    const item = workspace?.items.find((i) => i.name === itemName);
-    if (item) {
-      void launchItem(item);
     }
   };
 
@@ -119,44 +103,30 @@ function App() {
     setActiveView({ type: 'workspace-editor' });
   };
 
-  const handleSelectWorkspace = (id: string | null) => {
-    if (id !== null && id.length > 0) {
-      setActiveView({ type: 'workspace', id });
-    } else {
-      setActiveView({ type: 'quick-launch' });
-    }
+  const handleSelectWorkspace = (id: string) => {
+    setActiveView({ type: 'workspace', id });
+  };
+
+  const handleOpenHome = () => {
+    setActiveView({ type: 'home' });
   };
 
   const renderMainContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-gray-500">Loading workspaces...</p>
-          </div>
-        </div>
-      );
-    }
-
-    if (error !== null) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <div className="text-red-500 mb-4">⚠️ Error loading workspaces</div>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <button
-              onClick={() => void loadWorkspaces()}
-              className="px-4 py-2 bg-primary text-white rounded-button hover:bg-primary-600"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      );
+    if (loading) {
+      return <div className="p-8 text-center text-gray-500">Loading...</div>;
     }
 
     switch (activeView.type) {
+      case 'home':
+        return (
+          <WorkspaceList
+            workspaces={workspaces}
+            error={error}
+            onLaunchWorkspace={(workspace) => {
+              void handleLaunch(workspace.id);
+            }}
+          />
+        );
       case 'tools':
         return <ToolsRegistry />;
       case 'mcp':
@@ -172,81 +142,34 @@ function App() {
               if (activeView.id != null) {
                 setActiveView({ type: 'workspace', id: activeView.id });
               } else {
-                setActiveView({ type: 'quick-launch' });
+                setActiveView({ type: 'home' });
               }
             }}
           />
         );
       case 'workspace':
+      default:
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
             onLaunch={(id) => void handleLaunch(id)}
-            onLaunchItem={(item) => void launchItem(item)}
+            onLaunchItem={(item) => {
+              void launchItem(item);
+            }}
+            onEditWorkspace={(id) => {
+              setActiveView({ type: 'workspace-editor', id });
+            }}
           />
         ) : (
           <div className="p-8 text-center text-gray-500">Workspace not found</div>
         );
-      case 'quick-launch':
-      default:
-        return (
-          <QuickLaunch
-            workspaces={workspaces}
-            onSelectWorkspace={(id) => {
-              handleSelectWorkspace(id);
-            }}
-            onLaunchItem={handleLaunchItem}
-            onLaunchWorkspace={(id) => void handleLaunch(id)}
-          />
-        );
-    }
-  };
-
-  const getHeaderContent = () => {
-    switch (activeView.type) {
-      case 'tools':
-        return { title: 'Tools Registry', subtitle: 'Manage installed tools' };
-      case 'mcp':
-        return { title: 'MCP Servers', subtitle: 'Model Context Protocol configuration' };
-      case 'settings':
-        return { title: 'Settings', subtitle: 'Application preferences' };
-      case 'workspace-editor':
-        if (activeView.id != null && selectedWorkspace != null) {
-          return {
-            title: 'Edit Workspace',
-            subtitle: `Configure settings for ${selectedWorkspace.name}`,
-          };
-        }
-        return { title: 'Create Workspace', subtitle: 'Set up a new workspace' };
-      case 'workspace':
-        return selectedWorkspace
-          ? {
-              title: selectedWorkspace.name,
-              subtitle: selectedWorkspace.description,
-              tags: selectedWorkspace.tags,
-              showEditButton: true,
-              onEdit: () => {
-                handleEditWorkspace(selectedWorkspace.id);
-              },
-            }
-          : { title: 'Workspace', subtitle: '' };
-      case 'quick-launch':
-      default:
-        return {
-          title: 'Quick Launch',
-          subtitle: 'Start your work in seconds',
-          showEditButton: true,
-          onEdit: () => {
-            // Edit Quick Launch settings
-          },
-        };
     }
   };
 
   return (
     <Layout
       workspaces={workspaces}
-      header={getHeaderContent()}
+      activeWorkspaceId={activeView.type === 'workspace' ? activeView.id : null}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
       onOpenSettings={() => {
@@ -258,6 +181,7 @@ function App() {
       onOpenMCP={() => {
         setActiveView({ type: 'mcp' });
       }}
+      onOpenHome={handleOpenHome}
     >
       {renderMainContent()}
     </Layout>

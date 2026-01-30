@@ -1,7 +1,7 @@
-import { shell } from 'electron';
-import * as path from 'node:path';
 import { spawn } from 'node:child_process';
-import type { IShellAdapter, IOSAdapter } from './interfaces';
+import * as path from 'node:path';
+import { shell } from 'electron';
+import type { IOSAdapter, IShellAdapter } from './interfaces';
 
 /**
  * Shell adapter wrapping Electron shell API
@@ -29,7 +29,7 @@ export class ShellAdapter implements IShellAdapter {
 
   async openPath(pathValue: string): Promise<string> {
     const validatedPath = this.validatePath(pathValue, false);
-    return shell.openPath(validatedPath);
+    return await shell.openPath(validatedPath);
   }
 
   async launchApp(appPath: string, args: string[] = []): Promise<void> {
