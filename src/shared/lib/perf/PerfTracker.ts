@@ -1,3 +1,13 @@
+// Resolve `performance.now()` across Node.js (main) and browser (renderer) environments.
+// Node.js 16+ and all modern browsers provide `performance` as a global.
+// Falls back to Date.now() for rare environments where `performance` is unavailable.
+function now(): number {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+    return performance.now();
+  }
+  return Date.now();
+}
+
 export interface PerfMeasurement {
   name: string;
   startMark: string;
@@ -31,7 +41,7 @@ class PerfTrackerImpl implements IPerfTracker {
   private readonly memorySnapshots: PerfMemorySnapshot[] = [];
 
   mark(name: string): void {
-    this.marks.set(name, performance.now());
+    this.marks.set(name, now());
   }
 
   measure(name: string, startMark: string, endMark?: string): number {
@@ -40,7 +50,7 @@ class PerfTrackerImpl implements IPerfTracker {
       return -1;
     }
 
-    const end = endMark !== undefined ? this.marks.get(endMark) : performance.now();
+    const end = endMark !== undefined ? this.marks.get(endMark) : now();
     if (end === undefined) {
       return -1;
     }
@@ -56,31 +66,34 @@ class PerfTrackerImpl implements IPerfTracker {
   }
 
   memorySnapshot(label: string): void {
-    if (typeof process === 'undefined' || typeof process.memoryUsage !== 'function') {
-      // Renderer process: use performance.memory if available (Chromium only)
-      const perfMemory = (
-        performance as { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }
-      ).memory;
-      if (perfMemory) {
-        this.memorySnapshots.push({
-          label,
-          rss: 0,
-          heapUsed: perfMemory.usedJSHeapSize,
-          heapTotal: perfMemory.totalJSHeapSize,
-          timestamp: Date.now(),
-        });
-      }
+    if (typeof process !== 'undefined' && typeof process.memoryUsage === 'function') {
+      // Node.js / Electron main process
+      const mem = process.memoryUsage();
+      this.memorySnapshots.push({
+        label,
+        rss: mem.rss,
+        heapUsed: mem.heapUsed,
+        heapTotal: mem.heapTotal,
+        timestamp: Date.now(),
+      });
       return;
     }
 
-    const mem = process.memoryUsage();
-    this.memorySnapshots.push({
-      label,
-      rss: mem.rss,
-      heapUsed: mem.heapUsed,
-      heapTotal: mem.heapTotal,
-      timestamp: Date.now(),
-    });
+    // Renderer process: use performance.memory if available (Chromium only)
+    const perfMemory = (
+      globalThis as {
+        performance?: { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } };
+      }
+    ).performance?.memory;
+    if (perfMemory) {
+      this.memorySnapshots.push({
+        label,
+        rss: 0,
+        heapUsed: perfMemory.usedJSHeapSize,
+        heapTotal: perfMemory.totalJSHeapSize,
+        timestamp: Date.now(),
+      });
+    }
   }
 
   report(): PerfReport {

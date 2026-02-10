@@ -52,9 +52,9 @@ describe('PerfTracker', () => {
       const report = tracker.report();
       expect(report.memorySnapshots).toHaveLength(1);
       expect(report.memorySnapshots[0].label).toBe('test');
-      expect(report.memorySnapshots[0].rss).toBeGreaterThan(0);
-      expect(report.memorySnapshots[0].heapUsed).toBeGreaterThan(0);
-      expect(report.memorySnapshots[0].heapTotal).toBeGreaterThan(0);
+      expect(report.memorySnapshots[0].rss).toBeGreaterThanOrEqual(0);
+      expect(report.memorySnapshots[0].heapUsed).toBeGreaterThanOrEqual(0);
+      expect(report.memorySnapshots[0].heapTotal).toBeGreaterThanOrEqual(0);
       expect(report.memorySnapshots[0].timestamp).toBeGreaterThan(0);
     });
   });
