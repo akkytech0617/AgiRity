@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
 import { Layout } from './components/Layout';
@@ -10,6 +10,11 @@ import { WorkspaceEditor } from './components/WorkspaceEditor';
 import { WorkspaceList } from './components/WorkspaceList';
 import { workspaceDataSource } from './data/workspaceDataSource';
 import { log } from './lib/logger';
+import {
+  getRendererPerfTracker,
+  initRendererPerfTracker,
+  printRendererPerfReport,
+} from './lib/perf';
 
 type View =
   | { type: 'home' }
@@ -19,17 +24,23 @@ type View =
   | { type: 'mcp' }
   | { type: 'settings' };
 
+const rendererPerf = initRendererPerfTracker();
+
 function App() {
   const [activeView, setActiveView] = useState<View>({ type: 'home' });
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const perfReported = useRef(false);
 
   const loadWorkspaces = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
+      rendererPerf.mark('workspace:load:start');
       const data = await workspaceDataSource.load();
+      rendererPerf.mark('workspace:load:end');
+      rendererPerf.measure('workspace:load', 'workspace:load:start', 'workspace:load:end');
       setWorkspaces(data);
     } catch (err) {
       log.error('Failed to load workspaces:', err);
@@ -40,8 +51,20 @@ function App() {
   }, []);
 
   useEffect(() => {
+    rendererPerf.mark('react:firstRender');
     void loadWorkspaces();
   }, [loadWorkspaces]);
+
+  useEffect(() => {
+    if (!loading && !perfReported.current) {
+      perfReported.current = true;
+      rendererPerf.mark('renderer:ready');
+      rendererPerf.measure('react:firstRender', 'renderer:start', 'react:firstRender');
+      rendererPerf.measure('renderer:startup', 'renderer:start', 'renderer:ready');
+      rendererPerf.memorySnapshot('renderer');
+      printRendererPerfReport(getRendererPerfTracker().report());
+    }
+  }, [loading]);
 
   const selectedWorkspace =
     activeView.type === 'workspace' ||
