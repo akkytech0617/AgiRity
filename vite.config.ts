@@ -82,6 +82,8 @@ export default defineConfig({
         'src/vite-env.d.ts',
         'src/main/index.ts',
         'src/preload/index.ts',
+        'src/main/lib/perf.ts',
+        'src/renderer/lib/perf.ts',
       ],
     },
   },

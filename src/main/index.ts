@@ -5,7 +5,11 @@ import { app, BrowserWindow } from 'electron';
 import { createContainer } from './container';
 import { setupIpcHandlers } from './ipc';
 import { initMainLogger, log } from './lib/logger';
+import { getMainPerfTracker, initPerfTracker, printPerfReport } from './lib/perf';
 import { flushSentry } from './lib/sentry';
+
+// Initialize perf tracker first (before anything else)
+const perf = initPerfTracker();
 
 // Initialize logger first
 initMainLogger();
@@ -60,14 +64,32 @@ async function createWindow() {
 }
 
 // Initialize container and handlers
+perf.mark('container:start');
 const container = createContainer();
+perf.mark('container:end');
+perf.measure('container:create', 'container:start', 'container:end');
+
+perf.mark('ipc:start');
 setupIpcHandlers(container);
+perf.mark('ipc:end');
+perf.measure('ipc:setup', 'ipc:start', 'ipc:end');
 
 // nosonar: Using promise chain instead of top-level await to prevent blocking Electron's main process startup
+perf.mark('app:whenReady:start');
 app
   .whenReady()
   .then(async () => {
+    perf.mark('app:whenReady:end');
+    perf.measure('app:whenReady', 'app:whenReady:start', 'app:whenReady:end');
+
+    perf.mark('window:start');
     await createWindow();
+    perf.mark('window:end');
+    perf.measure('window:create', 'window:start', 'window:end');
+
+    perf.measure('main:startup', 'main:start');
+    perf.memorySnapshot('main');
+    printPerfReport(getMainPerfTracker().report());
   })
   .catch((error: unknown) => {
     log.error('Failed to start application:', error);

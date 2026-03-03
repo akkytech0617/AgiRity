@@ -107,6 +107,12 @@ sonar:
         -Dsonar.token=${SONARCLOUD_TOKEN}
 
 
+# --- Performance ---
+
+# Start dev server with performance measurement enabled
+perf:
+    AGIRITY_PERF=true VITE_PERF=true npm run dev
+
 # --- Utility ---
 
 # Install dependencies

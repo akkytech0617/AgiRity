@@ -10,6 +10,7 @@ import {
 } from '../../shared/types';
 import type { ServiceContainer } from '../container';
 import { log } from '../lib/logger';
+import { getMainPerfTracker } from '../lib/perf';
 
 function getErrorMessage(error: unknown, zodErrorMessage: string): string {
   if (error instanceof z.ZodError) {
@@ -27,9 +28,13 @@ export function setupIpcHandlers(container: ServiceContainer): void {
   ipcMain.handle(
     IPC_CHANNELS.LAUNCHER_LAUNCH_ITEM,
     async (_event, item: unknown): Promise<LaunchResult> => {
+      const perf = getMainPerfTracker();
+      const markStart = `ipc:launchItem:${String(Date.now())}`;
+      perf.mark(markStart);
       try {
         const validatedItem = WorkspaceItemSchema.parse(item);
         await launcher.launchItem(validatedItem);
+        perf.measure('ipc:launcher:launchItem', markStart);
         return { success: true };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid input data');
@@ -55,8 +60,12 @@ export function setupIpcHandlers(container: ServiceContainer): void {
   );
 
   ipcMain.handle(IPC_CHANNELS.WORKSPACE_LOAD, async (): Promise<WorkspaceResult> => {
+    const perf = getMainPerfTracker();
+    const markStart = `ipc:workspaceLoad:${String(Date.now())}`;
+    perf.mark(markStart);
     try {
       const workspaces = await project.loadWorkspaces();
+      perf.measure('ipc:workspace:load', markStart);
       return { success: true, data: workspaces };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -83,9 +92,13 @@ export function setupIpcHandlers(container: ServiceContainer): void {
   ipcMain.handle(
     IPC_CHANNELS.WORKSPACE_SAVE,
     async (_event, workspace: unknown): Promise<WorkspaceResult> => {
+      const perf = getMainPerfTracker();
+      const markStart = `ipc:workspaceSave:${String(Date.now())}`;
+      perf.mark(markStart);
       try {
         const validatedWorkspace = WorkspaceSchema.parse(workspace);
         await project.saveWorkspace(validatedWorkspace);
+        perf.measure('ipc:workspace:save', markStart);
         return { success: true };
       } catch (error) {
         const message = getErrorMessage(error, 'Invalid workspace data');
