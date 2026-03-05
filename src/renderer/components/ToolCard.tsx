@@ -23,6 +23,23 @@ const getFallbackIcon = (type: WorkspaceItem['type']) => {
   }
 };
 
+function renderIcon(isLoading: boolean, iconSrc: string | null, item: WorkspaceItem) {
+  if (isLoading) {
+    return <div className="opacity-50">{getFallbackIcon(item.type)}</div>;
+  }
+  if (iconSrc) {
+    return (
+      <img
+        src={iconSrc}
+        alt={item.name}
+        className="w-10 h-10 object-contain"
+        style={item.type === 'app' ? { transform: 'scale(1.3)' } : undefined}
+      />
+    );
+  }
+  return getFallbackIcon(item.type);
+}
+
 export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
   const [iconSrc, setIconSrc] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,20 +105,7 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
       </div>
 
       {/* Icon - Top Center */}
-      <div className="flex items-center justify-center">
-        {isLoading ? (
-          <div className="opacity-50">{getFallbackIcon(item.type)}</div>
-        ) : iconSrc ? (
-          <img
-            src={iconSrc}
-            alt={item.name}
-            className="w-10 h-10 object-contain"
-            style={item.type === 'app' ? { transform: 'scale(1.3)' } : undefined}
-          />
-        ) : (
-          getFallbackIcon(item.type)
-        )}
-      </div>
+      <div className="flex items-center justify-center">{renderIcon(isLoading, iconSrc, item)}</div>
 
       {/* App Name - Bottom */}
       <div className="w-full mt-1 flex items-center justify-center">

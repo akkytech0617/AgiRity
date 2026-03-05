@@ -91,9 +91,9 @@ export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps
       <h3 className="font-display font-bold text-text-primary">{preset.name}</h3>
 
       <div className="flex items-center gap-1 mt-1">
-        {items.slice(0, 5).map((item) => (
+        {items.slice(0, 5).map((item, index) => (
           <div
-            key={item.name}
+            key={`${index}-${item.name}`}
             className="p-1 bg-surface rounded-sm border border-border overflow-hidden"
             title={item.name}
           >

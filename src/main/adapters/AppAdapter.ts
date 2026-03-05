@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import { lookup } from 'node:dns/promises';
 import { readFile, unlink } from 'node:fs/promises';
 import type { IncomingMessage } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -77,7 +78,7 @@ export class AppAdapter implements IAppAdapter {
     const parsedUrl = new URL(url);
     try {
       return await this.fetchUrl(
-        `${parsedUrl.origin}/favicon.ico`,
+        `https://${parsedUrl.hostname}/favicon.ico`,
         parsedUrl.hostname,
         MAX_FAVICON_REDIRECTS
       );
@@ -93,11 +94,52 @@ export class AppAdapter implements IAppAdapter {
     return this.fetchUrl(thirdPartyUrl, parsedUrl.hostname, MAX_FAVICON_REDIRECTS);
   }
 
+  private async validateUrlSafety(url: string): Promise<void> {
+    const parsed = new URL(url);
+
+    if (parsed.protocol !== 'https:') {
+      throw new Error(`Blocked non-HTTPS URL: ${parsed.hostname}`);
+    }
+
+    const blockedHostnames = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0'];
+    if (blockedHostnames.includes(parsed.hostname.toLowerCase())) {
+      throw new Error(`Blocked request to private hostname: ${parsed.hostname}`);
+    }
+
+    const { address } = await lookup(parsed.hostname);
+    if (this.isPrivateIp(address)) {
+      throw new Error(`Blocked request to private IP: ${address} (${parsed.hostname})`);
+    }
+  }
+
+  private isPrivateIp(ip: string): boolean {
+    if (ip === '::1' || ip === '::') return true;
+
+    const parts = ip.split('.').map(Number);
+    if (parts.length !== 4) return false;
+
+    // 127.0.0.0/8
+    if (parts[0] === 127) return true;
+    // 10.0.0.0/8
+    if (parts[0] === 10) return true;
+    // 172.16.0.0/12
+    if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+    // 192.168.0.0/16
+    if (parts[0] === 192 && parts[1] === 168) return true;
+    // 169.254.0.0/16 (link-local / cloud metadata)
+    if (parts[0] === 169 && parts[1] === 254) return true;
+    // 0.0.0.0
+    if (parts.every((p) => p === 0)) return true;
+
+    return false;
+  }
+
   private async fetchUrl(
     url: string,
     hostname: string,
     redirectsRemaining: number
   ): Promise<Buffer> {
+    await this.validateUrlSafety(url);
     const { default: https } = await import('node:https');
 
     return new Promise<Buffer>((resolve, reject) => {
