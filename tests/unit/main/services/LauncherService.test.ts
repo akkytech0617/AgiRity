@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { IAppAdapter } from '@/main/adapters/interfaces';
 import type { IConfigService } from '@/main/services/interfaces';
 import { LauncherService } from '@/main/services/LauncherService';
 import type { WorkspaceItem } from '@/shared/types';
@@ -8,11 +9,18 @@ describe('LauncherService', () => {
   const TEST_HOME_DIR = '/test/home';
   let mockShellAdapter: ReturnType<typeof createMockShellAdapter>;
   let mockConfigService: IConfigService;
+  let mockAppAdapter: IAppAdapter;
   let service: LauncherService;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockShellAdapter = createMockShellAdapter();
+
+    // Mock AppAdapter
+    mockAppAdapter = {
+      getAppIconViaSips: vi.fn().mockResolvedValue(Buffer.from('sips-icon-png-data')),
+      fetchFavicon: vi.fn().mockResolvedValue(Buffer.from('favicon-png-data')),
+    };
 
     // Mock ConfigService
     mockConfigService = {
@@ -27,7 +35,7 @@ describe('LauncherService', () => {
       }),
     };
 
-    service = new LauncherService(mockShellAdapter, mockConfigService);
+    service = new LauncherService(mockShellAdapter, mockConfigService, mockAppAdapter);
   });
 
   describe('launchItem - browser type', () => {

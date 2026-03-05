@@ -1,11 +1,15 @@
 import type { IconResult, WorkspaceItem } from '../../shared/types';
-import type { IShellAdapter } from '../adapters/interfaces';
+import type { IAppAdapter, IShellAdapter } from '../adapters/interfaces';
 import type { IConfigService, ILauncherService } from './interfaces';
 
 export class LauncherService implements ILauncherService {
+  private static readonly APP_ICON_TIMEOUT_MS = 15000;
+  private static readonly FAVICON_TIMEOUT_MS = 10000;
+
   constructor(
     private readonly shellAdapter: IShellAdapter,
-    private readonly configService: IConfigService
+    private readonly configService: IConfigService,
+    private readonly appAdapter: IAppAdapter
   ) {}
 
   async launchItem(item: WorkspaceItem): Promise<void> {
@@ -26,7 +30,40 @@ export class LauncherService implements ILauncherService {
     }
   }
 
-  getItemIcon(item: WorkspaceItem): Promise<IconResult> {
+  async getItemIcon(item: WorkspaceItem): Promise<IconResult> {
+    if (item.type === 'app' && item.path && item.path !== '') {
+      try {
+        const appPath = this.configService.expandTilde(item.path);
+        const iconBuffer = await this.withTimeout(
+          this.appAdapter.getAppIconViaSips(appPath, 128),
+          LauncherService.APP_ICON_TIMEOUT_MS,
+          'App icon fetch timeout'
+        );
+        const base64 = iconBuffer.toString('base64');
+        return { success: true, data: base64 };
+      } catch {
+        // sips failed or timeout, return fallback
+      }
+    }
+
+    if (item.type === 'browser' && item.urls && item.urls.length > 0) {
+      try {
+        const iconBuffer = await this.withTimeout(
+          this.appAdapter.fetchFavicon(item.urls[0], 128),
+          LauncherService.FAVICON_TIMEOUT_MS,
+          'Favicon fetch timeout'
+        );
+        const base64 = iconBuffer.toString('base64');
+        return { success: true, data: base64 };
+      } catch {
+        // favicon fetch failed or timeout, return fallback
+      }
+    }
+
+    return this.getFallbackIconName(item);
+  }
+
+  private getFallbackIconName(item: WorkspaceItem): IconResult {
     let iconName: string;
 
     switch (item.type) {
@@ -43,9 +80,31 @@ export class LauncherService implements ILauncherService {
         iconName = 'code';
     }
 
-    return Promise.resolve({
+    return {
       success: true,
       data: iconName,
+    };
+  }
+
+  private withTimeout<T>(
+    promise: Promise<T>,
+    timeoutMs: number,
+    timeoutMessage: string
+  ): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error(timeoutMessage));
+      }, timeoutMs);
+
+      promise
+        .then((value) => {
+          clearTimeout(timer);
+          resolve(value);
+        })
+        .catch((error: unknown) => {
+          clearTimeout(timer);
+          reject(error);
+        });
     });
   }
 
