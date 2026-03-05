@@ -1,26 +1,51 @@
 import { Code, Folder, Globe, Monitor } from 'lucide-react';
-import type { FC, MouseEvent } from 'react';
+import { type FC, type MouseEvent, useEffect, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
+import { launcherApi } from '../api';
 
 interface ToolCardProps {
   item: WorkspaceItem;
   onLaunch?: (item: WorkspaceItem) => void;
 }
 
-const getItemIcon = (type: WorkspaceItem['type']) => {
+const FALLBACK_ICON_NAMES = ['app', 'browser', 'folder', 'code'];
+
+const getFallbackIcon = (type: WorkspaceItem['type']) => {
   switch (type) {
     case 'app':
-      return <Monitor className="w-4 h-4 text-primary" />;
+      return <Monitor className="w-10 h-10 text-primary" />;
     case 'browser':
-      return <Globe className="w-4 h-4 text-success" />;
+      return <Globe className="w-10 h-10 text-success" />;
     case 'folder':
-      return <Folder className="w-4 h-4 text-warning" />;
+      return <Folder className="w-10 h-10 text-warning" />;
     default:
-      return <Code className="w-4 h-4 text-text-secondary" />;
+      return <Code className="w-10 h-10 text-text-secondary" />;
   }
 };
 
 export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
+  const [iconSrc, setIconSrc] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if ((item.type === 'app' && item.path) || (item.type === 'browser' && item.urls?.length)) {
+      setIsLoading(true);
+      launcherApi
+        .getItemIcon(item)
+        .then((result) => {
+          if (result.success && result.data && !FALLBACK_ICON_NAMES.includes(result.data)) {
+            setIconSrc(`data:image/png;base64,${result.data}`);
+          }
+        })
+        .catch(() => {
+          setIconSrc(null);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [item]);
+
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onLaunch?.(item);
@@ -39,9 +64,18 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
 
       {/* Icon - Top Center */}
       <div className="flex items-center justify-center">
-        <div className="p-1 bg-gray-50 rounded-md border border-gray-100 group-hover:bg-white group-hover:shadow-sm transition-all">
-          {getItemIcon(item.type)}
-        </div>
+        {isLoading ? (
+          <div className="opacity-50">{getFallbackIcon(item.type)}</div>
+        ) : iconSrc ? (
+          <img
+            src={iconSrc}
+            alt={item.name}
+            className="w-10 h-10 object-contain"
+            style={item.type === 'app' ? { transform: 'scale(1.3)' } : undefined}
+          />
+        ) : (
+          getFallbackIcon(item.type)
+        )}
       </div>
 
       {/* App Name - Bottom */}

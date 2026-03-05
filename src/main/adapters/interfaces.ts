@@ -46,3 +46,25 @@ export interface IShellAdapter {
    */
   launchApp(appPath: string, args?: string[]): Promise<void>;
 }
+
+/**
+ * App operations adapter
+ * Wraps Electron app API for application-specific operations
+ */
+export interface IAppAdapter {
+  /**
+   * Get app icon by extracting .icns from app bundle and converting via sips (macOS)
+   * @param appPath Path to the .app bundle
+   * @param size Icon size in pixels (default: 128)
+   * @returns PNG buffer of the icon
+   */
+  getAppIconViaSips(appPath: string, size?: number): Promise<Buffer>;
+
+  /**
+   * Fetch favicon for a URL from Google Favicon API
+   * @param url The website URL to get favicon for
+   * @param size Icon size in pixels (default: 128)
+   * @returns PNG buffer of the favicon
+   */
+  fetchFavicon(url: string, size?: number): Promise<Buffer>;
+}

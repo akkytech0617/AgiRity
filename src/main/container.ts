@@ -1,5 +1,11 @@
+import { AppAdapter } from './adapters/AppAdapter';
 import { FileSystemAdapter } from './adapters/FileSystemAdapter';
-import type { IFileSystemAdapter, IOSAdapter, IShellAdapter } from './adapters/interfaces';
+import type {
+  IAppAdapter,
+  IFileSystemAdapter,
+  IOSAdapter,
+  IShellAdapter,
+} from './adapters/interfaces';
 import { OSAdapter } from './adapters/OSAdapter';
 import { ShellAdapter } from './adapters/ShellAdapter';
 import { ConfigService } from './services/ConfigService';
@@ -14,6 +20,7 @@ export interface AdapterContainer {
   fileSystem: IFileSystemAdapter;
   os: IOSAdapter;
   shell: IShellAdapter;
+  app: IAppAdapter;
 }
 
 /**
@@ -38,16 +45,18 @@ export function createContainer(overrides?: Partial<AppContainer>): AppContainer
   const fileSystem = overrides?.fileSystem ?? new FileSystemAdapter();
   const os = overrides?.os ?? new OSAdapter();
   const shell = overrides?.shell ?? new ShellAdapter(os);
+  const app = overrides?.app ?? new AppAdapter();
 
   // Create services with dependency injection (or use overrides)
   const config = overrides?.config ?? new ConfigService(os, fileSystem);
   const project = overrides?.project ?? new ProjectService(config, fileSystem);
-  const launcher = overrides?.launcher ?? new LauncherService(shell, config);
+  const launcher = overrides?.launcher ?? new LauncherService(shell, config, app);
 
   return {
     fileSystem,
     os,
     shell,
+    app,
     config,
     project,
     launcher,

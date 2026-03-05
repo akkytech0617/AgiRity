@@ -1,5 +1,10 @@
 import { Folder, Globe, Monitor } from 'lucide-react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import type { WorkspaceItem } from '../../shared/types';
+import { launcherApi } from '../api';
+
+const FALLBACK_ICON_NAMES = ['app', 'browser', 'folder', 'code'];
 
 interface PresetCardProps {
   preset: {
@@ -10,6 +15,42 @@ interface PresetCardProps {
   items: WorkspaceItem[];
   onLaunch: () => void;
 }
+
+const PresetItemIcon: FC<{ item: WorkspaceItem }> = ({ item }) => {
+  const [iconSrc, setIconSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if ((item.type === 'app' && item.path) || (item.type === 'browser' && item.urls?.length)) {
+      launcherApi
+        .getItemIcon(item)
+        .then((result) => {
+          if (result.success && result.data && !FALLBACK_ICON_NAMES.includes(result.data)) {
+            setIconSrc(`data:image/png;base64,${result.data}`);
+          }
+        })
+        .catch(() => {
+          // Silently fail - fallback to lucide-react icons
+        });
+    }
+  }, [item]);
+
+  if (iconSrc) {
+    return (
+      <img
+        src={iconSrc}
+        alt={item.name}
+        className="w-3 h-3 object-contain"
+        style={item.type === 'app' ? { transform: 'scale(1.3)' } : undefined}
+      />
+    );
+  }
+
+  // Fallback lucide-react icons
+  if (item.type === 'app') return <Monitor className="w-3 h-3 text-primary" />;
+  if (item.type === 'browser') return <Globe className="w-3 h-3 text-success" />;
+  if (item.type === 'folder') return <Folder className="w-3 h-3 text-warning" />;
+  return null;
+};
 
 export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps>) {
   return (
@@ -31,12 +72,10 @@ export function PresetCard({ preset, items, onLaunch }: Readonly<PresetCardProps
         {items.slice(0, 5).map((item) => (
           <div
             key={item.name}
-            className="p-1 bg-surface rounded-sm border border-border"
+            className="p-1 bg-surface rounded-sm border border-border overflow-hidden"
             title={item.name}
           >
-            {item.type === 'app' && <Monitor className="w-3 h-3 text-primary" />}
-            {item.type === 'browser' && <Globe className="w-3 h-3 text-success" />}
-            {item.type === 'folder' && <Folder className="w-3 h-3 text-warning" />}
+            <PresetItemIcon item={item} />
           </div>
         ))}
         {items.length > 5 && (

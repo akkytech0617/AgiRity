@@ -1,11 +1,12 @@
 import type { IconResult, WorkspaceItem } from '../../shared/types';
-import type { IShellAdapter } from '../adapters/interfaces';
+import type { IAppAdapter, IShellAdapter } from '../adapters/interfaces';
 import type { IConfigService, ILauncherService } from './interfaces';
 
 export class LauncherService implements ILauncherService {
   constructor(
     private readonly shellAdapter: IShellAdapter,
-    private readonly configService: IConfigService
+    private readonly configService: IConfigService,
+    private readonly appAdapter: IAppAdapter
   ) {}
 
   async launchItem(item: WorkspaceItem): Promise<void> {
@@ -26,7 +27,32 @@ export class LauncherService implements ILauncherService {
     }
   }
 
-  getItemIcon(item: WorkspaceItem): Promise<IconResult> {
+  async getItemIcon(item: WorkspaceItem): Promise<IconResult> {
+    if (item.type === 'app' && item.path && item.path !== '') {
+      try {
+        const appPath = this.configService.expandTilde(item.path);
+        const iconBuffer = await this.appAdapter.getAppIconViaSips(appPath, 128);
+        const base64 = iconBuffer.toString('base64');
+        return { success: true, data: base64 };
+      } catch {
+        // sips failed, return fallback
+      }
+    }
+
+    if (item.type === 'browser' && item.urls && item.urls.length > 0) {
+      try {
+        const iconBuffer = await this.appAdapter.fetchFavicon(item.urls[0], 128);
+        const base64 = iconBuffer.toString('base64');
+        return { success: true, data: base64 };
+      } catch {
+        // favicon fetch failed, return fallback
+      }
+    }
+
+    return this.getFallbackIconName(item);
+  }
+
+  private getFallbackIconName(item: WorkspaceItem): IconResult {
     let iconName: string;
 
     switch (item.type) {
@@ -43,10 +69,10 @@ export class LauncherService implements ILauncherService {
         iconName = 'code';
     }
 
-    return Promise.resolve({
+    return {
       success: true,
       data: iconName,
-    });
+    };
   }
 
   private async launchBrowser(item: WorkspaceItem): Promise<void> {
