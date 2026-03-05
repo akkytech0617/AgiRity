@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { selectItemsToLaunch } from '@/shared/lib/workspace-utils';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
 import { Layout } from './components/Layout';
@@ -72,11 +73,12 @@ function App() {
       ? (workspaces.find((w) => w.id === activeView.id) ?? null)
       : null;
 
-  const handleLaunch = async (id: string) => {
+  const handleLaunch = async (id: string, itemNames?: string[]) => {
     const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
       log.info(`Launching workspace: ${workspace.name}`);
-      for (const item of workspace.items) {
+      const itemsToLaunch = selectItemsToLaunch(workspace, itemNames);
+      for (const item of itemsToLaunch) {
         await launchItem(item);
       }
     }
@@ -163,7 +165,7 @@ function App() {
         return selectedWorkspace ? (
           <WorkspaceDetail
             workspace={selectedWorkspace}
-            onLaunch={(id) => void handleLaunch(id)}
+            onLaunch={(id, itemNames) => void handleLaunch(id, itemNames)}
             onLaunchItem={(item) => {
               void launchItem(item);
             }}

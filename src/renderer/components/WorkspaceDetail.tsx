@@ -5,7 +5,7 @@ import { ToolCard } from './ToolCard';
 
 interface WorkspaceDetailProps {
   workspace: Workspace;
-  onLaunch: (id: string) => void;
+  onLaunch: (id: string, itemNames?: string[]) => void;
   onLaunchItem?: (item: WorkspaceItem) => void;
   onEditWorkspace?: (id: string) => void;
 }
@@ -73,7 +73,7 @@ export function WorkspaceDetail({
                   key={preset.name}
                   preset={preset}
                   items={presetItems}
-                  onLaunch={() => onLaunch(workspace.id)}
+                  onLaunch={() => onLaunch(workspace.id, preset.itemNames)}
                 />
               );
             })}
