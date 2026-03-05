@@ -2,8 +2,8 @@ import logger from 'electron-log/main';
 import { isPerfEnabled } from '@/shared/lib/perf/config';
 import {
   createPerfTracker,
-  NOOP_TRACKER,
   type IPerfTracker,
+  NOOP_TRACKER,
   type PerfReport,
 } from '@/shared/lib/perf/PerfTracker';
 
