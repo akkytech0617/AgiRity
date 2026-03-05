@@ -28,22 +28,47 @@ export const ToolCard: FC<ToolCardProps> = ({ item, onLaunch }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Use ref to track if this effect is still active
+    let isActive = true;
+
     if ((item.type === 'app' && item.path) || (item.type === 'browser' && item.urls?.length)) {
+      // Clear previous icon state when item changes or becomes non-fetchable
+      setIconSrc(null);
       setIsLoading(true);
+
       launcherApi
         .getItemIcon(item)
         .then((result) => {
+          // Guard against stale async completion
+          if (!isActive) return;
+
           if (result.success && result.data && !FALLBACK_ICON_NAMES.includes(result.data)) {
             setIconSrc(`data:image/png;base64,${result.data}`);
+          } else {
+            setIconSrc(null);
           }
         })
         .catch(() => {
+          // Guard against stale async completion
+          if (!isActive) return;
+
           setIconSrc(null);
         })
         .finally(() => {
+          // Guard against stale async completion
+          if (!isActive) return;
+
           setIsLoading(false);
         });
+    } else {
+      setIconSrc(null);
+      setIsLoading(false);
     }
+
+    // Cleanup function - mark effect as inactive
+    return () => {
+      isActive = false;
+    };
   }, [item]);
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {

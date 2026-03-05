@@ -1,9 +1,15 @@
 import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { readFile, unlink } from 'node:fs/promises';
+import type { IncomingMessage } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { IAppAdapter } from './interfaces';
+
+const EXTERNAL_COMMAND_TIMEOUT = 10000;
+const FAVICON_FETCH_TIMEOUT = 5000;
+const MAX_FAVICON_REDIRECTS = 2;
+const ALLOW_EXTERNAL_FAVICONS = process.env.AGIRITY_ALLOW_EXTERNAL_FAVICONS === 'true';
 
 /**
  * Adapter for Electron app operations
@@ -35,13 +41,18 @@ export class AppAdapter implements IAppAdapter {
 
   private readPlistValue(plistPath: string, key: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      execFile('/usr/libexec/PlistBuddy', ['-c', `Print :${key}`, plistPath], (error, stdout) => {
-        if (error) {
-          reject(new Error(`Failed to read ${key} from plist: ${error.message}`));
-          return;
+      execFile(
+        '/usr/libexec/PlistBuddy',
+        ['-c', `Print :${key}`, plistPath],
+        { timeout: EXTERNAL_COMMAND_TIMEOUT },
+        (error, stdout) => {
+          if (error) {
+            reject(new Error(`Failed to read ${key} from plist: ${error.message}`));
+            return;
+          }
+          resolve(stdout.trim());
         }
-        resolve(stdout.trim());
-      });
+      );
     });
   }
 
@@ -50,6 +61,7 @@ export class AppAdapter implements IAppAdapter {
       execFile(
         'sips',
         ['-s', 'format', 'png', '-z', String(size), String(size), icnsPath, '--out', outputPath],
+        { timeout: EXTERNAL_COMMAND_TIMEOUT },
         (error) => {
           if (error) {
             reject(new Error(`sips conversion failed: ${error.message}`));
@@ -62,37 +74,52 @@ export class AppAdapter implements IAppAdapter {
   }
 
   async fetchFavicon(url: string, size = 128): Promise<Buffer> {
+    const parsedUrl = new URL(url);
+    try {
+      return await this.fetchUrl(
+        `${parsedUrl.origin}/favicon.ico`,
+        parsedUrl.hostname,
+        MAX_FAVICON_REDIRECTS
+      );
+    } catch (firstPartyError) {
+      if (!ALLOW_EXTERNAL_FAVICONS) {
+        throw new Error(
+          `Failed to fetch first-party favicon for ${parsedUrl.hostname} and external favicon provider is disabled: ${firstPartyError instanceof Error ? firstPartyError.message : String(firstPartyError)}`
+        );
+      }
+    }
+
+    const thirdPartyUrl = `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=${size}`;
+    return this.fetchUrl(thirdPartyUrl, parsedUrl.hostname, MAX_FAVICON_REDIRECTS);
+  }
+
+  private async fetchUrl(
+    url: string,
+    hostname: string,
+    redirectsRemaining: number
+  ): Promise<Buffer> {
     const { default: https } = await import('node:https');
 
-    const parsedUrl = new URL(url);
-    const faviconApiUrl = `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=${size}`;
-
     return new Promise<Buffer>((resolve, reject) => {
-      const request = https.get(faviconApiUrl, (response) => {
-        // Follow redirects
-        if (
-          response.statusCode &&
-          response.statusCode >= 300 &&
-          response.statusCode < 400 &&
-          response.headers.location
-        ) {
-          https.get(response.headers.location, (redirectResponse) => {
-            const chunks: Buffer[] = [];
-            redirectResponse.on('data', (chunk: Buffer) => {
-              chunks.push(chunk);
-            });
-            redirectResponse.on('end', () => {
-              const buffer = Buffer.concat(chunks);
-              if (buffer.length === 0) {
-                reject(new Error(`Empty favicon response for ${parsedUrl.hostname}`));
-                return;
-              }
-              resolve(buffer);
-            });
-            redirectResponse.on('error', (err: Error) => {
-              reject(new Error(`Failed to fetch favicon: ${err.message}`));
-            });
-          });
+      const request = https.get(url, (response: IncomingMessage) => {
+        if (this.isRedirect(response)) {
+          if (redirectsRemaining <= 0) {
+            response.resume();
+            reject(new Error(`Too many favicon redirects for ${hostname}`));
+            return;
+          }
+
+          const nextUrl = new URL(response.headers.location ?? '', url).toString();
+          response.resume();
+          this.fetchUrl(nextUrl, hostname, redirectsRemaining - 1)
+            .then(resolve)
+            .catch(reject);
+          return;
+        }
+
+        if (response.statusCode && response.statusCode >= 400) {
+          response.resume();
+          reject(new Error(`Failed to fetch favicon for ${hostname}: HTTP ${response.statusCode}`));
           return;
         }
 
@@ -103,19 +130,32 @@ export class AppAdapter implements IAppAdapter {
         response.on('end', () => {
           const buffer = Buffer.concat(chunks);
           if (buffer.length === 0) {
-            reject(new Error(`Empty favicon response for ${parsedUrl.hostname}`));
+            reject(new Error(`Empty favicon response for ${hostname}`));
             return;
           }
           resolve(buffer);
         });
-        response.on('error', (err: Error) => {
-          reject(new Error(`Failed to fetch favicon: ${err.message}`));
+        response.on('error', (error: Error) => {
+          reject(new Error(`Failed to fetch favicon for ${hostname}: ${error.message}`));
         });
       });
 
+      request.setTimeout(FAVICON_FETCH_TIMEOUT, () => {
+        request.destroy(new Error(`Timeout fetching favicon for ${hostname}`));
+      });
+
       request.on('error', (error: Error) => {
-        reject(new Error(`Failed to fetch favicon for ${parsedUrl.hostname}: ${error.message}`));
+        reject(new Error(`Failed to fetch favicon for ${hostname}: ${error.message}`));
       });
     });
+  }
+
+  private isRedirect(response: IncomingMessage): boolean {
+    return (
+      response.statusCode != null &&
+      response.statusCode >= 300 &&
+      response.statusCode < 400 &&
+      typeof response.headers.location === 'string'
+    );
   }
 }

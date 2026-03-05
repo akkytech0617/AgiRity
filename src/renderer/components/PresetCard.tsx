@@ -20,18 +20,40 @@ const PresetItemIcon: FC<{ item: WorkspaceItem }> = ({ item }) => {
   const [iconSrc, setIconSrc] = useState<string | null>(null);
 
   useEffect(() => {
+    // Use ref to track if this effect is still active
+    let isActive = true;
+
     if ((item.type === 'app' && item.path) || (item.type === 'browser' && item.urls?.length)) {
+      // Clear previous icon state when item changes or becomes non-fetchable
+      setIconSrc(null);
+
       launcherApi
         .getItemIcon(item)
         .then((result) => {
+          // Guard against stale async completion
+          if (!isActive) return;
+
           if (result.success && result.data && !FALLBACK_ICON_NAMES.includes(result.data)) {
             setIconSrc(`data:image/png;base64,${result.data}`);
+          } else {
+            setIconSrc(null);
           }
         })
         .catch(() => {
+          // Guard against stale async completion
+          if (!isActive) return;
+
           // Silently fail - fallback to lucide-react icons
+          setIconSrc(null);
         });
+    } else {
+      setIconSrc(null);
     }
+
+    // Cleanup function - mark effect as inactive
+    return () => {
+      isActive = false;
+    };
   }, [item]);
 
   if (iconSrc) {
