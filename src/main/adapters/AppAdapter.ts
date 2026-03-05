@@ -2,7 +2,9 @@ import { execFile } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { lookup } from 'node:dns/promises';
 import { readFile, unlink } from 'node:fs/promises';
+import https from 'node:https';
 import type { IncomingMessage } from 'node:http';
+import { isIP } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { IAppAdapter } from './interfaces';
@@ -10,6 +12,7 @@ import type { IAppAdapter } from './interfaces';
 const EXTERNAL_COMMAND_TIMEOUT = 10000;
 const FAVICON_FETCH_TIMEOUT = 5000;
 const MAX_FAVICON_REDIRECTS = 2;
+const MAX_FAVICON_BYTES = 512 * 1024;
 const ALLOW_EXTERNAL_FAVICONS = process.env.AGIRITY_ALLOW_EXTERNAL_FAVICONS === 'true';
 
 /**
@@ -60,7 +63,7 @@ export class AppAdapter implements IAppAdapter {
   private runSips(icnsPath: string, outputPath: string, size: number): Promise<void> {
     return new Promise((resolve, reject) => {
       execFile(
-        'sips',
+        '/usr/bin/sips',
         ['-s', 'format', 'png', '-z', String(size), String(size), icnsPath, '--out', outputPath],
         { timeout: EXTERNAL_COMMAND_TIMEOUT },
         (error) => {
@@ -94,41 +97,51 @@ export class AppAdapter implements IAppAdapter {
     return this.fetchUrl(thirdPartyUrl, parsedUrl.hostname, MAX_FAVICON_REDIRECTS);
   }
 
-  private async validateUrlSafety(url: string): Promise<void> {
+  private async resolveAndValidate(url: string): Promise<{ parsed: URL; resolvedAddress: string }> {
     const parsed = new URL(url);
 
     if (parsed.protocol !== 'https:') {
       throw new Error(`Blocked non-HTTPS URL: ${parsed.hostname}`);
     }
 
-    const blockedHostnames = ['localhost', '127.0.0.1', '[::1]', '0.0.0.0'];
+    const blockedHostnames = ['localhost', '0.0.0.0'];
     if (blockedHostnames.includes(parsed.hostname.toLowerCase())) {
       throw new Error(`Blocked request to private hostname: ${parsed.hostname}`);
     }
 
-    const { address } = await lookup(parsed.hostname);
-    if (this.isPrivateIp(address)) {
-      throw new Error(`Blocked request to private IP: ${address} (${parsed.hostname})`);
+    const results = await lookup(parsed.hostname, { all: true });
+    for (const { address } of results) {
+      if (this.isPrivateIp(address)) {
+        throw new Error(`Blocked request to private IP: ${address} (${parsed.hostname})`);
+      }
     }
+
+    return { parsed, resolvedAddress: results[0].address };
   }
 
   private isPrivateIp(ip: string): boolean {
-    if (ip === '::1' || ip === '::') return true;
+    const normalized = ip.toLowerCase();
+    if (isIP(normalized) === 6) return this.isPrivateIpv6(normalized);
+    return this.isPrivateIpv4(normalized);
+  }
 
+  private isPrivateIpv6(ip: string): boolean {
+    if (ip === '::1' || ip === '::') return true;
+    if (ip.startsWith('fc') || ip.startsWith('fd')) return true;
+    if (/^fe[89ab]/.test(ip)) return true;
+    if (ip.startsWith('::ffff:')) return this.isPrivateIp(ip.slice('::ffff:'.length));
+    return false;
+  }
+
+  private isPrivateIpv4(ip: string): boolean {
     const parts = ip.split('.').map(Number);
     if (parts.length !== 4) return false;
 
-    // 127.0.0.0/8
     if (parts[0] === 127) return true;
-    // 10.0.0.0/8
     if (parts[0] === 10) return true;
-    // 172.16.0.0/12
     if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
-    // 192.168.0.0/16
     if (parts[0] === 192 && parts[1] === 168) return true;
-    // 169.254.0.0/16 (link-local / cloud metadata)
     if (parts[0] === 169 && parts[1] === 254) return true;
-    // 0.0.0.0
     if (parts.every((p) => p === 0)) return true;
 
     return false;
@@ -139,48 +152,66 @@ export class AppAdapter implements IAppAdapter {
     hostname: string,
     redirectsRemaining: number
   ): Promise<Buffer> {
-    await this.validateUrlSafety(url);
-    const { default: https } = await import('node:https');
+    const { parsed, resolvedAddress } = await this.resolveAndValidate(url);
 
     return new Promise<Buffer>((resolve, reject) => {
-      const request = https.get(url, (response: IncomingMessage) => {
-        if (this.isRedirect(response)) {
-          if (redirectsRemaining <= 0) {
+      const request = https.get(
+        {
+          hostname: resolvedAddress,
+          port: parsed.port || 443,
+          path: `${parsed.pathname}${parsed.search}`,
+          headers: { Host: parsed.hostname },
+          servername: parsed.hostname,
+          timeout: FAVICON_FETCH_TIMEOUT,
+        },
+        (response: IncomingMessage) => {
+          if (this.isRedirect(response)) {
+            if (redirectsRemaining <= 0) {
+              response.resume();
+              reject(new Error(`Too many favicon redirects for ${hostname}`));
+              return;
+            }
+
+            const nextUrl = new URL(response.headers.location ?? '', url).toString();
             response.resume();
-            reject(new Error(`Too many favicon redirects for ${hostname}`));
+            this.fetchUrl(nextUrl, hostname, redirectsRemaining - 1)
+              .then(resolve)
+              .catch(reject);
             return;
           }
 
-          const nextUrl = new URL(response.headers.location ?? '', url).toString();
-          response.resume();
-          this.fetchUrl(nextUrl, hostname, redirectsRemaining - 1)
-            .then(resolve)
-            .catch(reject);
-          return;
-        }
-
-        if (response.statusCode && response.statusCode >= 400) {
-          response.resume();
-          reject(new Error(`Failed to fetch favicon for ${hostname}: HTTP ${response.statusCode}`));
-          return;
-        }
-
-        const chunks: Buffer[] = [];
-        response.on('data', (chunk: Buffer) => {
-          chunks.push(chunk);
-        });
-        response.on('end', () => {
-          const buffer = Buffer.concat(chunks);
-          if (buffer.length === 0) {
-            reject(new Error(`Empty favicon response for ${hostname}`));
+          if (response.statusCode && response.statusCode >= 400) {
+            response.resume();
+            reject(
+              new Error(`Failed to fetch favicon for ${hostname}: HTTP ${response.statusCode}`)
+            );
             return;
           }
-          resolve(buffer);
-        });
-        response.on('error', (error: Error) => {
-          reject(new Error(`Failed to fetch favicon for ${hostname}: ${error.message}`));
-        });
-      });
+
+          const chunks: Buffer[] = [];
+          let totalBytes = 0;
+          response.on('data', (chunk: Buffer) => {
+            totalBytes += chunk.length;
+            if (totalBytes > MAX_FAVICON_BYTES) {
+              response.resume();
+              request.destroy(new Error(`Favicon too large for ${hostname}`));
+              return;
+            }
+            chunks.push(chunk);
+          });
+          response.on('end', () => {
+            const buffer = Buffer.concat(chunks);
+            if (buffer.length === 0) {
+              reject(new Error(`Empty favicon response for ${hostname}`));
+              return;
+            }
+            resolve(buffer);
+          });
+          response.on('error', (error: Error) => {
+            reject(new Error(`Failed to fetch favicon for ${hostname}: ${error.message}`));
+          });
+        }
+      );
 
       request.setTimeout(FAVICON_FETCH_TIMEOUT, () => {
         request.destroy(new Error(`Timeout fetching favicon for ${hostname}`));
