@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { captureException, captureIssue, type SentryLike, sendLog } from '@/shared/lib/sentry';
+import {
+  captureException,
+  captureIssue,
+  createSentryClient,
+  type SentryLike,
+  sendLog,
+} from '@/shared/lib/sentry';
 
 const DSN = 'https://test@sentry.io/123';
 
@@ -145,6 +151,48 @@ describe('shared/lib/sentry', () => {
       captureException(fixture.sentry, DSN, error, { processType: 'main' });
       expect(fixture.mocks.captureException).toHaveBeenCalledWith(error, {
         extra: { processType: 'main' },
+      });
+    });
+  });
+
+  describe('createSentryClient', () => {
+    let fixture: ReturnType<typeof createFakeSentry>;
+
+    beforeEach(() => {
+      fixture = createFakeSentry();
+    });
+
+    it('should resolve the DSN on every call so late env loading is supported', () => {
+      let currentDsn: string | null = null;
+      const client = createSentryClient(fixture.sentry, () => currentDsn);
+
+      client.sendLog('first', 'info');
+      expect(fixture.mocks.logger.info).not.toHaveBeenCalled();
+
+      currentDsn = DSN;
+      client.sendLog('second', 'info', { key: 'value' });
+      expect(fixture.mocks.logger.info).toHaveBeenCalledWith('second', { key: 'value' });
+    });
+
+    it('should forward captureIssue with default error level', () => {
+      const client = createSentryClient(fixture.sentry, () => DSN);
+      client.captureIssue('msg');
+      expect(fixture.mocks.captureMessage).toHaveBeenCalledWith('msg', 'error');
+    });
+
+    it('should forward captureIssue context via withScope', () => {
+      const client = createSentryClient(fixture.sentry, () => DSN);
+      client.captureIssue('msg', 'warning', { processType: 'renderer' });
+      expect(fixture.mocks.setExtras).toHaveBeenCalledWith({ processType: 'renderer' });
+      expect(fixture.mocks.captureMessage).toHaveBeenCalledWith('msg', 'warning');
+    });
+
+    it('should forward captureException with extras', () => {
+      const client = createSentryClient(fixture.sentry, () => DSN);
+      const error = new Error('boom');
+      client.captureException(error, { processType: 'renderer' });
+      expect(fixture.mocks.captureException).toHaveBeenCalledWith(error, {
+        extra: { processType: 'renderer' },
       });
     });
   });

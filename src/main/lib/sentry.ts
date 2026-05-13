@@ -4,13 +4,7 @@
 
 import * as Sentry from '@sentry/electron/main';
 import { isDevelopment } from '@/shared/lib/logging/config';
-import {
-  type SentryIssueLevel,
-  type SentryLogLevel,
-  captureException as sharedCaptureException,
-  captureIssue as sharedCaptureIssue,
-  sendLog as sharedSendLog,
-} from '@/shared/lib/sentry';
+import { createSentryClient } from '@/shared/lib/sentry';
 
 /**
  * Get Sentry DSN from environment
@@ -42,34 +36,22 @@ export function initSentryMain(): void {
   });
 }
 
+const client = createSentryClient(Sentry, getSentryDsn);
+
 /**
  * Send log to Sentry Logs
  */
-export function sendLog(
-  message: string,
-  level: SentryLogLevel = 'info',
-  attributes?: Record<string, unknown>
-): void {
-  sharedSendLog(Sentry, getSentryDsn(), message, level, attributes);
-}
+export const sendLog = client.sendLog;
 
 /**
  * Send error/warn to Sentry Issues
  */
-export function captureIssue(
-  message: string,
-  level: SentryIssueLevel = 'error',
-  context?: Record<string, unknown>
-): void {
-  sharedCaptureIssue(Sentry, getSentryDsn(), message, level, context);
-}
+export const captureIssue = client.captureIssue;
 
 /**
  * Capture exception to Sentry Issues
  */
-export function captureException(error: Error, context?: Record<string, unknown>): void {
-  sharedCaptureException(Sentry, getSentryDsn(), error, context);
-}
+export const captureException = client.captureException;
 
 /**
  * Flush Sentry buffer before exit

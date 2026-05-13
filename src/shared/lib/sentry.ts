@@ -92,3 +92,31 @@ export function captureException(
 
   sentry.captureException(error, { extra: context });
 }
+
+/**
+ * Per-process Sentry client bound to a specific Sentry instance and DSN source.
+ */
+export interface SentryClient {
+  sendLog: (message: string, level?: SentryLogLevel, attributes?: Record<string, unknown>) => void;
+  captureIssue: (
+    message: string,
+    level?: SentryIssueLevel,
+    context?: Record<string, unknown>
+  ) => void;
+  captureException: (error: Error, context?: Record<string, unknown>) => void;
+}
+
+/**
+ * Build a Sentry client bound to the given process-specific Sentry instance and
+ * a DSN resolver. The resolver is invoked on every call so DSN changes (e.g.
+ * lazy env loading) are picked up automatically.
+ */
+export function createSentryClient(sentry: SentryLike, getDsn: () => string | null): SentryClient {
+  return {
+    sendLog: (message, level = 'info', attributes) =>
+      sendLog(sentry, getDsn(), message, level, attributes),
+    captureIssue: (message, level = 'error', context) =>
+      captureIssue(sentry, getDsn(), message, level, context),
+    captureException: (error, context) => captureException(sentry, getDsn(), error, context),
+  };
+}
