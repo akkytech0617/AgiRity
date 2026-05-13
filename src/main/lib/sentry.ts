@@ -4,6 +4,7 @@
 
 import * as Sentry from '@sentry/electron/main';
 import { isDevelopment } from '@/shared/lib/logging/config';
+import { createSentryClient } from '@/shared/lib/sentry';
 
 /**
  * Get Sentry DSN from environment
@@ -35,56 +36,22 @@ export function initSentryMain(): void {
   });
 }
 
+const client = createSentryClient(Sentry, getSentryDsn);
+
 /**
  * Send log to Sentry Logs
  */
-export function sendLog(
-  message: string,
-  level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' = 'info',
-  attributes?: Record<string, unknown>
-): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  Sentry.logger[level](message, attributes ?? {});
-}
+export const sendLog = client.sendLog;
 
 /**
  * Send error/warn to Sentry Issues
  */
-export function captureIssue(
-  message: string,
-  level: 'warning' | 'error' = 'error',
-  context?: Record<string, unknown>
-): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  if (context !== undefined && Object.keys(context).length > 0) {
-    Sentry.withScope((scope) => {
-      scope.setExtras(context);
-      Sentry.captureMessage(message, level);
-    });
-  } else {
-    Sentry.captureMessage(message, level);
-  }
-}
+export const captureIssue = client.captureIssue;
 
 /**
  * Capture exception to Sentry Issues
  */
-export function captureException(error: Error, context?: Record<string, unknown>): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  Sentry.captureException(error, { extra: context });
-}
+export const captureException = client.captureException;
 
 /**
  * Flush Sentry buffer before exit
