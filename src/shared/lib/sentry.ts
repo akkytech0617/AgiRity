@@ -113,9 +113,8 @@ export interface SentryClient {
  */
 export function createSentryClient(sentry: SentryLike, getDsn: () => string | null): SentryClient {
   return {
-    sendLog: (message, level = 'info', attributes) =>
-      sendLog(sentry, getDsn(), message, level, attributes),
-    captureIssue: (message, level = 'error', context) =>
+    sendLog: (message, level, attributes) => sendLog(sentry, getDsn(), message, level, attributes),
+    captureIssue: (message, level, context) =>
       captureIssue(sentry, getDsn(), message, level, context),
     captureException: (error, context) => captureException(sentry, getDsn(), error, context),
   };
