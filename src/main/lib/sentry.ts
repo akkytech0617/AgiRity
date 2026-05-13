@@ -4,6 +4,13 @@
 
 import * as Sentry from '@sentry/electron/main';
 import { isDevelopment } from '@/shared/lib/logging/config';
+import {
+  type SentryIssueLevel,
+  type SentryLogLevel,
+  captureException as sharedCaptureException,
+  captureIssue as sharedCaptureIssue,
+  sendLog as sharedSendLog,
+} from '@/shared/lib/sentry';
 
 /**
  * Get Sentry DSN from environment
@@ -40,15 +47,10 @@ export function initSentryMain(): void {
  */
 export function sendLog(
   message: string,
-  level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' = 'info',
+  level: SentryLogLevel = 'info',
   attributes?: Record<string, unknown>
 ): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  Sentry.logger[level](message, attributes ?? {});
+  sharedSendLog(Sentry, getSentryDsn(), message, level, attributes);
 }
 
 /**
@@ -56,34 +58,17 @@ export function sendLog(
  */
 export function captureIssue(
   message: string,
-  level: 'warning' | 'error' = 'error',
+  level: SentryIssueLevel = 'error',
   context?: Record<string, unknown>
 ): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  if (context !== undefined && Object.keys(context).length > 0) {
-    Sentry.withScope((scope) => {
-      scope.setExtras(context);
-      Sentry.captureMessage(message, level);
-    });
-  } else {
-    Sentry.captureMessage(message, level);
-  }
+  sharedCaptureIssue(Sentry, getSentryDsn(), message, level, context);
 }
 
 /**
  * Capture exception to Sentry Issues
  */
 export function captureException(error: Error, context?: Record<string, unknown>): void {
-  const dsn = getSentryDsn();
-  if (dsn === null) {
-    return;
-  }
-
-  Sentry.captureException(error, { extra: context });
+  sharedCaptureException(Sentry, getSentryDsn(), error, context);
 }
 
 /**

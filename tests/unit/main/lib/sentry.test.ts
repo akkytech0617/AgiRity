@@ -63,112 +63,90 @@ describe('Sentry Main Process', () => {
     });
   });
 
-  describe('sendLog', () => {
+  describe('shared helper integration', () => {
     beforeEach(() => {
-      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
       vi.resetModules();
     });
 
-    it('should not send when DSN is not configured', async () => {
-      delete process.env.SENTRY_DSN;
-      vi.resetModules();
+    it('should forward sendLog to the main Sentry logger when DSN is configured', async () => {
+      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
       const { sendLog } = await import('@/main/lib/sentry');
-      sendLog('test', 'info');
+      sendLog('main log', 'info', { key: 'value' });
+      expect(mockSentryLogger.info).toHaveBeenCalledWith('main log', { key: 'value' });
+    });
+
+    it('should no-op sendLog when DSN is missing', async () => {
+      delete process.env.SENTRY_DSN;
+      const { sendLog } = await import('@/main/lib/sentry');
+      sendLog('main log', 'info');
       expect(mockSentryLogger.info).not.toHaveBeenCalled();
     });
 
-    it('should send info log', async () => {
-      const { sendLog } = await import('@/main/lib/sentry');
-      sendLog('test message', 'info');
-      expect(mockSentryLogger.info).toHaveBeenCalledWith('test message', {});
-    });
-
-    it('should send error log', async () => {
-      const { sendLog } = await import('@/main/lib/sentry');
-      sendLog('error message', 'error');
-      expect(mockSentryLogger.error).toHaveBeenCalledWith('error message', {});
-    });
-
-    it('should pass attributes', async () => {
-      const { sendLog } = await import('@/main/lib/sentry');
-      sendLog('test', 'info', { key: 'value' });
-      expect(mockSentryLogger.info).toHaveBeenCalledWith('test', { key: 'value' });
-    });
-  });
-
-  describe('captureIssue', () => {
-    beforeEach(() => {
+    it('should forward captureIssue to the main Sentry instance', async () => {
       process.env.SENTRY_DSN = 'https://test@sentry.io/123';
-      vi.resetModules();
-    });
-
-    it('should not capture when DSN is not configured', async () => {
-      delete process.env.SENTRY_DSN;
-      vi.resetModules();
       const { captureIssue } = await import('@/main/lib/sentry');
-      captureIssue('test');
-      expect(mockSentryCaptureMessage).not.toHaveBeenCalled();
+      captureIssue('issue', 'error');
+      expect(mockSentryCaptureMessage).toHaveBeenCalledWith('issue', 'error');
     });
 
-    it('should capture message', async () => {
-      const { captureIssue } = await import('@/main/lib/sentry');
-      captureIssue('test message', 'error');
-      expect(mockSentryCaptureMessage).toHaveBeenCalledWith('test message', 'error');
-    });
-
-    it('should capture with context using withScope', async () => {
+    it('should attach context via withScope when captureIssue receives context', async () => {
+      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
       const mockScope = { setExtras: vi.fn() };
       mockSentryWithScope.mockImplementation((cb: (scope: typeof mockScope) => void) => {
         cb(mockScope);
       });
       const { captureIssue } = await import('@/main/lib/sentry');
-      captureIssue('test', 'warning', { key: 'value' });
-      expect(mockScope.setExtras).toHaveBeenCalledWith({ key: 'value' });
+      captureIssue('issue', 'warning', { processType: 'main' });
+      expect(mockScope.setExtras).toHaveBeenCalledWith({ processType: 'main' });
+      expect(mockSentryCaptureMessage).toHaveBeenCalledWith('issue', 'warning');
     });
-  });
 
-  describe('captureException', () => {
-    beforeEach(() => {
+    it('should forward captureException to the main Sentry instance', async () => {
       process.env.SENTRY_DSN = 'https://test@sentry.io/123';
-      vi.resetModules();
+      const { captureException } = await import('@/main/lib/sentry');
+      const error = new Error('boom');
+      captureException(error, { processType: 'main' });
+      expect(mockSentryCaptureException).toHaveBeenCalledWith(error, {
+        extra: { processType: 'main' },
+      });
     });
 
-    it('should not capture when DSN is not configured', async () => {
+    it('should no-op captureException when DSN is missing', async () => {
       delete process.env.SENTRY_DSN;
-      vi.resetModules();
       const { captureException } = await import('@/main/lib/sentry');
-      captureException(new Error('test'));
+      captureException(new Error('boom'));
       expect(mockSentryCaptureException).not.toHaveBeenCalled();
-    });
-
-    it('should capture exception', async () => {
-      const { captureException } = await import('@/main/lib/sentry');
-      const error = new Error('test');
-      captureException(error);
-      expect(mockSentryCaptureException).toHaveBeenCalledWith(error, { extra: undefined });
     });
   });
 
   describe('flushSentry', () => {
     beforeEach(() => {
-      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
       vi.resetModules();
     });
 
     it('should return true when DSN is not configured', async () => {
       delete process.env.SENTRY_DSN;
-      vi.resetModules();
       const { flushSentry } = await import('@/main/lib/sentry');
       const result = await flushSentry();
       expect(result).toBe(true);
+      expect(mockSentryFlush).not.toHaveBeenCalled();
     });
 
-    it('should call flush with timeout', async () => {
+    it('should call flush with the provided timeout when DSN is configured', async () => {
+      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
       mockSentryFlush.mockResolvedValue(true);
       const { flushSentry } = await import('@/main/lib/sentry');
       const result = await flushSentry(5000);
       expect(mockSentryFlush).toHaveBeenCalledWith(5000);
       expect(result).toBe(true);
+    });
+
+    it('should return false when flush throws', async () => {
+      process.env.SENTRY_DSN = 'https://test@sentry.io/123';
+      mockSentryFlush.mockRejectedValue(new Error('flush failed'));
+      const { flushSentry } = await import('@/main/lib/sentry');
+      const result = await flushSentry(1000);
+      expect(result).toBe(false);
     });
   });
 });
