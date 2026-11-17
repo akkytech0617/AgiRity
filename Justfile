@@ -17,8 +17,8 @@ default:
 dev:
     npm run dev
 
-# Run checks, test, scan and build as local CI
-ci: check test e2e security-all build
+# Run mandatory checks, tests and build (Snyk scans are manual/optional)
+ci: check test e2e build
 
 
 # Run all checks (type-check, format, lint)
@@ -84,7 +84,7 @@ package: build
 release: build
     npm run release
 
-# --- Security ---
+# --- Security (manual/optional; not part of ci or Git hooks) ---
 
 # Run Snyk security scan (SCA - dependencies)
 security:

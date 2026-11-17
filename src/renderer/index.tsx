@@ -4,7 +4,6 @@ import App from './App';
 import { initRendererLogger } from './lib/logger';
 import './index.css';
 
-// Initialize logger first
 initRendererLogger();
 
 const rootElement = document.getElementById('root');
@@ -14,6 +13,8 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <main className="dark text-foreground bg-background">
+      <App />
+    </main>
   </StrictMode>
 );

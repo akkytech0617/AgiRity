@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createPerfTracker, NOOP_TRACKER, type IPerfTracker } from '@/shared/lib/perf/PerfTracker';
+import { createPerfTracker, type IPerfTracker, NOOP_TRACKER } from '@/shared/lib/perf/PerfTracker';
 
 describe('PerfTracker', () => {
   let tracker: IPerfTracker;

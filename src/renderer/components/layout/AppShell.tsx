@@ -1,44 +1,46 @@
-import { ReactNode } from 'react';
-import { Workspace } from '../../shared/types';
-import { Header } from './Header';
+import type { ReactNode } from 'react';
+import type { Workspace } from '@/shared/types';
+import { AppHeader } from './AppHeader';
 
-interface LayoutProps {
+interface AppShellProps {
   children: ReactNode;
   workspaces: Workspace[];
-  activeWorkspaceId: string | null;
+  activeWorkspace: Workspace | null;
   onSelectWorkspace: (id: string) => void;
   onNewWorkspace: () => void;
+  onLaunch: () => void;
+  isLaunching: boolean;
   onOpenSettings: () => void;
   onOpenTools: () => void;
   onOpenMCP: () => void;
-  onOpenHome: () => void;
 }
 
-export function Layout({
+export function AppShell({
   children,
   workspaces,
-  activeWorkspaceId,
+  activeWorkspace,
   onSelectWorkspace,
   onNewWorkspace,
+  onLaunch,
+  isLaunching,
   onOpenSettings,
   onOpenTools,
   onOpenMCP,
-  onOpenHome,
-}: Readonly<LayoutProps>) {
+}: Readonly<AppShellProps>) {
   return (
-    <div className="flex flex-col h-screen bg-surface font-body text-text-primary overflow-hidden">
-      <Header
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
+      <AppHeader
         workspaces={workspaces}
-        activeWorkspaceId={activeWorkspaceId}
+        activeWorkspace={activeWorkspace}
         onSelectWorkspace={onSelectWorkspace}
         onNewWorkspace={onNewWorkspace}
+        onLaunch={onLaunch}
+        isLaunching={isLaunching}
         onOpenSettings={onOpenSettings}
         onOpenTools={onOpenTools}
         onOpenMCP={onOpenMCP}
-        onOpenHome={onOpenHome}
       />
-
-      <main className="flex-1 flex flex-col min-h-0 bg-white">
+      <main className="flex-1 flex flex-col min-h-0 bg-surface">
         <div className="flex-1 overflow-y-auto">
           <div className="min-h-full" data-testid="app-root">
             {children}

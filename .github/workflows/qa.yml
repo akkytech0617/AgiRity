@@ -1,0 +1,119 @@
+name: QA
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      base_ref:
+        description: 'Git base ref/SHA to compare with the selected branch (e.g. origin/main or HEAD^)'
+        required: true
+        default: 'origin/main'
+
+concurrency:
+  group: qa-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    name: QA Tests
+    # Fork PRs do not receive the Factory secret; do not run a paid agent without it.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: macos-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout tested head
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Resolve QA comparison
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || inputs.base_ref }}
+          HEAD_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          base=$(git rev-parse --verify "${BASE_REF}^{commit}")
+          head=$(git rev-parse --verify "${HEAD_REF}^{commit}")
+          git merge-base "$base" "$head" >/dev/null
+          {
+            echo "QA_BASE_REF=$base"
+            echo "QA_HEAD_REF=$head"
+          } >> "$GITHUB_ENV"
+          mkdir -p qa-results
+          git diff --name-status "$base...$head" > qa-results/changed-files.txt
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install ImageMagick
+        run: brew install imagemagick
+
+      - name: Install Droid CLI
+        run: curl -fsSL https://app.factory.ai/cli | sh
+
+      - name: Run QA
+        id: qa
+        timeout-minutes: 18
+        continue-on-error: true
+        env:
+          CI: true
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$FACTORY_API_KEY" || { echo "FACTORY_API_KEY is not configured"; exit 1; }
+          droid exec --auto high \
+            "First activate this repository's project skill named qa from .factory/skills/qa/SKILL.md with the Skill tool, and follow it plus its qa-electron sub-skill before doing anything else. If the qa skill cannot be activated, write a BLOCKED qa-results/report.md explaining why and stop. Run functional QA for QA_BASE_REF=$QA_BASE_REF and QA_HEAD_REF=$QA_HEAD_REF using the PR merge-base diff. Test this checked-out head in isolated real Electron via CDP, not an ordinary browser. Report blocked prerequisites honestly. Do not commit, push, alter remote settings, or print secrets." \
+            2>&1 | tee qa-results/qa-output.txt
+
+      # Learning suggestions are artifacts for human review, not automatic branch writes.
+      - name: Ensure QA report exists
+        if: always()
+        run: |
+          mkdir -p qa-results
+          if [ ! -s qa-results/report.md ]; then
+            printf '%s\n' '## QA Report' '' 'BLOCKED — QA did not produce a report. Inspect the workflow logs and QA artifacts.' > qa-results/report.md
+          fi
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-results
+          path: qa-results/
+          retention-days: 14
+
+      - name: Post QA report as PR comment
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          {
+            printf '%s\n' '<!-- qa-report -->'
+            cat qa-results/report.md
+            printf '\n---\nQA run: %s\n' "$RUN_URL"
+          } > qa-results/pr-comment.md
+          existing=$(gh api "repos/$REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- qa-report -->")) | .id][0] // empty')
+          existing=$(printf '%s\n' "$existing" | head -1)
+          if [ -n "$existing" ]; then
+            gh api "repos/$REPOSITORY/issues/comments/$existing" -X PATCH \
+              -F body=@qa-results/pr-comment.md
+          else
+            gh pr comment "$PR_NUMBER" --repo "$REPOSITORY" --body-file qa-results/pr-comment.md
+          fi

@@ -313,7 +313,9 @@ pnpm-lock.yaml
 yarn.lock
 ```
 
-## 6. Snyk
+## 6. Snyk（手動・任意）
+
+Snyk CLI・設定・依存関係は維持しますが、GitHub Actions、`just ci`、Git hooks の必須チェックからは除外しています。必要なときに以下のコマンドを手動実行してください。認証・サービスエラーで未完了のスキャンを成功と報告しないでください。
 
 ### 5.1 概要
 
@@ -417,22 +419,16 @@ brew install snyk
 snyk auth
 ```
 
-#### 環境変数 (CI 用)
+#### 環境変数（任意の手動実行用。GitHub Actions では未使用）
 
 | 変数名       | 説明              |
 | ------------ | ----------------- |
 | `SNYK_TOKEN` | Snyk API トークン |
 
-### 5.6 Git Hooks との統合
+### 5.6 必須チェックとの分離
 
-`lefthook.yml` で `pre-push` 時に自動実行:
-
-```yaml
-pre-push:
-  commands:
-    scan:
-      run: just --color never security-all
-```
+`pre-push` は `just test` のみ実行します。Snyk は自動実行しません。
+`just security`、`just security-code`、`just security-all` は必要に応じて手動で利用できます。
 
 ### 5.7 脆弱性の無視 (例外設定)
 

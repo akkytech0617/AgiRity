@@ -260,8 +260,9 @@ just ci
 1. `check` - type-check, format-check, lint
 2. `test` - ユニットテスト
 3. `e2e` - E2Eテスト
-4. `security-all` - Snyk SCA/SAST
-5. `build` - プロダクションビルド
+4. `build` - プロダクションビルド
+
+Snyk SCA/SAST は手動・任意の `just security-all` で実行できます。`just ci`、Git hooks、GitHub Actions の必須チェックには含めません。
 
 ### 4.3 エラー修正
 
@@ -299,7 +300,7 @@ just ci
 
 2. **Lefthookによる自動チェック**
    - pre-commit: lint, format-check, type-check
-   - pre-push: test, security-all
+   - pre-push: test
 
 3. **Linearチケット更新（該当する場合）**
    - PRリンクをコメントに追加
@@ -387,7 +388,7 @@ just ci
 | フック     | タイミング      | 実行内容                       |
 | ---------- | --------------- | ------------------------------ |
 | pre-commit | `git commit` 時 | lint, format-check, type-check |
-| pre-push   | `git push` 時   | test, security-all             |
+| pre-push   | `git push` 時   | test                          |
 
 #### フックをスキップする場合（緊急時のみ）
 
@@ -400,7 +401,7 @@ git push --no-verify
 
 ### セキュリティスキャン
 
-#### Snyk（実装済み）
+#### Snyk（手動・任意）
 
 | スキャン | コマンド             | 内容                     |
 | -------- | -------------------- | ------------------------ |
@@ -478,8 +479,6 @@ just ci 失敗
     │
     ├─ e2e 失敗 → E2Eテストまたは実装を修正
     │
-    ├─ security 失敗 → 脆弱性を修正（上記「セキュリティスキャン」参照）
-    │
     └─ build 失敗 → ビルドエラーを修正
 
     ↓
@@ -519,7 +518,7 @@ just e2e          # E2Eテスト
 just coverage     # カバレッジレポート
 
 # セキュリティ
-just security-all # 全セキュリティスキャン
+just security-all # 任意の手動セキュリティスキャン
 
 # CI
 just ci           # ローカルCI（全チェック + テスト + ビルド）
