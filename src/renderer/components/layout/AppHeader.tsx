@@ -6,7 +6,7 @@ import {
   DropdownTrigger,
 } from '@heroui/react/dropdown';
 import { Separator } from '@heroui/react/separator';
-import { Box, Database, MoreHorizontal, Settings } from 'lucide-react';
+import { MoreHorizontal, Settings } from 'lucide-react';
 import type { Workspace } from '@/shared/types';
 import { LaunchButton } from '../workspace/LaunchButton';
 import { WorkspaceSwitcher } from '../workspace/WorkspaceSwitcher';
@@ -73,11 +73,7 @@ export function AppHeader({
           </DropdownTrigger>
           <DropdownPopover>
             <DropdownMenu
-              items={[
-                { id: 'settings', label: 'Settings', icon: Settings },
-                { id: 'tools', label: 'Tools Registry', icon: Box },
-                { id: 'mcp', label: 'MCP Servers', icon: Database },
-              ]}
+              items={[{ id: 'settings', label: 'Settings', icon: Settings }]}
               onAction={(key) => {
                 const action = String(key);
                 if (action === 'settings') onOpenSettings();

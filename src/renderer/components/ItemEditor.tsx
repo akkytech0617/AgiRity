@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -27,7 +26,6 @@ export function ItemEditor({
   item,
   index,
   totalItems,
-  existingItemNames,
   onUpdate,
   onDelete,
   onMoveUp,
@@ -41,7 +39,6 @@ export function ItemEditor({
   const pathId = `${baseId}-path`;
   const urlsId = `${baseId}-urls`;
   const waitTimeId = `${baseId}-wait-time`;
-  const dependsOnId = `${baseId}-depends-on`;
 
   const getItemIcon = () => {
     switch (item.type) {
@@ -127,12 +124,6 @@ export function ItemEditor({
               <span className="flex items-center gap-1 text-xs text-amber-400">
                 <Clock className="w-3 h-3" />
                 {item.waitTime}s
-              </span>
-            )}
-            {item.dependsOn != null && (
-              <span className="flex items-center gap-1 text-xs text-purple-400">
-                <ArrowRight className="w-3 h-3" />
-                after {item.dependsOn}
               </span>
             )}
             {item.path != null && (
@@ -267,28 +258,6 @@ export function ItemEditor({
                 placeholder="0"
                 className="w-full px-3 py-1.5 bg-gray-950 text-text-primary placeholder:text-gray-500 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm"
               />
-            </div>
-            <div>
-              <label htmlFor={dependsOnId} className="block text-xs font-medium text-gray-300 mb-1">
-                Depends On
-              </label>
-              <select
-                id={dependsOnId}
-                value={item.dependsOn ?? ''}
-                onChange={(e) => {
-                  handleFieldChange('dependsOn', e.target.value || undefined);
-                }}
-                className="w-full px-3 py-1.5 bg-gray-950 text-text-primary placeholder:text-gray-500 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm"
-              >
-                <option value="">None</option>
-                {existingItemNames
-                  .filter((n) => n !== item.name)
-                  .map((itemName) => (
-                    <option key={itemName} value={itemName}>
-                      {itemName}
-                    </option>
-                  ))}
-              </select>
             </div>
           </div>
 
