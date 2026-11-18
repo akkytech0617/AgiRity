@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@heroui/styles";
 
 @layer utilities {
   .rounded-card {
@@ -26,10 +27,10 @@
   --color-accent-blue: #0066ff;
   --color-accent-orange: #ff6b35;
 
-  --color-surface: #f8f9fa;
-  --color-border: #e5e7eb;
-  --color-text-primary: #1f2937;
-  --color-text-secondary: #6b7280;
+  --color-surface: #1f2937;
+  --color-border: #374151;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #9ca3af;
   --color-success: #10b981;
   --color-error: #ef4444;
   --color-warning: #f59e0b;

@@ -269,13 +269,12 @@ npm install -D snyk
 - ライセンス監視
 - 自動修正PR
 
-**GitHub Actions統合:**
+**運用:** 手動・任意。GitHub Actions、`just ci`、Git hooks では実行しません。CLI・設定・依存関係は維持します。
 
-```yaml
-- name: Run Snyk
-  uses: snyk/actions/node@master
-  env:
-    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+```bash
+just security      # SCA
+just security-code # SAST
+just security-all  # 両方
 ```
 
 **無料枠:** 200スキャン/月
@@ -499,7 +498,7 @@ CI/CD パイプラインは GitHub Actions で実装されています。詳細�
 #### 必要な設定
 
 **Secrets:**
-- `SNYK_TOKEN`: Snyk API トークン
+- `SNYK_TOKEN`: 任意の手動 Snyk スキャン用（GitHub Actions では未使用）
 - `SONARCLOUD_TOKEN`: SonarCloud トークン
 
 **Variables:**

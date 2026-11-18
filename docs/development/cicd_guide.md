@@ -94,6 +94,8 @@ just --list   # 同上
 
 #### セキュリティ
 
+Snyk は手動・任意のスキャンです。`just ci`、Git hooks、GitHub Actions からは実行しません。CLI、設定、依存関係は維持します。Snyk の認証・サービス障害は必須の品質ゲートをブロックしません。
+
 | コマンド             | 説明                        |
 | -------------------- | --------------------------- |
 | `just security`      | Snyk 依存関係スキャン (SCA) |
@@ -105,7 +107,7 @@ just --list   # 同上
 
 | コマンド  | 説明                                                         |
 | --------- | ------------------------------------------------------------ |
-| `just ci` | ローカル CI 実行 (check + test + e2e + security-all + build) |
+| `just ci` | ローカル CI 実行 (check + test + e2e + build) |
 
 ### 2.4 よく使うワークフロー
 
@@ -156,8 +158,6 @@ pre-push:
   commands:
     test:
       run: just --color never test
-    scan:
-      run: just --color never security-all
 ```
 
 ### 3.3 実行タイミング
@@ -165,7 +165,7 @@ pre-push:
 | フック       | 実行タイミング      | 実行内容                       |
 | ------------ | ------------------- | ------------------------------ |
 | `pre-commit` | `git commit` 実行時 | lint, format-check, type-check |
-| `pre-push`   | `git push` 実行時   | test, security-all             |
+| `pre-push`   | `git push` 実行時   | test             |
 
 ### 3.4 インストール・セットアップ
 
@@ -248,7 +248,6 @@ setup ─┬─► check ─┬─► test ─┬─► build (macOS)
        │          │         │
        │          │         └─► sonar (optional)
        │          │
-       │          └─► security
        │
        └─► build-multi-os (optional)
        │
@@ -260,7 +259,6 @@ setup ─┬─► check ─┬─► test ─┬─► build (macOS)
 | `setup`          | Feature flags 設定             | 常に実行          |
 | `check`          | type-check, format-check, lint | 常に実行          |
 | `test`           | Unit テスト + カバレッジ       | check 成功後      |
-| `security`       | Snyk スキャン (SCA + SAST)     | check 成功後      |
 | `sonar`          | SonarCloud スキャン            | flag 有効時       |
 | `build`          | macOS ビルド                   | check, test 成功後 |
 | `build-multi-os` | Linux/Windows ビルド           | flag 有効時       |
@@ -314,7 +312,7 @@ env:
 
 | Secret              | 用途                    | 必須 |
 | ------------------- | ----------------------- | ---- |
-| `SNYK_TOKEN`        | Snyk API トークン       | Yes  |
+| `SNYK_TOKEN`        | 任意のローカル Snyk 認証用（Actions では未使用） | No |
 | `SONARCLOUD_TOKEN`  | SonarCloud トークン     | Yes  |
 | `GH_TOKEN`          | GitHub Token (リリース用) | Release時 |
 
@@ -371,7 +369,7 @@ CI で生成されるアーティファクトは GitHub Actions の Artifacts �
 | Lint             | pre-commit          | CI (check)                |
 | Format Check     | pre-commit          | CI (check)                |
 | Unit Tests       | pre-push            | CI (test)                 |
-| Security Scan    | pre-push            | CI (security)             |
+| Snyk Scan        | 手動・任意 (`just security-all`) | 実行しない |
 | SonarCloud       | -                   | CI (sonar)                |
 | E2E Tests        | -                   | CI (e2e)                  |
 | Build            | -                   | CI (build)                |
@@ -380,7 +378,7 @@ CI で生成されるアーティファクトは GitHub Actions の Artifacts �
 
 1. **Lefthook (ローカル)**: 素早いフィードバック
    - コミット前に軽量なチェック
-   - プッシュ前にテスト・セキュリティスキャン
+   - プッシュ前にユニットテスト
    - 問題を早期発見
 
 2. **GitHub Actions (リモート)**: 確実な品質ゲート
@@ -430,7 +428,7 @@ git commit -m "feat: add new feature"
 
 # 4. プッシュ (Lefthook が自動テスト)
 git push
-# → pre-push: test, security-all
+# → pre-push: test
 # → GitHub Actions: CI ワークフロー実行
 ```
 
@@ -487,7 +485,9 @@ ls -la .git/hooks/
    just test
    ```
 
-### 8.4 セキュリティスキャンが失敗する
+### 8.4 任意の手動セキュリティスキャンが失敗する
+
+`SNYK-0003` / HTTP 400 などの認証・サービスエラーは、Snyk のログを機密情報を伏せて確認し、認証やサービス状態を調査してください。必須チェックを回避するための hook bypass は不要です。スキャン未完了を成功と扱わず、手動スキャンの制限として報告します。
 
 ```bash
 # Snyk は npm 経由で実行される (npx snyk)

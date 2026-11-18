@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { selectItemsToLaunch } from '@/shared/lib/workspace-utils';
+import { getPresetItemNames, selectItemsToLaunch } from '@/shared/lib/workspace-utils';
 import type { Workspace } from '@/shared/types';
 
 const createWorkspace = (overrides?: Partial<Workspace>): Workspace => ({
@@ -41,5 +41,31 @@ describe('selectItemsToLaunch', () => {
     const result = selectItemsToLaunch(workspace, []);
 
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('getPresetItemNames', () => {
+  const workspace = createWorkspace({
+    presets: [
+      { name: 'Code Only', itemNames: ['VS Code'] },
+      { name: 'Empty', itemNames: [] },
+    ],
+  });
+
+  it('returns undefined when no preset is selected', () => {
+    expect(getPresetItemNames(workspace, null)).toBeUndefined();
+  });
+
+  it('returns the item names of the selected preset', () => {
+    expect(getPresetItemNames(workspace, 'Code Only')).toEqual(['VS Code']);
+  });
+
+  it('keeps an empty preset as an empty list', () => {
+    expect(getPresetItemNames(workspace, 'Empty')).toEqual([]);
+  });
+
+  it('returns undefined for an unknown preset or a workspace without presets', () => {
+    expect(getPresetItemNames(workspace, 'Missing')).toBeUndefined();
+    expect(getPresetItemNames(createWorkspace(), 'Launch All')).toBeUndefined();
   });
 });

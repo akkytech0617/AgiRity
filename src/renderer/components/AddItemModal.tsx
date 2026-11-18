@@ -1,5 +1,5 @@
 import { Folder, Globe, Monitor, Plus, X } from 'lucide-react';
-import { useId, useState } from 'react';
+import { type FormEvent, type KeyboardEvent, useId, useState } from 'react';
 import { WorkspaceItem } from '../../shared/types';
 
 interface AddItemModalProps {
@@ -9,6 +9,12 @@ interface AddItemModalProps {
 }
 
 type ItemType = 'app' | 'browser' | 'folder';
+
+const LABEL_CLASS = 'block text-sm font-medium text-gray-200 mb-1';
+const SMALL_LABEL_CLASS = 'block text-xs font-medium text-gray-300 mb-1';
+const HINT_CLASS = 'text-xs text-text-secondary mt-1';
+const FIELD_CLASS =
+  'w-full px-3 py-2 bg-gray-950 text-text-primary placeholder:text-gray-500 border border-border rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all';
 
 export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<AddItemModalProps>) {
   const [itemType, setItemType] = useState<ItemType>('app');
@@ -20,6 +26,7 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
   const [dependsOn, setDependsOn] = useState('');
 
   const baseId = useId();
+  const titleId = `${baseId}-title`;
   const nameId = `${baseId}-name`;
   const categoryId = `${baseId}-category`;
   const pathId = `${baseId}-path`;
@@ -56,9 +63,20 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
     return item;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // React propagates synthetic submit events to ancestor handlers; keep this form's
+    // submission from also triggering a surrounding editor form.
+    event.stopPropagation();
     if (!isValidSubmission()) return;
     onAdd(buildWorkspaceItem());
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      onClose();
+    }
   };
 
   const typeOptions: {
@@ -88,200 +106,218 @@ export function AddItemModal({ onAdd, onClose, existingItemNames }: Readonly<Add
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-card shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface">
-          <h3 className="text-lg font-display font-bold text-text-primary">Add Item</h3>
-          <button
-            onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        onKeyDown={handleKeyDown}
+        className="flex w-full max-w-lg max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-card border border-border bg-gray-900 text-text-primary shadow-2xl"
+      >
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          {/* Header */}
+          <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface px-5 py-3">
+            <h3 id={titleId} className="text-lg font-display font-bold text-text-primary">
+              Add Item
+            </h3>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="p-1 text-text-secondary hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div
+            data-testid="add-item-modal-body"
+            className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-5"
           >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+            {/* Item Type Selection */}
+            <fieldset>
+              <legend className="block text-sm font-medium text-gray-200 mb-2">Item Type</legend>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {typeOptions.map((opt) => {
+                  const isSelected = itemType === opt.type;
+                  return (
+                    <button
+                      key={opt.type}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => {
+                        setItemType(opt.type);
+                      }}
+                      className={`p-3 rounded-button border-2 transition-all text-left ${
+                        isSelected
+                          ? 'border-primary bg-primary-900/40'
+                          : 'border-border bg-gray-950 hover:border-gray-500'
+                      }`}
+                    >
+                      <div
+                        className={`mb-1.5 ${isSelected ? 'text-primary-300' : 'text-text-secondary'}`}
+                      >
+                        {opt.icon}
+                      </div>
+                      <div
+                        className={`text-sm font-medium ${isSelected ? 'text-primary-100' : 'text-text-primary'}`}
+                      >
+                        {opt.label}
+                      </div>
+                      <div className="text-xs text-text-secondary mt-0.5">{opt.description}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
 
-        {/* Body */}
-        <div className="p-6 space-y-6">
-          {/* Item Type Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Item Type</label>
-            <div className="grid grid-cols-3 gap-3">
-              {typeOptions.map((opt) => (
-                <button
-                  key={opt.type}
-                  onClick={() => {
-                    setItemType(opt.type);
-                  }}
-                  className={`p-4 rounded-button border-2 transition-all text-left ${
-                    itemType === opt.type
-                      ? 'border-primary bg-primary-50'
-                      : 'border-border hover:border-gray-300 bg-white'
-                  }`}
-                >
-                  <div
-                    className={`mb-2 ${itemType === opt.type ? 'text-primary' : 'text-text-secondary'}`}
-                  >
-                    {opt.icon}
-                  </div>
-                  <div
-                    className={`text-sm font-medium ${itemType === opt.type ? 'text-primary-900' : 'text-text-primary'}`}
-                  >
-                    {opt.label}
-                  </div>
-                  <div className="text-xs text-text-secondary mt-0.5">{opt.description}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Name */}
-          <div>
-            <label htmlFor={nameId} className="block text-sm font-medium text-gray-700 mb-1">
-              Name
-            </label>
-            <input
-              id={nameId}
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-              placeholder="e.g., VS Code, GitHub Repo"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
-            />
-          </div>
-
-          {/* Category (optional) */}
-          <div>
-            <label htmlFor={categoryId} className="block text-sm font-medium text-gray-700 mb-1">
-              Category
-            </label>
-            <input
-              id={categoryId}
-              type="text"
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-              }}
-              placeholder="e.g., development, reference, communication"
-              className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all"
-            />
-            <p className="text-xs text-gray-500 mt-1">Optional label for grouping and filtering</p>
-          </div>
-
-          {/* Path (for app/folder) */}
-          {(itemType === 'app' || itemType === 'folder') && (
+            {/* Name */}
             <div>
-              <label htmlFor={pathId} className="block text-sm font-medium text-gray-700 mb-1">
-                {itemType === 'app' ? 'Application Path' : 'Folder Path'}
+              <label htmlFor={nameId} className={LABEL_CLASS}>
+                Name
               </label>
               <input
-                id={pathId}
+                id={nameId}
                 type="text"
-                value={path}
+                value={name}
                 onChange={(e) => {
-                  setPath(e.target.value);
+                  setName(e.target.value);
                 }}
-                placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm"
+                placeholder="e.g., VS Code, GitHub Repo"
+                className={FIELD_CLASS}
+                autoFocus
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {itemType === 'app' ? 'Full path to the application' : 'Path to the folder to open'}
-              </p>
             </div>
-          )}
 
-          {/* URLs (for browser) */}
-          {itemType === 'browser' && (
+            {/* Category (optional) */}
             <div>
-              <label htmlFor={urlsId} className="block text-sm font-medium text-gray-700 mb-1">
-                URLs
+              <label htmlFor={categoryId} className={LABEL_CLASS}>
+                Category
               </label>
-              <textarea
-                id={urlsId}
-                value={urls}
+              <input
+                id={categoryId}
+                type="text"
+                value={category}
                 onChange={(e) => {
-                  setUrls(e.target.value);
+                  setCategory(e.target.value);
                 }}
-                placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all font-mono text-sm resize-none"
+                placeholder="e.g., development, reference, communication"
+                className={FIELD_CLASS}
               />
-              <p className="text-xs text-gray-500 mt-1">One URL per line</p>
+              <p className={HINT_CLASS}>Optional label for grouping and filtering</p>
             </div>
-          )}
 
-          {/* Advanced Settings */}
-          <div className="pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Launch Settings</h4>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Wait Time */}
+            {/* Path (for app/folder) */}
+            {(itemType === 'app' || itemType === 'folder') && (
               <div>
-                <label
-                  htmlFor={waitTimeId}
-                  className="block text-xs font-medium text-gray-600 mb-1"
-                >
-                  Wait Time (seconds)
+                <label htmlFor={pathId} className={LABEL_CLASS}>
+                  {itemType === 'app' ? 'Application Path' : 'Folder Path'}
                 </label>
                 <input
-                  id={waitTimeId}
-                  type="number"
-                  min={0}
-                  value={waitTime ?? ''}
+                  id={pathId}
+                  type="text"
+                  value={path}
                   onChange={(e) => {
-                    setWaitTime(e.target.value ? Number(e.target.value) : undefined);
+                    setPath(e.target.value);
                   }}
-                  placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm"
+                  placeholder={itemType === 'app' ? '/Applications/App.app' : '~/workspace/project'}
+                  className={`${FIELD_CLASS} font-mono text-sm`}
                 />
+                <p className={HINT_CLASS}>
+                  {itemType === 'app'
+                    ? 'Full path to the application'
+                    : 'Path to the folder to open'}
+                </p>
               </div>
+            )}
 
-              {/* Depends On */}
+            {/* URLs (for browser) */}
+            {itemType === 'browser' && (
               <div>
-                <label
-                  htmlFor={dependsOnId}
-                  className="block text-xs font-medium text-gray-600 mb-1"
-                >
-                  Depends On
+                <label htmlFor={urlsId} className={LABEL_CLASS}>
+                  URLs
                 </label>
-                <select
-                  id={dependsOnId}
-                  value={dependsOn}
+                <textarea
+                  id={urlsId}
+                  value={urls}
                   onChange={(e) => {
-                    setDependsOn(e.target.value);
+                    setUrls(e.target.value);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-button focus:ring-2 focus:ring-primary focus:border-primary outline-hidden transition-all text-sm bg-white"
-                >
-                  <option value="">None</option>
-                  {existingItemNames.map((itemName) => (
-                    <option key={itemName} value={itemName}>
-                      {itemName}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="https://github.com&#10;https://linear.app&#10;https://localhost:3000"
+                  rows={4}
+                  className={`${FIELD_CLASS} font-mono text-sm resize-none`}
+                />
+                <p className={HINT_CLASS}>One URL per line</p>
+              </div>
+            )}
+
+            {/* Advanced Settings */}
+            <div className="pt-4 border-t border-border">
+              <h4 className="text-sm font-medium text-gray-200 mb-3">Launch Settings</h4>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {/* Wait Time */}
+                <div>
+                  <label htmlFor={waitTimeId} className={SMALL_LABEL_CLASS}>
+                    Wait Time (seconds)
+                  </label>
+                  <input
+                    id={waitTimeId}
+                    type="number"
+                    min={0}
+                    value={waitTime ?? ''}
+                    onChange={(e) => {
+                      setWaitTime(e.target.value ? Number(e.target.value) : undefined);
+                    }}
+                    placeholder="0"
+                    className={`${FIELD_CLASS} text-sm`}
+                  />
+                </div>
+
+                {/* Depends On */}
+                <div>
+                  <label htmlFor={dependsOnId} className={SMALL_LABEL_CLASS}>
+                    Depends On
+                  </label>
+                  <select
+                    id={dependsOnId}
+                    value={dependsOn}
+                    onChange={(e) => {
+                      setDependsOn(e.target.value);
+                    }}
+                    className={`${FIELD_CLASS} text-sm`}
+                  >
+                    <option value="">None</option>
+                    {existingItemNames.map((itemName) => (
+                      <option key={itemName} value={itemName}>
+                        {itemName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 bg-surface border-t border-border flex items-center justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-text-primary font-medium hover:bg-gray-200 rounded-button transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!isValidSubmission()}
-            className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Plus className="w-4 h-4" />
-            Add Item
-          </button>
-        </div>
+          {/* Footer */}
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border bg-surface px-5 py-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-text-primary font-medium hover:bg-gray-700 rounded-button transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!isValidSubmission()}
+              className="px-4 py-2 bg-primary text-white font-medium hover:bg-primary-600 rounded-button transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-4 h-4" />
+              Add Item
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

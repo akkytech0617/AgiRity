@@ -72,6 +72,7 @@ vi.mock('@/renderer/components/ItemEditor', () => ({
 }));
 
 import { WorkspaceEditor } from '@/renderer/components/WorkspaceEditor';
+import { findLightOnlyElements } from '../theme-helpers';
 
 function makeWorkspace(overrides: Partial<Workspace> = {}): Workspace {
   return {
@@ -290,5 +291,16 @@ describe('WorkspaceEditor', () => {
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses dark theme surfaces and text', () => {
+    const { container } = render(
+      <WorkspaceEditor
+        workspace={makeWorkspace({ items: [] })}
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+    expect(findLightOnlyElements(container)).toEqual([]);
   });
 });

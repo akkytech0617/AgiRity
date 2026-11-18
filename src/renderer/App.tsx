@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { selectItemsToLaunch } from '@/shared/lib/workspace-utils';
+import { getPresetItemNames, selectItemsToLaunch } from '@/shared/lib/workspace-utils';
 import { Workspace, WorkspaceItem } from '../shared/types';
 import { launcherApi } from './api';
-import { Layout } from './components/Layout';
+import { AppShell } from './components/layout/AppShell';
+import { EmptyWorkspacePanel } from './components/layout/EmptyWorkspacePanel';
+import { MainPanel } from './components/layout/MainPanel';
 import { MCPServers } from './components/MCPServers';
 import { Settings as SettingsView } from './components/Settings';
 import { ToolsRegistry } from './components/ToolsRegistry';
-import { WorkspaceDetail } from './components/WorkspaceDetail';
 import { WorkspaceEditor } from './components/WorkspaceEditor';
 import { WorkspaceList } from './components/WorkspaceList';
 import { workspaceDataSource } from './data/workspaceDataSource';
@@ -32,7 +33,10 @@ function App() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLaunching, setIsLaunching] = useState(false);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const perfReported = useRef(false);
+  const hasAutoSelected = useRef(false);
 
   const loadWorkspaces = useCallback(async () => {
     try {
@@ -67,6 +71,19 @@ function App() {
     }
   }, [loading]);
 
+  // Auto-select first workspace on initial load when on home view
+  useEffect(() => {
+    if (
+      !loading &&
+      !hasAutoSelected.current &&
+      workspaces.length > 0 &&
+      activeView.type === 'home'
+    ) {
+      hasAutoSelected.current = true;
+      setActiveView({ type: 'workspace', id: workspaces[0].id });
+    }
+  }, [loading, workspaces, activeView.type]);
+
   const selectedWorkspace =
     activeView.type === 'workspace' ||
     (activeView.type === 'workspace-editor' && activeView.id != null)
@@ -76,11 +93,13 @@ function App() {
   const handleLaunch = async (id: string, itemNames?: string[]) => {
     const workspace = workspaces.find((w) => w.id === id);
     if (workspace) {
+      setIsLaunching(true);
       log.info(`Launching workspace: ${workspace.name}`);
       const itemsToLaunch = selectItemsToLaunch(workspace, itemNames);
       for (const item of itemsToLaunch) {
         await launchItem(item);
       }
+      setIsLaunching(false);
     }
   };
 
@@ -117,11 +136,22 @@ function App() {
   };
 
   const handleSelectWorkspace = (id: string) => {
+    setSelectedPreset(null);
     setActiveView({ type: 'workspace', id });
   };
 
-  const handleOpenHome = () => {
-    setActiveView({ type: 'home' });
+  const renderWorkspaceList = () => {
+    if (workspaces.length === 0 && error === null) {
+      return <EmptyWorkspacePanel onNew={handleNew} />;
+    }
+    return (
+      <WorkspaceList
+        workspaces={workspaces}
+        error={error}
+        onRetry={() => void loadWorkspaces()}
+        onLaunchWorkspace={(workspace) => void handleLaunch(workspace.id)}
+      />
+    );
   };
 
   const renderMainContent = () => {
@@ -129,15 +159,32 @@ function App() {
       return <div className="p-8 text-center text-gray-500">Loading...</div>;
     }
 
+    if (
+      workspaces.length === 0 &&
+      (activeView.type === 'home' || activeView.type === 'workspace')
+    ) {
+      return renderWorkspaceList();
+    }
+
     switch (activeView.type) {
       case 'home':
+        return renderWorkspaceList();
+      case 'workspace':
+        if (!selectedWorkspace) {
+          return <div className="p-8 text-center text-gray-500">Workspace not found</div>;
+        }
         return (
-          <WorkspaceList
-            workspaces={workspaces}
-            error={error}
-            onLaunchWorkspace={(workspace) => {
-              void handleLaunch(workspace.id);
+          <MainPanel
+            workspace={selectedWorkspace}
+            selectedPreset={selectedPreset}
+            onSelectPreset={setSelectedPreset}
+            onLaunchItem={(item) => {
+              void launchItem(item);
             }}
+            onEditWorkspace={(id) => {
+              setActiveView({ type: 'workspace-editor', id });
+            }}
+            isLaunching={isLaunching}
           />
         );
       case 'tools':
@@ -160,31 +207,26 @@ function App() {
             }}
           />
         );
-      case 'workspace':
       default:
-        return selectedWorkspace ? (
-          <WorkspaceDetail
-            workspace={selectedWorkspace}
-            onLaunch={(id, itemNames) => void handleLaunch(id, itemNames)}
-            onLaunchItem={(item) => {
-              void launchItem(item);
-            }}
-            onEditWorkspace={(id) => {
-              setActiveView({ type: 'workspace-editor', id });
-            }}
-          />
-        ) : (
-          <div className="p-8 text-center text-gray-500">Workspace not found</div>
-        );
+        return <div className="p-8 text-center text-gray-500">View not found</div>;
     }
   };
 
   return (
-    <Layout
+    <AppShell
       workspaces={workspaces}
-      activeWorkspaceId={activeView.type === 'workspace' ? activeView.id : null}
+      activeWorkspace={selectedWorkspace}
       onSelectWorkspace={handleSelectWorkspace}
       onNewWorkspace={handleNew}
+      onLaunch={() => {
+        if (selectedWorkspace) {
+          void handleLaunch(
+            selectedWorkspace.id,
+            getPresetItemNames(selectedWorkspace, selectedPreset)
+          );
+        }
+      }}
+      isLaunching={isLaunching}
       onOpenSettings={() => {
         setActiveView({ type: 'settings' });
       }}
@@ -194,10 +236,9 @@ function App() {
       onOpenMCP={() => {
         setActiveView({ type: 'mcp' });
       }}
-      onOpenHome={handleOpenHome}
     >
       {renderMainContent()}
-    </Layout>
+    </AppShell>
   );
 }
 
