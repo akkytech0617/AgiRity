@@ -18,7 +18,7 @@ dev:
     npm run dev
 
 # Run mandatory checks, tests and build (Snyk scans are manual/optional)
-ci: check test e2e build
+ci: check test e2e build clean
 
 
 # Run all checks (type-check, format, lint)

@@ -37,12 +37,9 @@
     "@heroui/styles": "^3.2.7",
     "@sentry/electron": "^7.20.2",
     "clsx": "^2.1.1",
-    "dotenv": "^17.4.2",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.12",
     "framer-motion": "^12.43.0",
-    "js-yaml": "^4.3.2",
-    "lucide-react": "^0.577.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwind-merge": "^3.7.0",
@@ -62,11 +59,14 @@
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.12",
     "concurrently": "^9.2.5",
+    "dotenv": "^18.0.10",
     "electron": "^39.8.10",
     "electron-builder": "^25.1.8",
-    "electron-playwright-helpers": "^2.3.1",
-    "jsdom": "^27.4.0",
+    "electron-playwright-helpers": "^3.1.2",
+    "js-yaml": "^5.5.0",
+    "jsdom": "^31.0.1",
     "lefthook": "^2.2.2",
+    "lucide-react": "^1.76.0",
     "postcss": "^8.5.33",
     "snyk": "^1.1308.4",
     "tailwindcss": "^4.3.5",
@@ -75,5 +75,12 @@
     "vite-plugin-electron": "^0.29.1",
     "vite-plugin-electron-renderer": "^0.14.7",
     "vitest": "^4.1.12"
+  },
+  "allowScripts": {
+    "electron@39.8.10": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "lefthook@2.2.2": true,
+    "snyk@1.1308.4": true
   }
 }
