@@ -8,12 +8,12 @@
 
 ## CRUD ライフサイクル
 
-| 操作 | フロー | 成果物 |
-|------|--------|--------|
-| **Create** | UI → `WorkspaceEditor` → `workspaceDataSource.save()` → IPC → `ProjectService.saveWorkspace()` | 新規 YAML エントリ |
-| **Read** | アプリ起動 → `workspaceDataSource.load()` → IPC → `ProjectService.loadWorkspaces()` | `Workspace[]` |
+| 操作       | フロー                                                                                         | 成果物                 |
+| ---------- | ---------------------------------------------------------------------------------------------- | ---------------------- |
+| **Create** | UI → `WorkspaceEditor` → `workspaceDataSource.save()` → IPC → `ProjectService.saveWorkspace()` | 新規 YAML エントリ     |
+| **Read**   | アプリ起動 → `workspaceDataSource.load()` → IPC → `ProjectService.loadWorkspaces()`            | `Workspace[]`          |
 | **Update** | UI → `WorkspaceEditor` → `workspaceDataSource.save()` → IPC → `ProjectService.saveWorkspace()` | 更新済み YAML エントリ |
-| **Delete** | UI → IPC → `ProjectService.deleteWorkspace()` | YAML エントリ削除 |
+| **Delete** | UI → IPC → `ProjectService.deleteWorkspace()`                                                  | YAML エントリ削除      |
 
 ## 主要コンポーネント
 
@@ -89,50 +89,50 @@ workspaces:
         folder: "~/projects/my-app"
       - type: "browser"
         name: "localhost"
-        urls: ["http://localhost:3000"]
+        urls: [ "http://localhost:3000" ]
       - type: "folder"
         name: "プロジェクトフォルダ"
         path: "~/projects/my-app"
     presets:
       - name: "開発"
         description: "開発に必要なアプリのみ"
-        itemNames: ["VS Code", "localhost"]
-    tags: ["frontend", "react"]
+        itemNames: [ "VS Code", "localhost" ]
+    tags: [ "frontend", "react" ]
     createdAt: "2025-01-01T00:00:00.000Z"
     updatedAt: "2025-06-01T12:00:00.000Z"
 ```
 
 ## 統合ポイント
 
-| 統合先 | インターフェース | 説明 |
-|--------|-----------------|------|
-| レンダラープロセス | `IWorkspaceApi` | `window.workspaceApi` 経由で CRUD 操作 |
-| メインプロセス | `IProjectService` | `ProjectService` の DI インターフェース |
-| ファイルシステム | `IFileSystemAdapter` | ファイル読み書きの抽象化 |
-| 設定 | `IConfigService` | パス解決とディレクトリ管理 |
+| 統合先             | インターフェース     | 説明                                    |
+| ------------------ | -------------------- | --------------------------------------- |
+| レンダラープロセス | `IWorkspaceApi`      | `window.workspaceApi` 経由で CRUD 操作  |
+| メインプロセス     | `IProjectService`    | `ProjectService` の DI インターフェース |
+| ファイルシステム   | `IFileSystemAdapter` | ファイル読み書きの抽象化                |
+| 設定               | `IConfigService`     | パス解決とディレクトリ管理              |
 
 ## 変更時のエントリポイント
 
-| 目的 | 編集ファイル |
-|------|-------------|
-| スキーマ変更 | `src/shared/types.ts`, `src/main/services/ProjectService.ts` |
-| UI 変更 | `src/renderer/components/WorkspaceEditor.tsx` |
-| 保存ロジック | `src/main/services/ProjectService.ts` |
-| データソース切替 | `src/renderer/data/workspaceDataSource.ts` |
-| IPC チャンネル追加 | `src/shared/types.ts` (`IPC_CHANNELS`), `src/main/ipc/` |
-| テスト | `tests/unit/main/services/ProjectService.test.ts` |
+| 目的               | 編集ファイル                                                 |
+| ------------------ | ------------------------------------------------------------ |
+| スキーマ変更       | `src/shared/types.ts`, `src/main/services/ProjectService.ts` |
+| UI 変更            | `src/renderer/components/WorkspaceEditor.tsx`                |
+| 保存ロジック       | `src/main/services/ProjectService.ts`                        |
+| データソース切替   | `src/renderer/data/workspaceDataSource.ts`                   |
+| IPC チャンネル追加 | `src/shared/types.ts` (`IPC_CHANNELS`), `src/main/ipc/`      |
+| テスト             | `tests/unit/main/services/ProjectService.test.ts`            |
 
 ## 主要ソースファイル
 
-| ファイル | 役割 |
-|---------|------|
-| `src/shared/types.ts` | Zod スキーマと TypeScript 型定義 |
-| `src/main/services/ProjectService.ts` | YAML 永続化と CRUD ロジック |
-| `src/main/services/ConfigService.ts` | 設定ディレクトリとパス管理 |
-| `src/main/container.ts` | DI コンテナ定義 |
-| `src/renderer/data/workspaceDataSource.ts` | IPC / モック切替レイヤー |
-| `src/renderer/components/WorkspaceEditor.tsx` | ワークスペース編集 UI |
-| `src/renderer/components/WorkspaceList.tsx` | ワークスペース一覧 UI |
-| `src/renderer/components/WorkspaceDetail.tsx` | ワークスペース詳細表示 |
-| `src/main/adapters/FileSystemAdapter.ts` | ファイルシステム抽象化 |
-| `src/main/ipc/` | IPC ハンドラー設定 |
+| ファイル                                      | 役割                             |
+| --------------------------------------------- | -------------------------------- |
+| `src/shared/types.ts`                         | Zod スキーマと TypeScript 型定義 |
+| `src/main/services/ProjectService.ts`         | YAML 永続化と CRUD ロジック      |
+| `src/main/services/ConfigService.ts`          | 設定ディレクトリとパス管理       |
+| `src/main/container.ts`                       | DI コンテナ定義                  |
+| `src/renderer/data/workspaceDataSource.ts`    | IPC / モック切替レイヤー         |
+| `src/renderer/components/WorkspaceEditor.tsx` | ワークスペース編集 UI            |
+| `src/renderer/components/WorkspaceList.tsx`   | ワークスペース一覧 UI            |
+| `src/renderer/components/WorkspaceDetail.tsx` | ワークスペース詳細表示           |
+| `src/main/adapters/FileSystemAdapter.ts`      | ファイルシステム抽象化           |
+| `src/main/ipc/`                               | IPC ハンドラー設定               |

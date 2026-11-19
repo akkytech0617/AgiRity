@@ -242,10 +242,10 @@ npx lint-staged
 ```yaml
 version: 2
 updates:
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     open-pull-requests-limit: 5
 ```
 
@@ -478,10 +478,10 @@ CI/CD パイプラインは GitHub Actions で実装されています。詳細�
 
 #### 概要
 
-| ワークフロー | トリガー              | ジョブ                                              |
-| ------------ | --------------------- | --------------------------------------------------- |
-| CI           | Push, Pull Request    | setup, check, test, security, sonar, build, e2e     |
-| Release      | `v*.*.*` タグ Push    | check-enabled, validate, build-and-release, create-release |
+| ワークフロー | トリガー           | ジョブ                                                     |
+| ------------ | ------------------ | ---------------------------------------------------------- |
+| CI           | Push, Pull Request | setup, check, test, security, sonar, build, e2e            |
+| Release      | `v*.*.*` タグ Push | check-enabled, validate, build-and-release, create-release |
 
 > **Note**: Release ワークフローは `check-enabled` ジョブで `ENABLE_RELEASE` フラグを確認し、無効の場合は後続ジョブをスキップします。
 
@@ -489,19 +489,21 @@ CI/CD パイプラインは GitHub Actions で実装されています。詳細�
 
 一部のジョブはフラグで制御可能:
 
-| フラグ                  | デフォルト | 説明                       |
-| ----------------------- | ---------- | -------------------------- |
-| `enable_multi_os_build` | `false`    | Linux/Windows ビルド       |
-| `enable_e2e`            | `false`    | E2E テスト                 |
-| `enable_sonar`          | `true`     | SonarCloud スキャン        |
+| フラグ                  | デフォルト | 説明                 |
+| ----------------------- | ---------- | -------------------- |
+| `enable_multi_os_build` | `false`    | Linux/Windows ビルド |
+| `enable_e2e`            | `false`    | E2E テスト           |
+| `enable_sonar`          | `true`     | SonarCloud スキャン  |
 
 #### 必要な設定
 
 **Secrets:**
+
 - `SNYK_TOKEN`: 任意の手動 Snyk スキャン用（GitHub Actions では未使用）
 - `SONARCLOUD_TOKEN`: SonarCloud トークン
 
 **Variables:**
+
 - `SONAR_ORG`: SonarCloud 組織名
 - `SONAR_PROJECT_KEY`: SonarCloud プロジェクトキー
 

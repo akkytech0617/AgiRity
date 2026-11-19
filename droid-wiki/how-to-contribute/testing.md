@@ -2,29 +2,29 @@
 
 ## フレームワーク
 
-| フレームワーク | 用途 | パッケージ |
-|---------------|------|-----------|
-| Vitest | 単体テスト | `vitest` ^4.0.16 |
-| Playwright | E2E テスト | `@playwright/test` ^1.57.0 |
-| v8 Coverage | カバレッジ計測 | `@vitest/coverage-v8` ^4.0.16 |
-| React Testing Library | React コンポーネントテスト | `@testing-library/react` ^16.3.1 |
-| Testing Library Jest DOM | DOM アサーション | `@testing-library/jest-dom` ^6.9.1 |
-| Testing Library User Event | ユーザー操作シミュレーション | `@testing-library/user-event` ^14.6.1 |
-| jsdom | ブラウザ環境シミュレーション | `jsdom` ^27.4.0 |
-| electron-playwright-helpers | Electron E2E テスト補助 | `electron-playwright-helpers` ^2.0.1 |
+| フレームワーク              | 用途                         | パッケージ                            |
+| --------------------------- | ---------------------------- | ------------------------------------- |
+| Vitest                      | 単体テスト                   | `vitest` ^4.0.16                      |
+| Playwright                  | E2E テスト                   | `@playwright/test` ^1.57.0            |
+| v8 Coverage                 | カバレッジ計測               | `@vitest/coverage-v8` ^4.0.16         |
+| React Testing Library       | React コンポーネントテスト   | `@testing-library/react` ^16.3.1      |
+| Testing Library Jest DOM    | DOM アサーション             | `@testing-library/jest-dom` ^6.9.1    |
+| Testing Library User Event  | ユーザー操作シミュレーション | `@testing-library/user-event` ^14.6.1 |
+| jsdom                       | ブラウザ環境シミュレーション | `jsdom` ^27.4.0                       |
+| electron-playwright-helpers | Electron E2E テスト補助      | `electron-playwright-helpers` ^2.0.1  |
 
 ## 実行コマンド
 
-| コマンド | 内容 |
-|---------|------|
-| `just test` | 単体テスト実行 |
-| `just test-watch` | ウォッチモードでテスト実行 |
-| `just coverage` | カバレッジレポート付きテスト |
-| `just e2e` | E2E テスト実行 |
-| `npm run test:unit` | 単体テストのみ実行 |
-| `npm run test:e2e:ui` | Playwright UI モードで E2E |
-| `npm run test:e2e:debug` | デバッグモードで E2E |
-| `npm run test:smoke` | スモークテスト |
+| コマンド                 | 内容                         |
+| ------------------------ | ---------------------------- |
+| `just test`              | 単体テスト実行               |
+| `just test-watch`        | ウォッチモードでテスト実行   |
+| `just coverage`          | カバレッジレポート付きテスト |
+| `just e2e`               | E2E テスト実行               |
+| `npm run test:unit`      | 単体テストのみ実行           |
+| `npm run test:e2e:ui`    | Playwright UI モードで E2E   |
+| `npm run test:e2e:debug` | デバッグモードで E2E         |
+| `npm run test:smoke`     | スモークテスト               |
 
 ## テストディレクトリ構造
 
@@ -101,17 +101,17 @@ import { selectItemsToLaunch } from '@/shared/lib/workspace-utils';
 
 ### E2E テストの種類
 
-| テスト | ファイル | 内容 |
-|--------|---------|------|
-| 開発モードテスト | `dev-mode-test.spec.ts` | 基本的な動作確認 |
-| スモークテスト | `smoke/` | 主要機能の迅速な検証 |
+| テスト           | ファイル                | 内容                 |
+| ---------------- | ----------------------- | -------------------- |
+| 開発モードテスト | `dev-mode-test.spec.ts` | 基本的な動作確認     |
+| スモークテスト   | `smoke/`                | 主要機能の迅速な検証 |
 
 ## 主要ファイル
 
-| ファイル | 役割 |
-|---------|------|
-| `vitest.config.ts` / `vite.config.ts` | Vitest 設定 |
-| `tests/e2e/playwright.config.ts` | Playwright 設定 |
-| `src/main/container.ts` | テスト用 DI コンテナ |
-| `src/renderer/mocks/workspaces.ts` | モックワークスペースデータ |
-| `docs/implementation/testing_strategy.md` | テスト戦略ドキュメント |
+| ファイル                                  | 役割                       |
+| ----------------------------------------- | -------------------------- |
+| `vitest.config.ts` / `vite.config.ts`     | Vitest 設定                |
+| `tests/e2e/playwright.config.ts`          | Playwright 設定            |
+| `src/main/container.ts`                   | テスト用 DI コンテナ       |
+| `src/renderer/mocks/workspaces.ts`        | モックワークスペースデータ |
+| `docs/implementation/testing_strategy.md` | テスト戦略ドキュメント     |

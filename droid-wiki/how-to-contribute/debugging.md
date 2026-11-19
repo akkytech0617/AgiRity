@@ -6,10 +6,10 @@
 
 AgiRity は `electron-log` を使用して構造化ログを出力します。
 
-| プロセス | 出力先 | 設定ファイル |
-|---------|--------|-------------|
-| メインプロセス | `~/.agirity/logs/main.log` + コンソール | `src/main/lib/logger.ts` |
-| レンダラープロセス | コンソールのみ | `src/renderer/lib/logger.ts` |
+| プロセス           | 出力先                                  | 設定ファイル                 |
+| ------------------ | --------------------------------------- | ---------------------------- |
+| メインプロセス     | `~/.agirity/logs/main.log` + コンソール | `src/main/lib/logger.ts`     |
+| レンダラープロセス | コンソールのみ                          | `src/renderer/lib/logger.ts` |
 
 ### ログレベル
 
@@ -56,15 +56,15 @@ AGIRITY_PERF=true VITE_PERF=true npm run dev
 
 ## よくある問題
 
-| 問題 | 原因 | 解決方法 |
-|------|------|---------|
-| `workspaces.yaml not found` | 初回起動でファイルが存在しない | 正常動作。空配列として処理される |
-| Zod バリデーションエラー | YAML ファイルのスキーマが不正 | `workspaces.yaml` の構造を `WorkspaceSchema` に合わせて修正 |
-| アイコン取得失敗 | sips タイムアウトまたはパス間違い | アプリパスが正しいか確認。フォールバックアイコンが使用される |
-| ファビコン取得失敗 | SSRF 防御によるブロックまたはタイムアウト | `AGIRITY_ALLOW_EXTERNAL_FAVICONS=true` で外部プロバイダーを有効化 |
-| ポート競合 | Vite 開発サーバーのポート使用中 | 他のプロセスを終了またはポート設定を変更 |
-| モックデータ不一致 | `VITE_USE_MOCK_DATA=true` で古いモック | `src/renderer/mocks/workspaces.ts` のデータを更新 |
-| `ENOENT` エラー | 設定ディレクトリ未作成 | `ensureConfigDir()` が自動作成するはず。権限を確認 |
+| 問題                        | 原因                                      | 解決方法                                                          |
+| --------------------------- | ----------------------------------------- | ----------------------------------------------------------------- |
+| `workspaces.yaml not found` | 初回起動でファイルが存在しない            | 正常動作。空配列として処理される                                  |
+| Zod バリデーションエラー    | YAML ファイルのスキーマが不正             | `workspaces.yaml` の構造を `WorkspaceSchema` に合わせて修正       |
+| アイコン取得失敗            | sips タイムアウトまたはパス間違い         | アプリパスが正しいか確認。フォールバックアイコンが使用される      |
+| ファビコン取得失敗          | SSRF 防御によるブロックまたはタイムアウト | `AGIRITY_ALLOW_EXTERNAL_FAVICONS=true` で外部プロバイダーを有効化 |
+| ポート競合                  | Vite 開発サーバーのポート使用中           | 他のプロセスを終了またはポート設定を変更                          |
+| モックデータ不一致          | `VITE_USE_MOCK_DATA=true` で古いモック    | `src/renderer/mocks/workspaces.ts` のデータを更新                 |
+| `ENOENT` エラー             | 設定ディレクトリ未作成                    | `ensureConfigDir()` が自動作成するはず。権限を確認                |
 
 ## DevTools
 
@@ -84,6 +84,7 @@ VITE_USE_MOCK_DATA=true npm run dev
 ```
 
 このモードでは:
+
 - Electron のメインプロセスとの通信が不要
 - `workspaceDataSource` がインメモリ配列を使用
 - UI コンポーネントの開発・テストに最適

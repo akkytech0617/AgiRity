@@ -8,14 +8,14 @@ Tailwind CSS v3.4.19 から v4.x へのアップグレード戦略を定義す�
 
 ### 現在の構成
 
-| 項目 | 現在の状態 |
-|------|-----------|
-| Tailwind CSS | v3.4.19 |
-| tailwind-merge | v2.6.0 |
-| PostCSS設定 | `postcss.config.js` |
-| CSS設定 | `tailwind.config.js` (JavaScript) |
-| CSSエントリ | `src/renderer/index.css` |
-| ビルドツール | Vite |
+| 項目           | 現在の状態                        |
+| -------------- | --------------------------------- |
+| Tailwind CSS   | v3.4.19                           |
+| tailwind-merge | v2.6.0                            |
+| PostCSS設定    | `postcss.config.js`               |
+| CSS設定        | `tailwind.config.js` (JavaScript) |
+| CSSエントリ    | `src/renderer/index.css`          |
+| ビルドツール   | Vite                              |
 
 ### 使用状況
 
@@ -31,27 +31,27 @@ Tailwind CSS v3.4.19 から v4.x へのアップグレード戦略を定義す�
 
 ### 1. アーキテクチャの変更
 
-| v3 | v4 |
-|----|-----|
+| v3                                    | v4                                |
+| ------------------------------------- | --------------------------------- |
 | JavaScript設定 (`tailwind.config.js`) | CSS設定 (`@theme` ディレクティブ) |
-| `@tailwind base/components/utilities` | `@import "tailwindcss"` |
-| PostCSS経由 | Viteプラグイン推奨 |
+| `@tailwind base/components/utilities` | `@import "tailwindcss"`           |
+| PostCSS経由                           | Viteプラグイン推奨                |
 
 ### 2. デフォルト値の変更
 
-| ユーティリティ | v3 | v4 |
-|--------------|-----|-----|
-| `border` | `gray-200` | `currentColor` |
-| `ring-3` | `3px blue-500` | `1px currentColor` |
-| `placeholder` | `gray-400` | `currentColor 50%` |
+| ユーティリティ | v3             | v4                 |
+| -------------- | -------------- | ------------------ |
+| `border`       | `gray-200`     | `currentColor`     |
+| `ring-3`       | `3px blue-500` | `1px currentColor` |
+| `placeholder`  | `gray-400`     | `currentColor 50%` |
 
 ### 3. 関連パッケージ
 
-| パッケージ | v3 | v4 |
-|-----------|-----|-----|
-| tailwind-merge | v2.x | v3.x必須 |
-| PostCSS | `tailwindcss` | `@tailwindcss/postcss` |
-| Vite | PostCSS経由 | `@tailwindcss/vite` 推奨 |
+| パッケージ     | v3            | v4                       |
+| -------------- | ------------- | ------------------------ |
+| tailwind-merge | v2.x          | v3.x必須                 |
+| PostCSS        | `tailwindcss` | `@tailwindcss/postcss`   |
+| Vite           | PostCSS経由   | `@tailwindcss/vite` 推奨 |
 
 ---
 
@@ -82,6 +82,7 @@ npx @tailwindcss/upgrade
 ```
 
 このツールは以下を自動で行う：
+
 - 依存関係の更新
 - `tailwind.config.js` → CSS `@theme` への変換
 - `@tailwind` → `@import "tailwindcss"` への変換
@@ -92,15 +93,12 @@ npx @tailwindcss/upgrade
 **vite.config.ts の更新:**
 
 ```typescript
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
 });
 ```
 
@@ -111,7 +109,7 @@ export default defineConfig({
 ```javascript
 export default {
   plugins: {
-    "@tailwindcss/postcss": {},
+    '@tailwindcss/postcss': {},
   },
 };
 ```
@@ -121,6 +119,7 @@ export default {
 #### 3.1 tailwind-mergeのアップグレード
 
 **package.json:**
+
 ```json
 {
   "dependencies": {
@@ -144,18 +143,18 @@ export default {
 
 @theme {
   /* tailwind.config.js のカスタム設定を移行 */
-  --color-primary-500: #4A90E2;
-  --color-accent-blue: #0066FF;
-  --color-accent-orange: #FF6B35;
-  --color-surface: #F8F9FA;
-  --color-border: #E5E7EB;
-  --color-success: #10B981;
-  --color-error: #EF4444;
-  --color-warning: #F59E0B;
-  
-  --font-display: 'Raleway', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  
+  --color-primary-500: #4a90e2;
+  --color-accent-blue: #0066ff;
+  --color-accent-orange: #ff6b35;
+  --color-surface: #f8f9fa;
+  --color-border: #e5e7eb;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+
+  --font-display: "Raleway", sans-serif;
+  --font-body: "Inter", sans-serif;
+
   --radius-card: 16px;
   --radius-button: 8px;
 }
@@ -200,6 +199,7 @@ npm run dev
 ```
 
 確認ポイント：
+
 - [ ] ボーダーの色が正しいか
 - [ ] リングのスタイルが正しいか
 - [ ] プレースホルダーの色が正しいか
@@ -212,19 +212,19 @@ npm run dev
 
 ### 設定ファイル
 
-| ファイル | 変更内容 |
-|---------|---------|
-| `package.json` | 依存関係の更新 |
-| `tailwind.config.js` | 削除（CSSに移行） |
-| `postcss.config.js` | 更新または削除 |
-| `vite.config.ts` | Tailwindプラグイン追加 |
+| ファイル             | 変更内容               |
+| -------------------- | ---------------------- |
+| `package.json`       | 依存関係の更新         |
+| `tailwind.config.js` | 削除（CSSに移行）      |
+| `postcss.config.js`  | 更新または削除         |
+| `vite.config.ts`     | Tailwindプラグイン追加 |
 
 ### ソースファイル
 
-| ファイル | 変更内容 |
-|---------|---------|
-| `src/renderer/index.css` | `@import` と `@theme` に変更 |
-| `src/renderer/utils.ts` | tailwind-merge v3対応（変更不要の可能性） |
+| ファイル                 | 変更内容                                  |
+| ------------------------ | ----------------------------------------- |
+| `src/renderer/index.css` | `@import` と `@theme` に変更              |
+| `src/renderer/utils.ts`  | tailwind-merge v3対応（変更不要の可能性） |
 
 ### 確認が必要なコンポーネント
 
@@ -240,19 +240,22 @@ grep -r "border\|ring\|placeholder" --include="*.tsx" src/renderer/
 
 ### リスク1: デフォルト値変更による見た目の変化
 
-**対策**: 
+**対策**:
+
 - アップグレードツール実行後、全画面を目視確認
 - 必要に応じてベーススタイルでv3互換を維持
 
 ### リスク2: tailwind-merge v3との互換性
 
-**対策**: 
+**対策**:
+
 - tailwind-mergeを同時にv3へアップグレード
 - `cn()` ユーティリティの動作確認
 
 ### リスク3: カスタム設定の移行漏れ
 
-**対策**: 
+**対策**:
+
 - `tailwind.config.js` の全設定をCSS `@theme` へ移行
 - 各カスタムカラー・フォントの動作確認
 

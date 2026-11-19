@@ -28,19 +28,19 @@ export function createContainer(overrides?: Partial<AppContainer>): AppContainer
 
 外部依存（ファイルシステム、シェル、OS、アプリ）はアダプターインターフェースで抽象化します。
 
-| アダプター | インターフェース | 実装 | 役割 |
-|-----------|-----------------|------|------|
-| FileSystemAdapter | `IFileSystemAdapter` | `FileSystemAdapter` | ファイル読み書き・ディレクトリ作成 |
-| ShellAdapter | `IShellAdapter` | `ShellAdapter` | `openPath`, `openExternal`, `launchApp` |
-| OSAdapter | `IOSAdapter` | `OSAdapter` | `homedir()` 等の OS 情報 |
-| AppAdapter | `IAppAdapter` | `AppAdapter` | sips アイコン抽出、favicon 取得 |
+| アダプター        | インターフェース     | 実装                | 役割                                    |
+| ----------------- | -------------------- | ------------------- | --------------------------------------- |
+| FileSystemAdapter | `IFileSystemAdapter` | `FileSystemAdapter` | ファイル読み書き・ディレクトリ作成      |
+| ShellAdapter      | `IShellAdapter`      | `ShellAdapter`      | `openPath`, `openExternal`, `launchApp` |
+| OSAdapter         | `IOSAdapter`         | `OSAdapter`         | `homedir()` 等の OS 情報                |
+| AppAdapter        | `IAppAdapter`        | `AppAdapter`        | sips アイコン抽出、favicon 取得         |
 
 ## エラーハンドリング
 
-| レイヤー | 方針 |
-|---------|------|
-| サービス層 | エラーを **スロー** する（`throw new Error()`） |
-| IPC 層 | エラーをキャッチして `{ success: false, error: string }` を返却 |
+| レイヤー   | 方針                                                                 |
+| ---------- | -------------------------------------------------------------------- |
+| サービス層 | エラーを **スロー** する（`throw new Error()`）                      |
+| IPC 層     | エラーをキャッチして `{ success: false, error: string }` を返却      |
 | レンダラー | `result.success` をチェックし、失敗時は `log.error()` + ユーザー通知 |
 
 ```typescript
@@ -64,12 +64,12 @@ interface WorkspaceResult {
 
 外部ライブラリ（Redux 等）は使用せず、React の標準フックのみ。
 
-| フック | 用途 |
-|--------|------|
-| `useState` | ローカル状態（ワークスペース一覧、ローディング、エラー） |
-| `useEffect` | 副作用（データ読込、ライフサイクル） |
-| `useCallback` | コールバックのメモ化 |
-| `useRef` | DOM 参照、パフォーマンス計測用マーカー |
+| フック        | 用途                                                     |
+| ------------- | -------------------------------------------------------- |
+| `useState`    | ローカル状態（ワークスペース一覧、ローディング、エラー） |
+| `useEffect`   | 副作用（データ読込、ライフサイクル）                     |
+| `useCallback` | コールバックのメモ化                                     |
+| `useRef`      | DOM 参照、パフォーマンス計測用マーカー                   |
 
 ## スタイリング
 
@@ -82,27 +82,27 @@ interface WorkspaceResult {
 
 ### ファイル・ディレクトリ
 
-| 種類 | 規約 | 例 |
-|------|------|-----|
-| コンポーネント | PascalCase | `WorkspaceEditor.tsx` |
-| サービス | PascalCase + Service | `ProjectService.ts` |
-| アダプター | PascalCase + Adapter | `FileSystemAdapter.ts` |
-| ユーティリティ | camelCase | `workspace-utils.ts` |
-| 型定義 | types.ts | `src/shared/types.ts` |
+| 種類           | 規約                 | 例                     |
+| -------------- | -------------------- | ---------------------- |
+| コンポーネント | PascalCase           | `WorkspaceEditor.tsx`  |
+| サービス       | PascalCase + Service | `ProjectService.ts`    |
+| アダプター     | PascalCase + Adapter | `FileSystemAdapter.ts` |
+| ユーティリティ | camelCase            | `workspace-utils.ts`   |
+| 型定義         | types.ts             | `src/shared/types.ts`  |
 
 ### コンポーネント
 
-| 規約 | 例 |
-|------|-----|
-| 関数コンポーネント + 名前付きエクスポート | `export function AppHeader()` |
-| Props は `Readonly<>` で型付け | `props: Readonly<AppHeaderProps>` |
-| イベントハンドラーは `on` プレフィックス | `onSelect`, `onLaunch`, `onOpenSettings` |
+| 規約                                      | 例                                       |
+| ----------------------------------------- | ---------------------------------------- |
+| 関数コンポーネント + 名前付きエクスポート | `export function AppHeader()`            |
+| Props は `Readonly<>` で型付け            | `props: Readonly<AppHeaderProps>`        |
+| イベントハンドラーは `on` プレフィックス  | `onSelect`, `onLaunch`, `onOpenSettings` |
 
 ### Zod スキーマ
 
-| 規約 | 例 |
-|------|-----|
-| スキーマ名: PascalCase + Schema | `WorkspaceSchema`, `WorkspaceItemSchema` |
+| 規約                               | 例                                                 |
+| ---------------------------------- | -------------------------------------------------- |
+| スキーマ名: PascalCase + Schema    | `WorkspaceSchema`, `WorkspaceItemSchema`           |
 | 型名: スキーマ名から Schema を除去 | `type Workspace = z.infer<typeof WorkspaceSchema>` |
 
 ### IPC チャンネル

@@ -1,8 +1,9 @@
 ---
+
 name: qa
 description: >
-  Run functional QA for AgiRity. Analyze an explicit PR base/head diff or local
-  working changes, then test relevant flows in isolated real Electron via CDP.
+Run functional QA for AgiRity. Analyze an explicit PR base/head diff or local
+working changes, then test relevant flows in isolated real Electron via CDP.
 ---
 
 # QA Orchestrator

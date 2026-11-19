@@ -8,18 +8,18 @@ Zod v3.25.76 から v4.x へのアップグレード戦略を定義する。
 
 ### 現在の構成
 
-| 項目 | 現在の状態 |
-|------|-----------|
-| Zod | v3.25.76 |
-| 使用ファイル数 | 3ファイル |
+| 項目           | 現在の状態 |
+| -------------- | ---------- |
+| Zod            | v3.25.76   |
+| 使用ファイル数 | 3ファイル  |
 
 ### 使用箇所
 
-| ファイル | 用途 |
-|---------|------|
-| `src/shared/types.ts` | スキーマ定義・型生成 |
+| ファイル                              | 用途                         |
+| ------------------------------------- | ---------------------------- |
+| `src/shared/types.ts`                 | スキーマ定義・型生成         |
 | `src/main/services/ProjectService.ts` | YAMLファイルのバリデーション |
-| `src/main/ipc/index.ts` | IPC入力のバリデーション |
+| `src/main/ipc/index.ts`               | IPC入力のバリデーション      |
 
 ### 使用しているZod API
 
@@ -60,11 +60,11 @@ z.ZodError
 
 ### 1. String Format APIの変更（必須対応）
 
-| v3 (非推奨) | v4 (推奨) |
-|-------------|-----------|
-| `z.string().email()` | `z.email()` |
-| `z.string().uuid()` | `z.uuid()` |
-| `z.string().url()` | `z.url()` |
+| v3 (非推奨)             | v4 (推奨)          |
+| ----------------------- | ------------------ |
+| `z.string().email()`    | `z.email()`        |
+| `z.string().uuid()`     | `z.uuid()`         |
+| `z.string().url()`      | `z.url()`          |
 | `z.string().datetime()` | `z.iso.datetime()` |
 
 **注意**: v3形式も動作するが非推奨となる。
@@ -77,12 +77,12 @@ z.ZodError
 
 ### 3. その他の変更
 
-| 変更点 | 詳細 |
-|--------|------|
-| `z.coerce` 入力型 | `string` → `unknown` |
+| 変更点               | 詳細                 |
+| -------------------- | -------------------- |
+| `z.coerce` 入力型    | `string` → `unknown` |
 | エラーマップ優先順位 | スキーマレベルが優先 |
-| `._def` プロパティ | `._zod.def` に移動 |
-| `z.number().int()` | 安全な整数のみ許可 |
+| `._def` プロパティ   | `._zod.def` に移動   |
+| `z.number().int()`   | 安全な整数のみ許可   |
 
 ---
 
@@ -127,6 +127,7 @@ npm install
 #### 3.1 src/shared/types.ts の修正
 
 **変更前:**
+
 ```typescript
 import { z } from 'zod';
 
@@ -135,25 +136,26 @@ export const WorkspaceItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().optional(),
   path: z.string().optional(),
-  urls: z.array(z.string().url()).optional(),  // ← 変更対象
+  urls: z.array(z.string().url()).optional(), // ← 変更対象
   folder: z.string().optional(),
   waitTime: z.number().min(0).optional(),
   dependsOn: z.string().optional(),
 });
 
 export const WorkspaceSchema = z.object({
-  id: z.string().uuid(),  // ← 変更対象
+  id: z.string().uuid(), // ← 変更対象
   name: z.string().min(1),
   description: z.string().optional(),
   items: z.array(WorkspaceItemSchema),
   presets: z.array(WorkspacePresetSchema).optional(),
   tags: z.array(z.string()).optional(),
-  createdAt: z.string().datetime(),  // ← 変更対象
-  updatedAt: z.string().datetime(),  // ← 変更対象
+  createdAt: z.string().datetime(), // ← 変更対象
+  updatedAt: z.string().datetime(), // ← 変更対象
 });
 ```
 
 **変更後:**
+
 ```typescript
 import { z } from 'zod';
 
@@ -162,32 +164,34 @@ export const WorkspaceItemSchema = z.object({
   name: z.string().min(1),
   category: z.string().optional(),
   path: z.string().optional(),
-  urls: z.array(z.url()).optional(),  // ← z.url() に変更
+  urls: z.array(z.url()).optional(), // ← z.url() に変更
   folder: z.string().optional(),
   waitTime: z.number().min(0).optional(),
   dependsOn: z.string().optional(),
 });
 
 export const WorkspaceSchema = z.object({
-  id: z.uuid(),  // ← z.uuid() に変更
+  id: z.uuid(), // ← z.uuid() に変更
   name: z.string().min(1),
   description: z.string().optional(),
   items: z.array(WorkspaceItemSchema),
   presets: z.array(WorkspacePresetSchema).optional(),
   tags: z.array(z.string()).optional(),
-  createdAt: z.iso.datetime(),  // ← z.iso.datetime() に変更
-  updatedAt: z.iso.datetime(),  // ← z.iso.datetime() に変更
+  createdAt: z.iso.datetime(), // ← z.iso.datetime() に変更
+  updatedAt: z.iso.datetime(), // ← z.iso.datetime() に変更
 });
 ```
 
 #### 3.2 src/main/ipc/index.ts の修正
 
 **変更前:**
+
 ```typescript
 const validatedId = z.string().uuid().parse(id);
 ```
 
 **変更後:**
+
 ```typescript
 const validatedId = z.uuid().parse(id);
 ```
@@ -195,6 +199,7 @@ const validatedId = z.uuid().parse(id);
 #### 3.3 src/main/services/ProjectService.ts の修正
 
 **変更前:**
+
 ```typescript
 const WorkspaceSchema = z.object({
   id: z.string().uuid(),
@@ -203,6 +208,7 @@ const WorkspaceSchema = z.object({
 ```
 
 **変更後:**
+
 ```typescript
 const WorkspaceSchema = z.object({
   id: z.uuid(),
@@ -225,6 +231,7 @@ npm test
 ```
 
 特に以下のテストファイルを重点確認：
+
 - `tests/unit/shared/types.test.ts`
 - `tests/unit/main/services/ProjectService.test.ts`
 
@@ -241,6 +248,7 @@ npm run dev
 ```
 
 確認ポイント：
+
 - [ ] ワークスペースの読み込みが正常か
 - [ ] ワークスペースの保存が正常か
 - [ ] バリデーションエラーが適切に表示されるか
@@ -251,17 +259,17 @@ npm run dev
 
 ### ソースファイル
 
-| ファイル | 変更内容 |
-|---------|---------|
-| `src/shared/types.ts` | Format API の更新 |
-| `src/main/ipc/index.ts` | Format API の更新 |
+| ファイル                              | 変更内容          |
+| ------------------------------------- | ----------------- |
+| `src/shared/types.ts`                 | Format API の更新 |
+| `src/main/ipc/index.ts`               | Format API の更新 |
 | `src/main/services/ProjectService.ts` | Format API の更新 |
 
 ### テストファイル
 
-| ファイル | 確認内容 |
-|---------|---------|
-| `tests/unit/shared/types.test.ts` | スキーマテストの動作確認 |
+| ファイル                                          | 確認内容                       |
+| ------------------------------------------------- | ------------------------------ |
+| `tests/unit/shared/types.test.ts`                 | スキーマテストの動作確認       |
 | `tests/unit/main/services/ProjectService.test.ts` | バリデーションテストの動作確認 |
 
 ---
@@ -270,23 +278,23 @@ npm run dev
 
 ### z.string().uuid() → z.uuid()
 
-| ファイル | 行 | 変更前 | 変更後 |
-|---------|-----|--------|--------|
-| `src/shared/types.ts` | 約18行 | `z.string().uuid()` | `z.uuid()` |
-| `src/main/services/ProjectService.ts` | 約28行 | `z.string().uuid()` | `z.uuid()` |
-| `src/main/ipc/index.ts` | 約51行 | `z.string().uuid().parse()` | `z.uuid().parse()` |
-| `src/main/ipc/index.ts` | 約73行 | `z.string().uuid().parse()` | `z.uuid().parse()` |
+| ファイル                              | 行     | 変更前                      | 変更後             |
+| ------------------------------------- | ------ | --------------------------- | ------------------ |
+| `src/shared/types.ts`                 | 約18行 | `z.string().uuid()`         | `z.uuid()`         |
+| `src/main/services/ProjectService.ts` | 約28行 | `z.string().uuid()`         | `z.uuid()`         |
+| `src/main/ipc/index.ts`               | 約51行 | `z.string().uuid().parse()` | `z.uuid().parse()` |
+| `src/main/ipc/index.ts`               | 約73行 | `z.string().uuid().parse()` | `z.uuid().parse()` |
 
 ### z.string().url() → z.url()
 
-| ファイル | 行 | 変更前 | 変更後 |
-|---------|-----|--------|--------|
+| ファイル              | 行     | 変更前                      | 変更後             |
+| --------------------- | ------ | --------------------------- | ------------------ |
 | `src/shared/types.ts` | 約10行 | `z.array(z.string().url())` | `z.array(z.url())` |
 
 ### z.string().datetime() → z.iso.datetime()
 
-| ファイル | 行 | 変更前 | 変更後 |
-|---------|-----|--------|--------|
+| ファイル              | 行     | 変更前                  | 変更後             |
+| --------------------- | ------ | ----------------------- | ------------------ |
 | `src/shared/types.ts` | 約25行 | `z.string().datetime()` | `z.iso.datetime()` |
 | `src/shared/types.ts` | 約26行 | `z.string().datetime()` | `z.iso.datetime()` |
 
@@ -300,10 +308,10 @@ v4では UUID が RFC 9562/4122 に厳密に準拠する必要がある：
 
 ```typescript
 // 有効な UUID（v4の例）
-"550e8400-e29b-41d4-a716-446655440000"  // ✅ バージョン4、バリアント1
+'550e8400-e29b-41d4-a716-446655440000'; // ✅ バージョン4、バリアント1
 
 // 無効になる可能性のある形式
-"00000000-0000-0000-0000-000000000000"  // ⚠️ バージョンビットが0
+'00000000-0000-0000-0000-000000000000'; // ⚠️ バージョンビットが0
 ```
 
 ### 対応方針
@@ -320,19 +328,22 @@ v4では UUID が RFC 9562/4122 に厳密に準拠する必要がある：
 
 ### リスク1: UUID検証の厳格化
 
-**対策**: 
+**対策**:
+
 - 既存のワークスペースファイルでテスト
 - 必要に応じて `z.guid()` を使用（緩い検証）
 
 ### リスク2: エラーマップ優先順位の変更
 
-**対策**: 
+**対策**:
+
 - 現在カスタムエラーマップを使用していないため影響なし
 - 今後追加する場合はv4の仕様に準拠
 
 ### リスク3: 型推論の変更
 
-**対策**: 
+**対策**:
+
 - `z.infer<>` の結果が変わる可能性を確認
 - TypeScript型チェックで検出可能
 

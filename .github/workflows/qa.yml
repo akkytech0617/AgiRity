@@ -2,13 +2,13 @@ name: QA
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [ main, develop ]
   workflow_dispatch:
     inputs:
       base_ref:
-        description: 'Git base ref/SHA to compare with the selected branch (e.g. origin/main or HEAD^)'
+        description: "Git base ref/SHA to compare with the selected branch (e.g. origin/main or HEAD^)"
         required: true
-        default: 'origin/main'
+        default: "origin/main"
 
 concurrency:
   group: qa-${{ github.event.pull_request.number || github.ref }}
@@ -51,8 +51,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci

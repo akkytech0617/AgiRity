@@ -308,46 +308,46 @@ Warning:       #FBBF24
 # ~/.agirity/workspaces.yaml
 schemaVersion: 1
 workspaces:
-  - id: 'uuid-1'
-    name: 'クライアントA開発'
-    description: 'フロントエンド開発環境'
+  - id: "uuid-1"
+    name: "クライアントA開発"
+    description: "フロントエンド開発環境"
     items:
-      - type: 'app'
-        name: 'Rancher Desktop'
-        path: '/Applications/Rancher Desktop.app'
+      - type: "app"
+        name: "Rancher Desktop"
+        path: "/Applications/Rancher Desktop.app"
         waitTime: 30
-        category: 'development'
+        category: "development"
 
-      - type: 'app'
-        name: 'VS Code'
-        path: '/Applications/Visual Studio Code.app'
-        folder: '~/projects/client-a'
-        dependsOn: 'Rancher Desktop'
-        category: 'development'
+      - type: "app"
+        name: "VS Code"
+        path: "/Applications/Visual Studio Code.app"
+        folder: "~/projects/client-a"
+        dependsOn: "Rancher Desktop"
+        category: "development"
 
-      - type: 'browser'
-        name: 'Reference Links'
+      - type: "browser"
+        name: "Reference Links"
         urls:
-          - 'https://github.com/client-a/frontend'
-          - 'https://dev.azure.com/client-a'
-          - 'http://localhost:3000'
-        category: 'reference'
+          - "https://github.com/client-a/frontend"
+          - "https://dev.azure.com/client-a"
+          - "http://localhost:3000"
+        category: "reference"
 
     # 起動プリセット (オプション)
     presets:
-      - name: 'Full Development'
-        description: 'フルセットで開発開始'
-        itemNames: ['Rancher Desktop', 'VS Code', 'Reference Links']
-      - name: 'Code Only'
-        description: 'コーディングのみ'
-        itemNames: ['VS Code']
-      - name: 'Review Mode'
-        description: 'PRレビュー時'
-        itemNames: ['Reference Links']
+      - name: "Full Development"
+        description: "フルセットで開発開始"
+        itemNames: [ "Rancher Desktop", "VS Code", "Reference Links" ]
+      - name: "Code Only"
+        description: "コーディングのみ"
+        itemNames: [ "VS Code" ]
+      - name: "Review Mode"
+        description: "PRレビュー時"
+        itemNames: [ "Reference Links" ]
 
-    tags: ['frontend', 'react', 'client-work']
-    createdAt: '2025-01-01T00:00:00Z'
-    updatedAt: '2025-01-15T00:00:00Z'
+    tags: [ "frontend", "react", "client-work" ]
+    createdAt: "2025-01-01T00:00:00Z"
+    updatedAt: "2025-01-15T00:00:00Z"
 ```
 
 ---

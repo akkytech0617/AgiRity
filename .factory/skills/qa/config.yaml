@@ -4,7 +4,7 @@ environments:
   development:
     runtime: electron-cdp
     cdp_port: 9223
-    url: 'file://<repository>/dist/index.html'
+    url: "file://<repository>/dist/index.html"
     restrictions: []
 default_target: development
 auth:
@@ -12,7 +12,7 @@ auth:
   provider: none
 personas:
   - name: default_user
-    description: 'Single user of the desktop app, no auth required'
+    description: "Single user of the desktop app, no auth required"
     test_focus:
       - workspace-management
       - app-launch
@@ -21,20 +21,20 @@ personas:
 apps:
   electron:
     path_patterns:
-      - 'src/**'
-      - 'index.html'
-      - 'vite.config.ts'
-      - 'package.json'
-      - 'package-lock.json'
+      - "src/**"
+      - "index.html"
+      - "vite.config.ts"
+      - "package.json"
+      - "package-lock.json"
     skill: qa-electron
     test_tool: agent-browser
-    build_command: 'VITE_USE_MOCK_DATA=false VITE_SENTRY_DSN= npm run prebuild:e2e'
-    launch_entry: 'dist-electron/main/index.js'
+    build_command: "VITE_USE_MOCK_DATA=false VITE_SENTRY_DSN= npm run prebuild:e2e"
+    launch_entry: "dist-electron/main/index.js"
 feature_flags:
   provider: none
 integrations: {}
 cleanup:
   auto_cleanup: true
   strategy: owned_process_and_temp_config
-  instructions: 'Use a fresh /tmp/agirity-qa.XXXXXX config and Chromium profile. Stop only the recorded Electron PID; remove only this run temporary data after persistence checks. Never modify ~/.agirity.'
+  instructions: "Use a fresh /tmp/agirity-qa.XXXXXX config and Chromium profile. Stop only the recorded Electron PID; remove only this run temporary data after persistence checks. Never modify ~/.agirity."
 failure_learning: report_only

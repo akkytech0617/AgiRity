@@ -34,16 +34,16 @@ src/main/
 
 ## 主要抽象化
 
-| 型 | 役割 |
-|----|------|
-| `IFileSystemAdapter` | Node.js fs.promisesのラッパー |
-| `IOSAdapter` | `os.homedir()`の抽象化 |
-| `IShellAdapter` | Electron Shell APIの抽象化 |
-| `IAppAdapter` | アプリアイコン・favicon取得の抽象化 |
-| `IConfigService` | 設定ディレクトリ・パス管理 |
-| `IProjectService` | ワークスペースのCRUD操作 |
-| `ILauncherService` | アプリ/URL/フォルダの起動 |
-| `AppContainer` | 全アダプタとサービスを統合するDIコンテナ |
+| 型                   | 役割                                     |
+| -------------------- | ---------------------------------------- |
+| `IFileSystemAdapter` | Node.js fs.promisesのラッパー            |
+| `IOSAdapter`         | `os.homedir()`の抽象化                   |
+| `IShellAdapter`      | Electron Shell APIの抽象化               |
+| `IAppAdapter`        | アプリアイコン・favicon取得の抽象化      |
+| `IConfigService`     | 設定ディレクトリ・パス管理               |
+| `IProjectService`    | ワークスペースのCRUD操作                 |
+| `ILauncherService`   | アプリ/URL/フォルダの起動                |
+| `AppContainer`       | 全アダプタとサービスを統合するDIコンテナ |
 
 ## 動作
 
@@ -96,15 +96,15 @@ sequenceDiagram
 
 ## 主要ソースファイル
 
-| ファイル | 役割 |
-|----------|------|
-| `src/main/index.ts` | Electronライフサイクル、ウィンドウ管理 |
-| `src/main/container.ts` | DIコンテナ定義、依存関係の組み立て |
-| `src/main/adapters/AppAdapter.ts` | アプリアイコン取得、favicon取得（SSRF保護付き） |
-| `src/main/adapters/FileSystemAdapter.ts` | ファイル読み書き |
-| `src/main/adapters/ShellAdapter.ts` | アプリ起動、URL/パスオープン |
-| `src/main/services/ProjectService.ts` | ワークスペースCRUD |
-| `src/main/services/LauncherService.ts` | アイテム起動ロジック |
-| `src/main/services/ConfigService.ts` | 設定パス管理 |
-| `src/main/ipc/index.ts` | IPCハンドラ（6チャネル） |
-| `src/main/preload.ts` | コンテキストブリッジ定義 |
+| ファイル                                 | 役割                                            |
+| ---------------------------------------- | ----------------------------------------------- |
+| `src/main/index.ts`                      | Electronライフサイクル、ウィンドウ管理          |
+| `src/main/container.ts`                  | DIコンテナ定義、依存関係の組み立て              |
+| `src/main/adapters/AppAdapter.ts`        | アプリアイコン取得、favicon取得（SSRF保護付き） |
+| `src/main/adapters/FileSystemAdapter.ts` | ファイル読み書き                                |
+| `src/main/adapters/ShellAdapter.ts`      | アプリ起動、URL/パスオープン                    |
+| `src/main/services/ProjectService.ts`    | ワークスペースCRUD                              |
+| `src/main/services/LauncherService.ts`   | アイテム起動ロジック                            |
+| `src/main/services/ConfigService.ts`     | 設定パス管理                                    |
+| `src/main/ipc/index.ts`                  | IPCハンドラ（6チャネル）                        |
+| `src/main/preload.ts`                    | コンテキストブリッジ定義                        |

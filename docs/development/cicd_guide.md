@@ -84,13 +84,13 @@ just --list   # 同上
 
 #### ビルド・リリース
 
-| コマンド        | 説明                                    |
-| --------------- | --------------------------------------- |
-| `just clean`    | ビルド成果物削除                        |
-| `just build`    | プロダクションビルド                    |
+| コマンド        | 説明                                     |
+| --------------- | ---------------------------------------- |
+| `just clean`    | ビルド成果物削除                         |
+| `just build`    | プロダクションビルド                     |
 | `just build-ci` | CI用ビルド (electron-builder をスキップ) |
-| `just package`  | インストーラー作成                      |
-| `just release`  | リリース (タグ作成 + プッシュ)          |
+| `just package`  | インストーラー作成                       |
+| `just release`  | リリース (タグ作成 + プッシュ)           |
 
 #### セキュリティ
 
@@ -105,8 +105,8 @@ Snyk は手動・任意のスキャンです。`just ci`、Git hooks、GitHub Ac
 
 #### CI
 
-| コマンド  | 説明                                                         |
-| --------- | ------------------------------------------------------------ |
+| コマンド  | 説明                                          |
+| --------- | --------------------------------------------- |
 | `just ci` | ローカル CI 実行 (check + test + e2e + build) |
 
 ### 2.4 よく使うワークフロー
@@ -145,10 +145,10 @@ pre-commit:
   parallel: true
   commands:
     lint:
-      glob: '*.{ts,tsx}'
+      glob: "*.{ts,tsx}"
       run: just --color never lint
     format-check:
-      glob: '*.{ts,tsx,json,md,yml,yaml}'
+      glob: "*.{ts,tsx,json,md,yml,yaml}"
       run: just --color never format-check
     typecheck:
       run: just --color never type-check
@@ -165,7 +165,7 @@ pre-push:
 | フック       | 実行タイミング      | 実行内容                       |
 | ------------ | ------------------- | ------------------------------ |
 | `pre-commit` | `git commit` 実行時 | lint, format-check, type-check |
-| `pre-push`   | `git push` 実行時   | test             |
+| `pre-push`   | `git push` 実行時   | test                           |
 
 ### 3.4 インストール・セットアップ
 
@@ -227,10 +227,10 @@ GitHub Actions でリモート CI/CD を実行します。Push および Pull Re
 
 ### 4.2 ワークフロー一覧
 
-| ワークフロー | ファイル                           | トリガー                    |
-| ------------ | ---------------------------------- | --------------------------- |
-| CI           | `.github/workflows/ci.yml`         | Push, Pull Request          |
-| Release      | `.github/workflows/release.yml`    | `v*.*.*` タグ Push          |
+| ワークフロー | ファイル                        | トリガー           |
+| ------------ | ------------------------------- | ------------------ |
+| CI           | `.github/workflows/ci.yml`      | Push, Pull Request |
+| Release      | `.github/workflows/release.yml` | `v*.*.*` タグ Push |
 
 ### 4.3 CI Workflow (`.github/workflows/ci.yml`)
 
@@ -254,15 +254,15 @@ setup ─┬─► check ─┬─► test ─┬─► build (macOS)
        └─► e2e (optional)
 ```
 
-| ジョブ           | 説明                           | 実行条件          |
-| ---------------- | ------------------------------ | ----------------- |
-| `setup`          | Feature flags 設定             | 常に実行          |
-| `check`          | type-check, format-check, lint | 常に実行          |
-| `test`           | Unit テスト + カバレッジ       | check 成功後      |
-| `sonar`          | SonarCloud スキャン            | flag 有効時       |
+| ジョブ           | 説明                           | 実行条件           |
+| ---------------- | ------------------------------ | ------------------ |
+| `setup`          | Feature flags 設定             | 常に実行           |
+| `check`          | type-check, format-check, lint | 常に実行           |
+| `test`           | Unit テスト + カバレッジ       | check 成功後       |
+| `sonar`          | SonarCloud スキャン            | flag 有効時        |
 | `build`          | macOS ビルド                   | check, test 成功後 |
-| `build-multi-os` | Linux/Windows ビルド           | flag 有効時       |
-| `e2e`            | E2E テスト                     | flag 有効時       |
+| `build-multi-os` | Linux/Windows ビルド           | flag 有効時        |
+| `e2e`            | E2E テスト                     | flag 有効時        |
 
 #### Feature Flags
 
@@ -271,16 +271,16 @@ CI Workflow では一部のジョブを Feature Flag で制御できます。
 
 ```yaml
 outputs:
-  enable_multi_os_build: 'false'  # Linux/Windows ビルド
-  enable_e2e: 'false'              # E2E テスト
-  enable_sonar: 'true'             # SonarCloud スキャン
+  enable_multi_os_build: "false" # Linux/Windows ビルド
+  enable_e2e: "false" # E2E テスト
+  enable_sonar: "true" # SonarCloud スキャン
 ```
 
-| フラグ                 | デフォルト | 説明                      |
-| ---------------------- | ---------- | ------------------------- |
+| フラグ                  | デフォルト | 説明                         |
+| ----------------------- | ---------- | ---------------------------- |
 | `enable_multi_os_build` | `false`    | Linux/Windows ビルドを有効化 |
-| `enable_e2e`           | `false`    | E2E テストを有効化         |
-| `enable_sonar`         | `true`     | SonarCloud スキャンを有効化 |
+| `enable_e2e`            | `false`    | E2E テストを有効化           |
+| `enable_sonar`          | `true`     | SonarCloud スキャンを有効化  |
 
 ### 4.4 Release Workflow (`.github/workflows/release.yml`)
 
@@ -290,12 +290,12 @@ outputs:
 
 #### ジョブ構成
 
-| ジョブ              | 説明                           |
-| ------------------- | ------------------------------ |
-| `check-enabled`     | リリースワークフロー有効確認   |
-| `validate`          | チェック + テスト              |
-| `build-and-release` | macOS ビルド + パッケージング  |
-| `create-release`    | GitHub Releases 作成           |
+| ジョブ              | 説明                          |
+| ------------------- | ----------------------------- |
+| `check-enabled`     | リリースワークフロー有効確認  |
+| `validate`          | チェック + テスト             |
+| `build-and-release` | macOS ビルド + パッケージング |
+| `create-release`    | GitHub Releases 作成          |
 
 #### Feature Flag
 
@@ -303,18 +303,18 @@ Release Workflow も Feature Flag で無効化できます:
 
 ```yaml
 env:
-  ENABLE_RELEASE: 'true'
+  ENABLE_RELEASE: "true"
 ```
 
 ### 4.5 GitHub Secrets / Variables
 
 #### Secrets (機密情報)
 
-| Secret              | 用途                    | 必須 |
-| ------------------- | ----------------------- | ---- |
-| `SNYK_TOKEN`        | 任意のローカル Snyk 認証用（Actions では未使用） | No |
-| `SONARCLOUD_TOKEN`  | SonarCloud トークン     | Yes  |
-| `GH_TOKEN`          | GitHub Token (リリース用) | Release時 |
+| Secret             | 用途                                             | 必須      |
+| ------------------ | ------------------------------------------------ | --------- |
+| `SNYK_TOKEN`       | 任意のローカル Snyk 認証用（Actions では未使用） | No        |
+| `SONARCLOUD_TOKEN` | SonarCloud トークン                              | Yes       |
+| `GH_TOKEN`         | GitHub Token (リリース用)                        | Release時 |
 
 #### Variables (設定値)
 
@@ -349,13 +349,13 @@ GitHub Actions の SHA 更新は Dependabot が自動で行います。設定は
 
 CI で生成されるアーティファクトは GitHub Actions の Artifacts に保存されます:
 
-| アーティファクト    | 内容                 | 保持期間 |
-| ------------------- | -------------------- | -------- |
-| `coverage-report`   | カバレッジレポート   | 7日      |
-| `build-macos`       | macOS ビルド成果物   | 7日      |
-| `build-ubuntu-latest` | Linux ビルド成果物 | 7日      |
-| `build-windows-latest` | Windows ビルド成果物 | 7日    |
-| `e2e-results`       | E2E テスト結果       | 7日      |
+| アーティファクト       | 内容                 | 保持期間 |
+| ---------------------- | -------------------- | -------- |
+| `coverage-report`      | カバレッジレポート   | 7日      |
+| `build-macos`          | macOS ビルド成果物   | 7日      |
+| `build-ubuntu-latest`  | Linux ビルド成果物   | 7日      |
+| `build-windows-latest` | Windows ビルド成果物 | 7日      |
+| `e2e-results`          | E2E テスト結果       | 7日      |
 
 ---
 
@@ -363,16 +363,16 @@ CI で生成されるアーティファクトは GitHub Actions の Artifacts �
 
 ### 5.1 実行内容の比較
 
-| チェック項目     | Lefthook (ローカル) | GitHub Actions (リモート) |
-| ---------------- | ------------------- | ------------------------- |
-| Type Check       | pre-commit          | CI (check)                |
-| Lint             | pre-commit          | CI (check)                |
-| Format Check     | pre-commit          | CI (check)                |
-| Unit Tests       | pre-push            | CI (test)                 |
-| Snyk Scan        | 手動・任意 (`just security-all`) | 実行しない |
-| SonarCloud       | -                   | CI (sonar)                |
-| E2E Tests        | -                   | CI (e2e)                  |
-| Build            | -                   | CI (build)                |
+| チェック項目 | Lefthook (ローカル)              | GitHub Actions (リモート) |
+| ------------ | -------------------------------- | ------------------------- |
+| Type Check   | pre-commit                       | CI (check)                |
+| Lint         | pre-commit                       | CI (check)                |
+| Format Check | pre-commit                       | CI (check)                |
+| Unit Tests   | pre-push                         | CI (test)                 |
+| Snyk Scan    | 手動・任意 (`just security-all`) | 実行しない                |
+| SonarCloud   | -                                | CI (sonar)                |
+| E2E Tests    | -                                | CI (e2e)                  |
+| Build        | -                                | CI (build)                |
 
 ### 5.2 設計思想
 
@@ -479,6 +479,7 @@ ls -la .git/hooks/
 1. ローカルで `just ci` を実行して再現
 2. エラーメッセージを確認
 3. 該当のチェックを個別に実行:
+
    ```bash
    just type-check
    just lint
@@ -510,11 +511,11 @@ snyk auth
 
 ## 9. 関連ドキュメント
 
-| ドキュメント                             | 内容                               |
-| ---------------------------------------- | ---------------------------------- |
-| `docs/development/code_quality_rules.md` | コード品質ルール (ESLint/Prettier) |
-| `docs/implementation/testing_strategy.md` | テスト戦略                        |
-| `docs/product/03_development_rules.md`   | 開発ルール・ブランチ戦略           |
+| ドキュメント                              | 内容                               |
+| ----------------------------------------- | ---------------------------------- |
+| `docs/development/code_quality_rules.md`  | コード品質ルール (ESLint/Prettier) |
+| `docs/implementation/testing_strategy.md` | テスト戦略                         |
+| `docs/product/03_development_rules.md`    | 開発ルール・ブランチ戦略           |
 
 ---
 

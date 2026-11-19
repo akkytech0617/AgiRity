@@ -44,17 +44,17 @@ just fix            # Biomeリント（自動修正）
 
 ## 主要npmスクリプト
 
-| スクリプト | 内容 |
-|---|---|
-| `npm run dev` | Vite開発サーバー＋Electron起動 |
-| `npm run build` | `tsc` + `vite build` + `electron-builder` |
-| `npm run test` | Vitest単発実行 |
-| `npm run test:watch` | Vitestウォッチモード |
-| `npm run test:coverage` | v8カバレッジ付きVitest |
-| `npm run test:e2e` | ビルド + Playwright E2Eテスト |
-| `npm run type-check` | TypeScript `--noEmit`（両tsconfig対象） |
-| `npm run lint` | Biomeリント |
-| `npm run package` | electron-builderパッケージング |
+| スクリプト              | 内容                                      |
+| ----------------------- | ----------------------------------------- |
+| `npm run dev`           | Vite開発サーバー＋Electron起動            |
+| `npm run build`         | `tsc` + `vite build` + `electron-builder` |
+| `npm run test`          | Vitest単発実行                            |
+| `npm run test:watch`    | Vitestウォッチモード                      |
+| `npm run test:coverage` | v8カバレッジ付きVitest                    |
+| `npm run test:e2e`      | ビルド + Playwright E2Eテスト             |
+| `npm run type-check`    | TypeScript `--noEmit`（両tsconfig対象）   |
+| `npm run lint`          | Biomeリント                               |
+| `npm run package`       | electron-builderパッケージング            |
 
 ## Gitフック
 

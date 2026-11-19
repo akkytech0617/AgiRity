@@ -57,14 +57,14 @@ graph LR
 
 すべてのIPCはElectronの双方向 `invoke`/`handle` パターンを使用します。プリロードスクリプト（`src/main/preload.ts`）が `contextBridge` 経由で型付きAPIを公開します：
 
-| API | メソッド | 戻り値 |
-|---|---|---|
-| `window.launcherApi` | `launchItem(item)` | `LaunchResult` |
-| `window.launcherApi` | `getItemIcon(item)` | `IconResult` |
-| `window.workspaceApi` | `load()` | `WorkspaceResult<Workspace[]>` |
-| `window.workspaceApi` | `get(id)` | `WorkspaceResult<Workspace \| null>` |
-| `window.workspaceApi` | `save(workspace)` | `WorkspaceResult<void>` |
-| `window.workspaceApi` | `delete(id)` | `WorkspaceResult<boolean>` |
+| API                   | メソッド            | 戻り値                               |
+| --------------------- | ------------------- | ------------------------------------ |
+| `window.launcherApi`  | `launchItem(item)`  | `LaunchResult`                       |
+| `window.launcherApi`  | `getItemIcon(item)` | `IconResult`                         |
+| `window.workspaceApi` | `load()`            | `WorkspaceResult<Workspace[]>`       |
+| `window.workspaceApi` | `get(id)`           | `WorkspaceResult<Workspace \| null>` |
+| `window.workspaceApi` | `save(workspace)`   | `WorkspaceResult<void>`              |
+| `window.workspaceApi` | `delete(id)`        | `WorkspaceResult<boolean>`           |
 
 入力は両側でZodにより検証されます。レンダラー側はUXフィードバックのため、メインプロセス側はセキュリティのためです。
 
@@ -111,24 +111,24 @@ sequenceDiagram
 
 ビュールーティングは `src/renderer/App.tsx` で判別可能なユニオン型 `View` を使用しています：
 
-| ビュー種別 | コンポーネント |
-|---|---|
-| `home` | `WorkspaceList` |
-| `workspace` | `MainPanel` |
-| `workspace-editor` | `WorkspaceEditor` |
-| `tools` | `ToolsRegistry`（Phase 2） |
-| `mcp` | `MCPServers`（Phase 2） |
-| `settings` | `Settings` |
+| ビュー種別         | コンポーネント             |
+| ------------------ | -------------------------- |
+| `home`             | `WorkspaceList`            |
+| `workspace`        | `MainPanel`                |
+| `workspace-editor` | `WorkspaceEditor`          |
+| `tools`            | `ToolsRegistry`（Phase 2） |
+| `mcp`              | `MCPServers`（Phase 2）    |
+| `settings`         | `Settings`                 |
 
 ## 主要ソースファイル
 
-| ファイル | 目的 |
-|---|---|
-| `src/main/index.ts` | アプリライフサイクル、ウィンドウ生成、コンテナ・IPCセットアップ |
-| `src/main/container.ts` | アダプター→サービスのDIコンテナ配線 |
-| `src/main/preload.ts` | レンダラーに型付きAPIを公開するコンテキストブリッジ |
-| `src/main/ipc/index.ts` | Zod検証付きの全IPCハンドラー登録 |
-| `src/shared/types.ts` | Zodスキーマ、TypeScript型、IPCチャンネル定数 |
-| `src/renderer/App.tsx` | ルートReactコンポーネント、ビュー状態管理、起動オーケストレーション |
-| `src/renderer/components/layout/AppShell.tsx` | ヘッダー、コンテンツ領域を含むレイアウトシェル |
-| `src/renderer/data/workspaceDataSource.ts` | データアクセス層（モックまたはIPC） |
+| ファイル                                      | 目的                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------- |
+| `src/main/index.ts`                           | アプリライフサイクル、ウィンドウ生成、コンテナ・IPCセットアップ     |
+| `src/main/container.ts`                       | アダプター→サービスのDIコンテナ配線                                 |
+| `src/main/preload.ts`                         | レンダラーに型付きAPIを公開するコンテキストブリッジ                 |
+| `src/main/ipc/index.ts`                       | Zod検証付きの全IPCハンドラー登録                                    |
+| `src/shared/types.ts`                         | Zodスキーマ、TypeScript型、IPCチャンネル定数                        |
+| `src/renderer/App.tsx`                        | ルートReactコンポーネント、ビュー状態管理、起動オーケストレーション |
+| `src/renderer/components/layout/AppShell.tsx` | ヘッダー、コンテンツ領域を含むレイアウトシェル                      |
+| `src/renderer/data/workspaceDataSource.ts`    | データアクセス層（モックまたはIPC）                                 |

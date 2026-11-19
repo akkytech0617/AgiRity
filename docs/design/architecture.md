@@ -134,13 +134,13 @@ We use **Two-way IPC (invoke/handle)** for all operations.
 
 ### IPC Channels (`src/shared/types.ts`)
 
-| Channel               | Type   | Args            | Return                         | Description        |
+| Channel | Type | Args | Return | Description |
 | --------------------- | ------ | --------------- | ------------------------------ | ------------------ | --------- |
-| `launcher:launchItem` | Invoke | `WorkspaceItem` | `LaunchResult`                 | Launch single item |
-| `workspace:load`      | Invoke | -               | `WorkspaceResult<Workspace[]>` | Get all workspaces |
-| `workspace:get`       | Invoke | `id: string`    | `WorkspaceResult<Workspace     | null>`             | Get by ID |
-| `workspace:save`      | Invoke | `Workspace`     | `WorkspaceResult<void>`        | Create or update   |
-| `workspace:delete`    | Invoke | `id: string`    | `WorkspaceResult<boolean>`     | Delete             |
+| `launcher:launchItem` | Invoke | `WorkspaceItem` | `LaunchResult` | Launch single item |
+| `workspace:load` | Invoke | - | `WorkspaceResult<Workspace[]>` | Get all workspaces |
+| `workspace:get` | Invoke | `id: string` | `WorkspaceResult<Workspace     | null>` | Get by ID |
+| `workspace:save` | Invoke | `Workspace` | `WorkspaceResult<void>` | Create or update |
+| `workspace:delete` | Invoke | `id: string` | `WorkspaceResult<boolean>` | Delete |
 
 ### Result Types
 
@@ -336,16 +336,19 @@ The application follows a browser-like tab UI pattern.
 ```
 
 **Header構成:**
+
 - **左**: ロゴ (A)
 - **中央**: ワークスペースタブ（全ワークスペースを表示）+ 新規追加ボタン (+)
 - **右**: ハンバーガーメニュー (≡)（Settings, Tools Registry, MCP Servers）
 
 **WorkspaceDetail - ヘッダー行:**
+
 - ワークスペース名、説明
 - タグ表示
 - 編集ボタン（workspace-settings ビューへ遷移）
 
 **WorkspaceDetail - 2カラムレイアウト:**
+
 - **左カラム**: Launch Presetsをカード形式で縦並び
 - **右カラム**: Workspace Toolsをリスト形式で縦並び
 - 各カラムの見出しはカード/リスト内に統合（独立したヘッダー行なし）
@@ -367,14 +370,14 @@ Navigation is handled via a discriminated union `View` type:
 
 ### 7.3 Component Responsibilities
 
-| Component                               | Responsibility                                           |
-| --------------------------------------- | -------------------------------------------------------- |
-| `App.tsx`                               | View state管理、遷移ロジック、ワークスペース初期化      |
-| `Layout`                                | 全体レイアウト (Header + Content）、コンテンツ委譲      |
+| Component                               | Responsibility                                             |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `App.tsx`                               | View state管理、遷移ロジック、ワークスペース初期化         |
+| `Layout`                                | 全体レイアウト (Header + Content）、コンテンツ委譲         |
 | `Header`                                | ロゴ、ワークスペースタブ、新規ボタン、ハンバーガーメニュー |
-| `WorkspaceDetail`                       | ヘッダー表示、2カラムレイアウト（プリセット＋ツール）  |
-| `CreateWorkspace` / `WorkspaceSettings` | フォーム操作、アイテム CRUD、バリデーション            |
-| `ItemEditor`                            | 個別アイテムの設定、ドラッグ&ドロップ対応              |
+| `WorkspaceDetail`                       | ヘッダー表示、2カラムレイアウト（プリセット＋ツール）      |
+| `CreateWorkspace` / `WorkspaceSettings` | フォーム操作、アイテム CRUD、バリデーション                |
+| `ItemEditor`                            | 個別アイテムの設定、ドラッグ&ドロップ対応                  |
 
 ---
 

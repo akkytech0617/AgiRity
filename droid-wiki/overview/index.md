@@ -12,19 +12,19 @@ MVPフェーズ（v0.1.0）で、開発者・エンジニアを対象として�
 
 ## 技術スタック
 
-| レイヤー | 技術 |
-|---|---|
-| デスクトップランタイム | Electron 39 |
-| UIフレームワーク | React 19 + HeroUI (v2.8+) |
-| スタイリング | Tailwind CSS v4、ダークモードのみ |
-| 言語 | TypeScript（strict mode） |
-| ビルド | Vite 7 + vite-plugin-electron |
-| パッケージング | electron-builder |
-| テスト | Vitest（ユニット）、Playwright（E2E） |
-| リント/フォーマット | Biome |
-| CI | GitHub Actions + Just |
-| ロギング | electron-log + Sentry |
-| バリデーション | Zod |
+| レイヤー               | 技術                                  |
+| ---------------------- | ------------------------------------- |
+| デスクトップランタイム | Electron 39                           |
+| UIフレームワーク       | React 19 + HeroUI (v2.8+)             |
+| スタイリング           | Tailwind CSS v4、ダークモードのみ     |
+| 言語                   | TypeScript（strict mode）             |
+| ビルド                 | Vite 7 + vite-plugin-electron         |
+| パッケージング         | electron-builder                      |
+| テスト                 | Vitest（ユニット）、Playwright（E2E） |
+| リント/フォーマット    | Biome                                 |
+| CI                     | GitHub Actions + Just                 |
+| ロギング               | electron-log + Sentry                 |
+| バリデーション         | Zod                                   |
 
 ## リポジトリ構成
 

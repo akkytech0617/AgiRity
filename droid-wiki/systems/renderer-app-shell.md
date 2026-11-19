@@ -66,10 +66,10 @@ type View =
 
 `VITE_USE_MOCK_DATA`環境変数でモックデータとリアルIPCを切り替えます:
 
-| モード | 環境変数 | 動作 |
-|--------|---------|------|
-| リアル | `false`（デフォルト） | `workspaceApi`経由でIPC通信 |
-| モック | `true` | `MOCK_WORKSPACES`をインメモリで操作 |
+| モード | 環境変数              | 動作                                |
+| ------ | --------------------- | ----------------------------------- |
+| リアル | `false`（デフォルト） | `workspaceApi`経由でIPC通信         |
+| モック | `true`                | `MOCK_WORKSPACES`をインメモリで操作 |
 
 ## ビュールーティング
 
@@ -109,13 +109,13 @@ graph TD
 
 ## 主要ソースファイル
 
-| ファイル | 役割 |
-|----------|------|
-| `src/renderer/index.tsx` | エントリポイント、ログ初期化 |
-| `src/renderer/App.tsx` | ルートコンポーネント、View状態管理、起動ロジック |
-| `src/renderer/api/index.ts` | IPC APIラッパー（Zod検証） |
-| `src/renderer/data/workspaceDataSource.ts` | データ層（モック/リアル切替） |
-| `src/renderer/components/layout/AppShell.tsx` | アプリ全体レイアウト |
-| `src/renderer/components/layout/MainPanel.tsx` | ワークスペース詳細パネル |
-| `src/renderer/components/WorkspaceEditor.tsx` | ワークスペース編集フォーム |
-| `src/renderer/components/WorkspaceList.tsx` | ワークスペース一覧表示 |
+| ファイル                                       | 役割                                             |
+| ---------------------------------------------- | ------------------------------------------------ |
+| `src/renderer/index.tsx`                       | エントリポイント、ログ初期化                     |
+| `src/renderer/App.tsx`                         | ルートコンポーネント、View状態管理、起動ロジック |
+| `src/renderer/api/index.ts`                    | IPC APIラッパー（Zod検証）                       |
+| `src/renderer/data/workspaceDataSource.ts`     | データ層（モック/リアル切替）                    |
+| `src/renderer/components/layout/AppShell.tsx`  | アプリ全体レイアウト                             |
+| `src/renderer/components/layout/MainPanel.tsx` | ワークスペース詳細パネル                         |
+| `src/renderer/components/WorkspaceEditor.tsx`  | ワークスペース編集フォーム                       |
+| `src/renderer/components/WorkspaceList.tsx`    | ワークスペース一覧表示                           |

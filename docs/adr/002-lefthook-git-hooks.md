@@ -45,11 +45,11 @@ pre-commit:
   parallel: true
   commands:
     lint:
-      glob: '*.{ts,tsx}'
+      glob: "*.{ts,tsx}"
       run: npx eslint {staged_files}
       stage_fixed: true
     format-check:
-      glob: '*.{ts,tsx,json,md,yml,yaml}'
+      glob: "*.{ts,tsx,json,md,yml,yaml}"
       run: npx prettier --check {staged_files}
     typecheck:
       run: npm run type-check

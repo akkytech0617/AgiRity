@@ -94,48 +94,48 @@
 ```yaml
 schemaVersion: 1
 workspaces:
-  - id: '550e8400-e29b-41d4-a716-446655440000'
-    name: 'Client A Development'
-    description: 'Frontend development environment for Client A'
-    tags: ['work', 'frontend']
+  - id: "550e8400-e29b-41d4-a716-446655440000"
+    name: "Client A Development"
+    description: "Frontend development environment for Client A"
+    tags: [ "work", "frontend" ]
     items:
       # 1. Docker (DB) start
-      - type: 'app'
-        name: 'Docker Desktop'
-        path: '/Applications/Docker.app'
+      - type: "app"
+        name: "Docker Desktop"
+        path: "/Applications/Docker.app"
         waitTime: 30
-        category: 'development'
+        category: "development"
 
       # 2. VS Code with project folder (depends on Docker)
-      - type: 'app'
-        name: 'VS Code'
-        path: '/Applications/Visual Studio Code.app'
-        folder: '~/workspace/client-a-frontend'
-        dependsOn: 'Docker Desktop'
-        category: 'development'
+      - type: "app"
+        name: "VS Code"
+        path: "/Applications/Visual Studio Code.app"
+        folder: "~/workspace/client-a-frontend"
+        dependsOn: "Docker Desktop"
+        category: "development"
 
       # 3. References
-      - type: 'browser'
-        name: 'Reference Links'
+      - type: "browser"
+        name: "Reference Links"
         urls:
-          - 'https://github.com/client-a/repo'
-          - 'https://figma.com/file/xyz'
-        category: 'reference'
+          - "https://github.com/client-a/repo"
+          - "https://figma.com/file/xyz"
+        category: "reference"
 
     # Launch Presets (optional)
     presets:
-      - name: 'Full Development'
-        description: 'Start everything for full stack dev'
-        itemNames: ['Docker Desktop', 'VS Code', 'Reference Links']
-      - name: 'Code Only'
-        description: 'Just the editor without Docker'
-        itemNames: ['VS Code']
-      - name: 'Review Mode'
-        description: 'Browser tools for PR review'
-        itemNames: ['Reference Links']
+      - name: "Full Development"
+        description: "Start everything for full stack dev"
+        itemNames: [ "Docker Desktop", "VS Code", "Reference Links" ]
+      - name: "Code Only"
+        description: "Just the editor without Docker"
+        itemNames: [ "VS Code" ]
+      - name: "Review Mode"
+        description: "Browser tools for PR review"
+        itemNames: [ "Reference Links" ]
 
-    createdAt: '2024-01-01T00:00:00.000Z'
-    updatedAt: '2024-01-15T00:00:00.000Z'
+    createdAt: "2024-01-01T00:00:00.000Z"
+    updatedAt: "2024-01-15T00:00:00.000Z"
 ```
 
 ---

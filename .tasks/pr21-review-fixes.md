@@ -15,6 +15,7 @@
 **ファイル**: `src/renderer/hooks/useWorkspaces.ts` (line 78)
 
 #### 指摘内容
+
 ```
 Rule: typescript:S3735
 Severity: CRITICAL
@@ -22,6 +23,7 @@ Message: Remove this use of the "void" operator.
 ```
 
 #### 対応内容
+
 - line 78の `void` 演算子を削除
 - 具体的な行を確認してリファクタリング
 
@@ -33,10 +35,12 @@ Message: Remove this use of the "void" operator.
 **対象件数**: 5件（SonarCloud 3 + CodeRabbit 2）
 
 #### 2-1. PresetCard.tsx (lines 16-19)
+
 - SonarCloud: S6848 (interactive element), S1082 (keyboard listener)
 - CodeRabbit: keyboard accessibility 追加
 
 対応:
+
 ```tsx
 // 変更前
 <div onClick={onLaunch} className="...">
@@ -57,16 +61,19 @@ Message: Remove this use of the "void" operator.
 ```
 
 #### 2-2. ToolCard.tsx (lines 30-33)
+
 - SonarCloud: S6848, S1082
 - CodeRabbit: keyboard accessibility 追加
 
 対応: PresetCard と同様に role="button", tabIndex={0}, onKeyDown を追加
 
 #### 2-3. WorkspaceList.tsx (lines 36-40)
+
 - SonarCloud: S6819 (use `<output>` instead of "status" role)
 - CodeRabbit: role 修正
 
 対応:
+
 ```tsx
 // 変更前
 <div role="status">
@@ -83,9 +90,11 @@ Message: Remove this use of the "void" operator.
 **対象件数**: 3件
 
 #### 3-1. Formatter glob パターン修正 (lines 18-30)
+
 - CodeRabbit: `!**/node_modules` → `!**/node_modules/**` など6パターン
 
 対応パターン:
+
 ```json
 // 変更前
 "!**/node_modules",
@@ -105,15 +114,19 @@ Message: Remove this use of the "void" operator.
 ```
 
 #### 3-2. 重複 override ブロック削除 (lines 127-159 と 192-224)
+
 - CodeRabbit: TS/TSX override が2回繰り返されている
 
 対応:
+
 - lines 192-224 の重複ブロック全体を削除
 
 #### 3-3. 未使用 on* グローバル削除 (lines 244-382)
+
 - CodeRabbit: 180+個の on* イベントハンドラが未使用
 
 対応:
+
 - TS/TSX override 内の `globals` 配列から on* で始まる要素をすべて削除
 - 保持する: `exports`, `location` のみ確認して判断
 
@@ -125,9 +138,11 @@ Message: Remove this use of the "void" operator.
 **対象件数**: 2件
 
 #### 4-1. エラー状態追加 (lines 29-39)
+
 - CodeRabbit: catch で error を setError にも渡す
 
 対応:
+
 ```tsx
 // 追加
 const [error, setError] = useState<string | null>(null);
@@ -158,9 +173,11 @@ useEffect(() => {
 ```
 
 #### 4-2. ハードコード id '1' → 'home' (lines 73-75, 111)
+
 - CodeRabbit: hardcoded workspace id '1' は fragile
 
 対応:
+
 ```tsx
 // 変更前
 const handleCreateWorkspace = () => {
@@ -183,9 +200,11 @@ const handleCreateWorkspace = () => {
 **対象件数**: 8件
 
 #### 5-1. Header.tsx (lines 103-105)
+
 - CodeRabbit: Plus icon w-2 h-2 → w-3 h-3
 
 対応:
+
 ```tsx
 // 変更前
 <Plus className="w-2 h-2" />
@@ -195,9 +214,11 @@ const handleCreateWorkspace = () => {
 ```
 
 #### 5-2. WorkspaceDetail.tsx (lines 50-52)
+
 - CodeRabbit: Edit2 icon w-2 h-2 → w-4 h-4
 
 対応:
+
 ```tsx
 // 変更前
 <Edit2 className="w-2 h-2" />
@@ -207,9 +228,11 @@ const handleCreateWorkspace = () => {
 ```
 
 #### 5-3. WorkspaceDetail.tsx (lines 92-96)
+
 - CodeRabbit: React key item.name → item.id
 
 対応:
+
 ```tsx
 // 変更前
 {workspace.items.map((item) => (
@@ -223,9 +246,11 @@ const handleCreateWorkspace = () => {
 ```
 
 #### 5-4. WorkspaceList.tsx (lines 143-155)
+
 - CodeRabbit: React key に index 追加
 
 対応:
+
 ```tsx
 // 変更前
 {workspace.items.map((item) => (
@@ -239,9 +264,11 @@ const handleCreateWorkspace = () => {
 ```
 
 #### 5-5. ToolCard.tsx (line 32)
+
 - CodeRabbit: Tailwind utility rounded-card, border-border 未定義
 
 対応: `src/renderer/index.css` に追加
+
 ```css
 @utility rounded-card {
   border-radius: var(--radius-card);
@@ -253,23 +280,27 @@ const handleCreateWorkspace = () => {
 ```
 
 #### 5-6. WorkspaceSettings.tsx (lines 3-8)
+
 - CodeRabbit: focus:ring-2 → focus-visible:ring-2
 
 対応:
+
 ```tsx
 // 変更前
-className="... focus:ring-2 focus:ring-blue-500 ..."
+className = '... focus:ring-2 focus:ring-blue-500 ...';
 
 // 変更後
-className="... focus-visible:ring-2 focus-visible:ring-blue-500 ..."
+className = '... focus-visible:ring-2 focus-visible:ring-blue-500 ...';
 ```
 
 ※ `focus:ring-blue-500` や `focus:border-blue-500` も `focus-visible:` に
 
 #### 5-7. index.css (lines 3-44)
+
 - CodeRabbit: var(--color-gray-200) が未定義 → var(--color-border) に
 
 対応:
+
 ```css
 // 変更前
 border-color: var(--color-gray-200, currentcolor);
@@ -279,9 +310,11 @@ border-color: var(--color-border);
 ```
 
 #### 5-8. api/index.ts (line 18)
+
 - SonarCloud: S7764 Prefer globalThis over window
 
 対応:
+
 ```tsx
 // 変更前
 const launcherApi = (window as any).launcherApi;
@@ -300,14 +333,17 @@ const launcherApi = (globalThis as any).launcherApi;
 **対象件数**: 7件
 
 #### 6-1. AGENTS.md (line 135)
+
 - CodeRabbit: typo `memoory-manager` → `memory-manager`
 
 対応: 該当行を修正
 
 #### 6-2. package.json (line 17)
+
 - CodeRabbit: Windows 対応 cross-env 追加
 
 対応:
+
 ```json
 // 変更前
 "prebuild:e2e": "VITE_USE_MOCK_DATA=false tsc && vite build",
@@ -318,9 +354,11 @@ const launcherApi = (globalThis as any).launcherApi;
 ```
 
 #### 6-3. codebase_guide.md (lines 14-55)
+
 - CodeRabbit: MD040 - コードブロック言語指定追加
 
 対応:
+
 ```markdown
 // 変更前
 ```
@@ -328,6 +366,7 @@ src/
 ...
 
 // 変更後
+
 ```text
 src/
 ...
@@ -336,14 +375,17 @@ src/
 3つのコードブロックすべてに言語指定を追加
 
 #### 6-4. code_quality_rules.md
+
 - CodeRabbit: ESLint/Prettier 記載を Biome に更新
 
 対応: Biome を canonical tool として宣言
 
 #### 6-5. WorkspaceList.tsx (line 118)
+
 - SonarCloud: S7735 Unexpected negated condition
 
 対応:
+
 ```tsx
 // 変更前
 if (!workspaces.length) { ... }
@@ -354,9 +396,11 @@ if (workspaces.length === 0) { ... }
 （条件をポジティブに）
 
 #### 6-6. AddItemModal.tsx (lines 278-282)
+
 - CodeRabbit: バリデーション重複削除
 
 対応:
+
 ```tsx
 // 変更前
 disabled={
@@ -370,9 +414,11 @@ disabled={!isValidSubmission()}
 ```
 
 #### 6-7. ToolCard/WorkspaceList/ItemEditor.tsx
+
 - CodeRabbit: getItemIcon 共通ユーティリティ抽出（オプション）
 
 対応（優先度低）:
+
 - 同じロジックが3ファイルで重複
 - `src/renderer/utils/icons.tsx` に共通関数を抽出（推奨）
 - または各ファイルの copy を許容

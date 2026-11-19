@@ -1,8 +1,9 @@
 ---
+
 name: qa-electron
 description: >
-  Interactive AgiRity QA in isolated real Electron via agent-browser CDP.
-  Separates persistence and OS launch evidence from optional browser/mock UI checks.
+Interactive AgiRity QA in isolated real Electron via agent-browser CDP.
+Separates persistence and OS launch evidence from optional browser/mock UI checks.
 ---
 
 # QA Tests — AgiRity Electron
@@ -18,9 +19,11 @@ on shared desktops.
    `node_modules/.bin/electron`; agent-browser is bundled with the Factory CLI.
    If missing, report BLOCKED rather than assuming an ordinary browser is equivalent.
 2. Build with mock mode explicitly disabled for **the entire npm command**:
+
    ```bash
    VITE_USE_MOCK_DATA=false VITE_SENTRY_DSN= npm run prebuild:e2e
    ```
+
    This builds main, preload, and renderer without packaging or running test suites.
    Empty Sentry DSNs disable telemetry for this QA run, including values in local dotenv files.
 3. Allocate a fresh temporary directory with `mktemp -d /tmp/agirity-qa.XXXXXX`.
@@ -31,6 +34,7 @@ on shared desktops.
 4. Launch only the newly built app with a GUI-capable local runner. Use Execute
    with `fireAndForget: true` (not shell `&`); keep its returned PID/log path.
    Replace `/tmp/agirity-qa.RUN` below with the directory just allocated.
+
    ```bash
    ELECTRON_BIN="$(node -p "require('electron')")"
    exec env AGIRITY_CONFIG_DIR=/tmp/agirity-qa.RUN VITE_DEV_SERVER_URL= SENTRY_DSN= \
@@ -38,6 +42,7 @@ on shared desktops.
      --user-data-dir=/tmp/agirity-qa.RUN/chromium \
      --remote-debugging-address=127.0.0.1 --remote-debugging-port=9223
    ```
+
    Keep a record of the **actual** chosen port and PID. Each Execute has a fresh
    shell, so pass the real values explicitly in subsequent calls. The `exec`
    makes the returned process the owned Electron process, not an npm wrapper.
@@ -45,11 +50,13 @@ on shared desktops.
    named session for this run. Use that same session on all calls. **Every**
    browser command must include the literal Electron port (not the Factory
    desktop CDP URL), e.g.:
+
    ```bash
    agent-browser --cdp 9223 tab
    agent-browser --cdp 9223 snapshot -i
    agent-browser --cdp 9223 eval '({workspace: typeof window.workspaceApi?.load, launcher: typeof window.launcherApi?.launchItem})'
    ```
+
    Select the actual AgiRity `file://.../dist/index.html` tab from the tab list if
    necessary. Require both functions and rendered app content. Inspect
    `window.workspaceApi.load()` for a successful real IPC result (setup evidence,

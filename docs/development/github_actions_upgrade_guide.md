@@ -83,12 +83,12 @@ gh pr diff <PR番号>
 
 確認項目：
 
-| 項目 | 確認内容 |
-|------|----------|
-| アクション名 | 例: `actions/download-artifact` |
-| 変更前バージョン | コミットSHAまたはタグ |
-| 変更後バージョン | コミットSHAまたはタグ |
-| 変更ファイル | どのワークフロー（`.github/workflows/*.yml`）か |
+| 項目             | 確認内容                                        |
+| ---------------- | ----------------------------------------------- |
+| アクション名     | 例: `actions/download-artifact`                 |
+| 変更前バージョン | コミットSHAまたはタグ                           |
+| 変更後バージョン | コミットSHAまたはタグ                           |
+| 変更ファイル     | どのワークフロー（`.github/workflows/*.yml`）か |
 
 #### 1.2 バージョンの特定
 
@@ -116,10 +116,10 @@ gh pr checks <PR番号>
 
 GitHub PRのステータスには**2種類**あり、両方を確認する必要があります：
 
-| 種類 | 内容 | 例 |
-|------|------|-----|
-| **Check Runs** | GitHub Actions CI | build, test, lint等 |
-| **Statuses** | 外部サービス連携 | Snyk, CodeRabbit, SonarCloud等 |
+| 種類           | 内容              | 例                             |
+| -------------- | ----------------- | ------------------------------ |
+| **Check Runs** | GitHub Actions CI | build, test, lint等            |
+| **Statuses**   | 外部サービス連携  | Snyk, CodeRabbit, SonarCloud等 |
 
 > **重要**: `mergeable_state: unstable`の場合、Check Runsの失敗が原因であることが多いです。Statusesのみがsuccessでも、Check Runsが失敗していればマージすべきではありません。
 
@@ -161,23 +161,23 @@ gh release view <tag> --repo actions/<action-name>
 
 #### 3.2 注意すべきキーワード
 
-| キーワード | 意味 |
-|-----------|------|
-| `BREAKING CHANGE` | 互換性のない変更 |
-| `Node.js XX` | ランタイム要件の変更 |
-| `Runner vX.X.X` | Actions Runner要件 |
-| `Deprecated` | 非推奨化 |
-| `Removed` | 機能削除 |
+| キーワード        | 意味                 |
+| ----------------- | -------------------- |
+| `BREAKING CHANGE` | 互換性のない変更     |
+| `Node.js XX`      | ランタイム要件の変更 |
+| `Runner vX.X.X`   | Actions Runner要件   |
+| `Deprecated`      | 非推奨化             |
+| `Removed`         | 機能削除             |
 
 #### 3.3 よくあるBreaking Changes
 
-| アクション | よくある変更 |
-|-----------|-------------|
-| `actions/checkout` | サブモジュール動作、認証方式 |
-| `actions/setup-node` | キャッシュ動作、Node.jsバージョン |
-| `actions/upload-artifact` | アーティファクト保持期間、圧縮方式 |
+| アクション                  | よくある変更                         |
+| --------------------------- | ------------------------------------ |
+| `actions/checkout`          | サブモジュール動作、認証方式         |
+| `actions/setup-node`        | キャッシュ動作、Node.jsバージョン    |
+| `actions/upload-artifact`   | アーティファクト保持期間、圧縮方式   |
 | `actions/download-artifact` | ダウンロードパス動作、ID指定時の挙動 |
-| `actions/cache` | キャッシュキー生成、復元動作 |
+| `actions/cache`             | キャッシュキー生成、復元動作         |
 
 ---
 
@@ -187,10 +187,10 @@ gh release view <tag> --repo actions/<action-name>
 
 以下のアクションはペアで使用されるため、互換性を確認：
 
-| アクション1 | アクション2 | 確認ポイント |
-|------------|------------|-------------|
-| `actions/upload-artifact` | `actions/download-artifact` | 同一メジャーバージョンが推奨 |
-| `actions/cache` | `actions/cache/restore`, `actions/cache/save` | キャッシュキーの互換性 |
+| アクション1               | アクション2                                   | 確認ポイント                 |
+| ------------------------- | --------------------------------------------- | ---------------------------- |
+| `actions/upload-artifact` | `actions/download-artifact`                   | 同一メジャーバージョンが推奨 |
+| `actions/cache`           | `actions/cache/restore`, `actions/cache/save` | キャッシュキーの互換性       |
 
 #### 4.2 現在のバージョン確認
 
@@ -218,12 +218,12 @@ grep -A 10 "uses: actions/<action-name>" .github/workflows/*.yml
 # v4以前: IDで単一アーティファクトをダウンロードした場合のパス動作
 - uses: actions/download-artifact@v4
   with:
-    artifact-id: 12345  # ← この使い方は影響を受ける
+    artifact-id: 12345 # ← この使い方は影響を受ける
 
 # name指定の場合は影響なし
 - uses: actions/download-artifact@v7
   with:
-    name: my-artifact   # ← この使い方は影響を受けない
+    name: my-artifact # ← この使い方は影響を受けない
 ```
 
 ---
@@ -232,12 +232,12 @@ grep -A 10 "uses: actions/<action-name>" .github/workflows/*.yml
 
 #### 6.1 判断基準
 
-| 条件 | 判断 |
-|------|------|
-| CIパス + Breaking Change影響なし | マージ可 |
-| CIパス + Breaking Change影響あり（対応済み） | マージ可 |
-| CI失敗 | 原因調査が必要 |
-| Self-hosted Runner使用 + Runner要件変更 | Runner更新後にマージ |
+| 条件                                         | 判断                 |
+| -------------------------------------------- | -------------------- |
+| CIパス + Breaking Change影響なし             | マージ可             |
+| CIパス + Breaking Change影響あり（対応済み） | マージ可             |
+| CI失敗                                       | 原因調査が必要       |
+| Self-hosted Runner使用 + Runner要件変更      | Runner更新後にマージ |
 
 #### 6.2 Runner要件の確認
 
@@ -260,11 +260,13 @@ PRレビュー時に使用するチェックリスト：
 ## GitHub Actions アップグレード検証
 
 ### 対象
-- アクション名: 
+
+- アクション名:
 - バージョン: vX.X.X → vY.Y.Y
-- 変更ファイル: 
+- 変更ファイル:
 
 ### 検証結果
+
 - [ ] CIチェック全パス
 - [ ] リリースノート確認
 - [ ] Breaking Changes: あり / なし
@@ -273,6 +275,7 @@ PRレビュー時に使用するチェックリスト：
 - [ ] Runner要件: GitHub-hosted / Self-hosted（要件確認済み）
 
 ### 判定
+
 - [ ] マージ可
 - [ ] 修正が必要（理由: ）
 ```
@@ -283,12 +286,12 @@ PRレビュー時に使用するチェックリスト：
 
 Dependabotが作成するGitHub Actions更新PRの形式：
 
-| 項目 | 形式 |
-|------|------|
-| ブランチ名 | `dependabot/github_actions/<action-name>-X.X.X` |
-| タイトル | `ci: bump <action-name> from X.X.X to Y.Y.Y` |
-| 変更ファイル | `.github/workflows/*.yml` |
-| コミット形式 | コミットSHA（セキュリティのためフルSHAを使用） |
+| 項目         | 形式                                            |
+| ------------ | ----------------------------------------------- |
+| ブランチ名   | `dependabot/github_actions/<action-name>-X.X.X` |
+| タイトル     | `ci: bump <action-name> from X.X.X to Y.Y.Y`    |
+| 変更ファイル | `.github/workflows/*.yml`                       |
+| コミット形式 | コミットSHA（セキュリティのためフルSHAを使用）  |
 
 ### Dependabot PR特有の注意点
 
@@ -300,13 +303,13 @@ Dependabotが作成するGitHub Actions更新PRの形式：
 
 ## 主要アクションのリリースページ
 
-| アクション | リリースページ |
-|-----------|---------------|
-| actions/checkout | https://github.com/actions/checkout/releases |
-| actions/setup-node | https://github.com/actions/setup-node/releases |
-| actions/upload-artifact | https://github.com/actions/upload-artifact/releases |
+| アクション                | リリースページ                                        |
+| ------------------------- | ----------------------------------------------------- |
+| actions/checkout          | https://github.com/actions/checkout/releases          |
+| actions/setup-node        | https://github.com/actions/setup-node/releases        |
+| actions/upload-artifact   | https://github.com/actions/upload-artifact/releases   |
 | actions/download-artifact | https://github.com/actions/download-artifact/releases |
-| actions/cache | https://github.com/actions/cache/releases |
+| actions/cache             | https://github.com/actions/cache/releases             |
 
 ---
 

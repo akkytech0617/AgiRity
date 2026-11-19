@@ -8,32 +8,32 @@
 
 ## IPCチャネル一覧
 
-| チャネル名 | 方向 | 入力 | 戻り値 | 用途 |
-|-----------|------|------|--------|------|
-| `launcher:launchItem` | R→M | `WorkspaceItem` | `LaunchResult` | アプリ/URL/フォルダを起動 |
-| `launcher:getItemIcon` | R→M | `WorkspaceItem` | `IconResult` | アイコン/faviconを取得 |
-| `workspace:load` | R→M | なし | `WorkspaceResult` | 全ワークスペースを読み込み |
-| `workspace:get` | R→M | `string` (UUID) | `WorkspaceResult` | 特定ワークスペースを取得 |
-| `workspace:save` | R→M | `Workspace` | `WorkspaceResult` | ワークスペースを保存 |
-| `workspace:delete` | R→M | `string` (UUID) | `WorkspaceResult` | ワークスペースを削除 |
+| チャネル名             | 方向 | 入力            | 戻り値            | 用途                       |
+| ---------------------- | ---- | --------------- | ----------------- | -------------------------- |
+| `launcher:launchItem`  | R→M  | `WorkspaceItem` | `LaunchResult`    | アプリ/URL/フォルダを起動  |
+| `launcher:getItemIcon` | R→M  | `WorkspaceItem` | `IconResult`      | アイコン/faviconを取得     |
+| `workspace:load`       | R→M  | なし            | `WorkspaceResult` | 全ワークスペースを読み込み |
+| `workspace:get`        | R→M  | `string` (UUID) | `WorkspaceResult` | 特定ワークスペースを取得   |
+| `workspace:save`       | R→M  | `Workspace`     | `WorkspaceResult` | ワークスペースを保存       |
+| `workspace:delete`     | R→M  | `string` (UUID) | `WorkspaceResult` | ワークスペースを削除       |
 
 ## プリロードブリッジ
 
 `src/main/preload.ts`で`contextBridge.exposeInMainWorld`を使って2つのAPIを露出しています:
 
 ```typescript
-window.launcherApi  // launchItem, getItemIcon
-window.workspaceApi // load, get, save, delete
+window.launcherApi; // launchItem, getItemIcon
+window.workspaceApi; // load, get, save, delete
 ```
 
 レンダラー側の`src/renderer/api/index.ts`は、これらのAPIを呼び出した後にZodスキーマでレスポンスを再検証します。
 
 ## Zodバリデーション（両側検証）
 
-| 側 | 検証内容 | ファイル |
-|----|---------|----------|
-| メイン（ハンドラ） | 入力を`WorkspaceItemSchema`, `WorkspaceSchema`, `z.uuid()`で検証 | `src/main/ipc/index.ts` |
-| レンダラー（API） | レスポンスを`LaunchResultSchema`, `IconResultSchema`, `WorkspaceResultSchema`で検証 | `src/renderer/api/index.ts` |
+| 側                 | 検証内容                                                                            | ファイル                    |
+| ------------------ | ----------------------------------------------------------------------------------- | --------------------------- |
+| メイン（ハンドラ） | 入力を`WorkspaceItemSchema`, `WorkspaceSchema`, `z.uuid()`で検証                    | `src/main/ipc/index.ts`     |
+| レンダラー（API）  | レスポンスを`LaunchResultSchema`, `IconResultSchema`, `WorkspaceResultSchema`で検証 | `src/renderer/api/index.ts` |
 
 ## セキュリティ設定
 
@@ -66,9 +66,9 @@ graph LR
 
 ## 主要ソースファイル
 
-| ファイル | 役割 |
-|----------|------|
-| `src/shared/types.ts` | IPCチャネル定数、型、Zodスキーマ |
-| `src/main/preload.ts` | コンテキストブリッジ、API露出 |
-| `src/main/ipc/index.ts` | メイン側IPCハンドラ（Zod入力検証） |
+| ファイル                    | 役割                                   |
+| --------------------------- | -------------------------------------- |
+| `src/shared/types.ts`       | IPCチャネル定数、型、Zodスキーマ       |
+| `src/main/preload.ts`       | コンテキストブリッジ、API露出          |
+| `src/main/ipc/index.ts`     | メイン側IPCハンドラ（Zod入力検証）     |
 | `src/renderer/api/index.ts` | レンダラー側APIラッパー（Zod出力検証） |

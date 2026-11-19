@@ -55,11 +55,11 @@ For detailed development guides, see [docs/development/](docs/development/).
 
 ## Roadmap
 
-| Phase | Status | Description |
-|-------|--------|-------------|
+| Phase             | Status            | Description                               |
+| ----------------- | ----------------- | ----------------------------------------- |
 | **Phase 1 (MVP)** | 🚧 In Development | Workspace management, batch app launching |
-| **Phase 2** | 📋 Planned | Tool registry, config export/import |
-| **Phase 3** | 💭 Concept | CLI, MCP integration, cloud sync |
+| **Phase 2**       | 📋 Planned        | Tool registry, config export/import       |
+| **Phase 3**       | 💭 Concept        | CLI, MCP integration, cloud sync          |
 
 For details, see [Requirements Document](docs/product/01_requirment.md).
 

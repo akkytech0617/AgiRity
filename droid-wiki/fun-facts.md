@@ -20,10 +20,10 @@
 
 メインプロセスとレンダラープロセスで異なるプレフィックスが使われています:
 
-| プロセス | プレフィックス | 例 |
-|----------|---------------|-----|
-| メイン | `AGIRITY_` | `AGIRITY_PERF`, `AGIRITY_ALLOW_EXTERNAL_FAVICONS` |
-| レンダラー | `VITE_` | `VITE_PERF`, `VITE_SENTRY_DSN` |
+| プロセス   | プレフィックス | 例                                                |
+| ---------- | -------------- | ------------------------------------------------- |
+| メイン     | `AGIRITY_`     | `AGIRITY_PERF`, `AGIRITY_ALLOW_EXTERNAL_FAVICONS` |
+| レンダラー | `VITE_`        | `VITE_PERF`, `VITE_SENTRY_DSN`                    |
 
 ## ボットコミット
 

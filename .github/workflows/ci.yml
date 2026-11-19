@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, 'feat/**', 'fix/**']
+    branches: [ main, develop, "feat/**", "fix/**" ]
   pull_request:
-    branches: [main, develop]
+    branches: [ main, develop ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,12 +21,12 @@ jobs:
       # =============================================================================
       # Enable Linux/Windows builds (macOS always runs)
       # TODO: Enable when ready for multi-OS distribution
-      enable_multi_os_build: 'false'
+      enable_multi_os_build: "false"
       # Enable E2E tests (requires build artifacts)
       # TODO: Enable when E2E tests are stable in CI environment
-      enable_e2e: 'false'
+      enable_e2e: "false"
       # Enable SonarCloud scan
-      enable_sonar: 'true'
+      enable_sonar: "true"
     steps:
       - name: Output feature flags
         run: |
@@ -48,8 +48,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v2
@@ -74,8 +74,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v2
@@ -97,7 +97,7 @@ jobs:
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    needs: [setup, test]
+    needs: [ setup, test ]
     if: ${{ needs.setup.outputs.enable_sonar == 'true' }}
     timeout-minutes: 15
 
@@ -110,8 +110,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -135,7 +135,7 @@ jobs:
   # Job 4: Build (macOS - always runs)
   build:
     name: Build (macOS)
-    needs: [check, test]
+    needs: [ check, test ]
     runs-on: macos-latest
     timeout-minutes: 30
 
@@ -146,8 +146,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v2
@@ -170,12 +170,12 @@ jobs:
   # Job 4b: Build (Linux/Windows - optional)
   build-multi-os:
     name: Build (${{ matrix.os }})
-    needs: [setup, check, test]
+    needs: [ setup, check, test ]
     if: ${{ needs.setup.outputs.enable_multi_os_build == 'true' }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
 
@@ -186,8 +186,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v2
@@ -210,7 +210,7 @@ jobs:
   # Job 5: E2E Tests (macOS only - Electron requires GUI)
   e2e:
     name: E2E Tests
-    needs: [setup, build]
+    needs: [ setup, build ]
     if: ${{ needs.setup.outputs.enable_e2e == 'true' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
     runs-on: macos-latest
     timeout-minutes: 30
@@ -222,8 +222,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Setup Just
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v2

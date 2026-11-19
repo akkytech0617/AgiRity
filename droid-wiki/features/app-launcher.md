@@ -10,11 +10,11 @@
 
 `src/main/services/LauncherService.ts` の `launchItem()` はアイテムタイプに基づいて起動メソッドを振り分けます。
 
-| タイプ | メソッド | 動作 | 使用 API |
-|--------|---------|------|----------|
-| `app` | `launchApp()` | `folder` 指定時: `launchApp(appPath, [folderPath])` 未指定時: `openPath(appPath)` | `ShellAdapter` |
-| `browser` | `launchBrowser()` | URL ごとに `openExternal(url)` を呼び出し | `ShellAdapter` |
-| `folder` | `launchFolder()` | `openPath(folderPath)` で Finder 等で開く | `ShellAdapter` |
+| タイプ    | メソッド          | 動作                                                                              | 使用 API       |
+| --------- | ----------------- | --------------------------------------------------------------------------------- | -------------- |
+| `app`     | `launchApp()`     | `folder` 指定時: `launchApp(appPath, [folderPath])` 未指定時: `openPath(appPath)` | `ShellAdapter` |
+| `browser` | `launchBrowser()` | URL ごとに `openExternal(url)` を呼び出し                                         | `ShellAdapter` |
+| `folder`  | `launchFolder()`  | `openPath(folderPath)` で Finder 等で開く                                         | `ShellAdapter` |
 
 ### パス展開
 
@@ -50,27 +50,27 @@ const folderPath = this.configService.expandTilde(folder);
 
 **SSRF 防御:**
 
-| 防御 | 内容 |
-|------|------|
-| HTTPS 強制 | `http:` スキームをブロック |
-| プライベート IP ブロック | IPv4（127.x, 10.x, 172.16-31.x, 192.168.x, 169.254.x, 0.0.0.0） |
-| IPv6 ブロック | `::1`, `fc`/`fd` (ULA), `fe80-` (リンクローカル), `::ffff:` マップ |
-| ホスト名ブロック | `localhost`, `0.0.0.0` |
-| DNS 解決検証 | 全 DNS 解決結果の IP アドレスを検証 |
-| サイズ制限 | 512KB（`MAX_FAVICON_BYTES`） |
-| リダイレクト制限 | 最大 2 回（`MAX_FAVICON_REDIRECTS`） |
-| タイムアウト | 5秒（`FAVICON_FETCH_TIMEOUT`） |
+| 防御                     | 内容                                                               |
+| ------------------------ | ------------------------------------------------------------------ |
+| HTTPS 強制               | `http:` スキームをブロック                                         |
+| プライベート IP ブロック | IPv4（127.x, 10.x, 172.16-31.x, 192.168.x, 169.254.x, 0.0.0.0）    |
+| IPv6 ブロック            | `::1`, `fc`/`fd` (ULA), `fe80-` (リンクローカル), `::ffff:` マップ |
+| ホスト名ブロック         | `localhost`, `0.0.0.0`                                             |
+| DNS 解決検証             | 全 DNS 解決結果の IP アドレスを検証                                |
+| サイズ制限               | 512KB（`MAX_FAVICON_BYTES`）                                       |
+| リダイレクト制限         | 最大 2 回（`MAX_FAVICON_REDIRECTS`）                               |
+| タイムアウト             | 5秒（`FAVICON_FETCH_TIMEOUT`）                                     |
 
 ### フォールバックアイコン
 
 アイコン取得に失敗した場合、タイプに応じた Lucide アイコン名を返却。
 
-| タイプ | フォールバックアイコン |
-|--------|---------------------|
-| `app` | `app` |
-| `browser` | `browser` |
-| `folder` | `folder` |
-| その他 | `code` |
+| タイプ    | フォールバックアイコン |
+| --------- | ---------------------- |
+| `app`     | `app`                  |
+| `browser` | `browser`              |
+| `folder`  | `folder`               |
+| その他    | `code`                 |
 
 ## ディスパッチフロー
 
@@ -100,12 +100,12 @@ graph TD
 
 ## 主要ファイル
 
-| ファイル | 役割 |
-|---------|------|
-| `src/main/services/LauncherService.ts` | 起動ディスパッチとアイコン取得の調整 |
-| `src/main/adapters/AppAdapter.ts` | sips アイコン抽出、favicon 取得、SSRF 防御 |
-| `src/main/adapters/ShellAdapter.ts` | `openPath`, `openExternal`, `launchApp` の実行 |
-| `src/main/services/ConfigService.ts` | `expandTilde()` パス展開 |
-| `src/main/container.ts` | DI コンテナ（`LauncherService` への依存注入） |
-| `src/shared/types.ts` | `LaunchResult`, `IconResult`, `WorkspaceItem` 型 |
-| `src/renderer/api/index.ts` | レンダラー側 IPC API |
+| ファイル                               | 役割                                             |
+| -------------------------------------- | ------------------------------------------------ |
+| `src/main/services/LauncherService.ts` | 起動ディスパッチとアイコン取得の調整             |
+| `src/main/adapters/AppAdapter.ts`      | sips アイコン抽出、favicon 取得、SSRF 防御       |
+| `src/main/adapters/ShellAdapter.ts`    | `openPath`, `openExternal`, `launchApp` の実行   |
+| `src/main/services/ConfigService.ts`   | `expandTilde()` パス展開                         |
+| `src/main/container.ts`                | DI コンテナ（`LauncherService` への依存注入）    |
+| `src/shared/types.ts`                  | `LaunchResult`, `IconResult`, `WorkspaceItem` 型 |
+| `src/renderer/api/index.ts`            | レンダラー側 IPC API                             |

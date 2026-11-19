@@ -8,10 +8,10 @@ pre-commit:
   parallel: true
   commands:
     lint:
-      glob: '*.{ts,tsx}'
+      glob: "*.{ts,tsx}"
       run: just --color never lint
     format-check:
-      glob: '*.{ts,tsx,json,md,yml,yaml}'
+      glob: "*.{ts,tsx,json,md,yml,yaml}"
       run: just --color never format-check
     typecheck:
       run: just --color never type-check

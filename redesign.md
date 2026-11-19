@@ -1,4 +1,5 @@
 # AgiRity UI Redesign Spec
+
 **対象:** Droid (Factory.ai) へのハンドオフ用指示書  
 **作成日:** 2026-04-30  
 **ステータ:** 実装待ち
@@ -28,25 +29,25 @@ npm install @heroui/react framer-motion
 
 ```css
 @import "tailwindcss";
-@plugin './hero.ts';
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@plugin "./hero.ts";
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 ```
 
 ### hero.ts を作成
 
 ```ts
-import { heroui } from "@heroui/react";
+import { heroui } from '@heroui/react';
 export default heroui();
 ```
 
 ### main.tsx に HeroUIProvider を追加
 
 ```tsx
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider } from '@heroui/react';
 
 <HeroUIProvider>
   <App />
-</HeroUIProvider>
+</HeroUIProvider>;
 ```
 
 ### 注意事項
@@ -98,6 +99,7 @@ import { HeroUIProvider } from "@heroui/react";
 ```
 
 **使用HeroUIコンポーネント:**
+
 - `Navbar`, `NavbarBrand`, `NavbarContent` — 全体構造
 - `Divider` — ロゴとスイッチャーの区切り
 - `Button` — Launchボタン
@@ -124,6 +126,7 @@ import { HeroUIProvider } from "@heroui/react";
 ```
 
 **使用HeroUIコンポーネント:**
+
 - `Dropdown`, `DropdownTrigger`, `DropdownMenu`, `DropdownItem`
 - `Badge` — アイテム数表示
 - `Chip` — カラードット代替案
@@ -141,6 +144,7 @@ import { HeroUIProvider } from "@heroui/react";
 ```
 
 **使用HeroUIコンポーネント:**
+
 - `Button` (color="primary", variant="solid")
 - `Spinner` — 起動中の表示
 
@@ -169,6 +173,7 @@ import { HeroUIProvider } from "@heroui/react";
 ```
 
 **使用HeroUIコンポーネント:**
+
 - `Chip` (clickable, variant切り替え)
 
 ---
@@ -189,6 +194,7 @@ import { HeroUIProvider } from "@heroui/react";
 ```
 
 **使用HeroUIコンポーネント:**
+
 - `Card`, `CardBody` — カード全体
 - `Chip` — singleton/待機時間などのバッジ
 
@@ -203,7 +209,7 @@ HeroUIのデフォルトテーマをdarkに設定する。
   <main className="dark text-foreground bg-background">
     <App />
   </main>
-</HeroUIProvider>
+</HeroUIProvider>;
 ```
 
 カラーパレットは既存の要件定義（`docs/product/01_requirment.md`）のDark Modeカラーを参照:
@@ -220,16 +226,19 @@ Primary:    #60A5FA
 ## Step 4: 既存コードの削除・移行
 
 ### 削除対象（確認してから削除）
+
 - 既存のタブ形式ヘッダーコンポーネント
 - 既存のサイドバーコンポーネント
 - タブ切り替えに関連するstate・ロジック
 
 ### 移行対象（ロジックは維持・UIのみ置き換え）
+
 - ワークスペースのCRUD操作
 - 起動ロジック（ElectronのipcRenderer/mainとのやり取り）
 - 設定ファイルの読み書き（YAML/JSON）
 
 ### 注意事項
+
 - **ロジック層には触れない**。UIコンポーネントの置き換えのみ
 - 既存のテストが通ることを確認しながら進める
 - `npm run test` と `npm run type-check` を各ステップ後に実行

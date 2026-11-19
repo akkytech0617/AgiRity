@@ -10,11 +10,11 @@
 
 `src/shared/lib/workspace-utils.ts` の `selectItemsToLaunch()` は、プリセットのアイテム名リストに基づいて 3 つのケースを処理します。
 
-| `itemNames` の値 | 動作 | ユースケース |
-|-----------------|------|-------------|
-| `undefined` | ワークスペースの **全アイテム** を返却 | プリセット未選択時の全件起動 |
-| `[]`（空配列） | **空配列** を返却 | 何も起動しない |
-| `["VS Code", ...]`（非空） | `itemNames` に含まれる名前で **フィルタリング** | プリセット選択時の部分起動 |
+| `itemNames` の値           | 動作                                            | ユースケース                 |
+| -------------------------- | ----------------------------------------------- | ---------------------------- |
+| `undefined`                | ワークスペースの **全アイテム** を返却          | プリセット未選択時の全件起動 |
+| `[]`（空配列）             | **空配列** を返却                               | 何も起動しない               |
+| `["VS Code", ...]`（非空） | `itemNames` に含まれる名前で **フィルタリング** | プリセット選択時の部分起動   |
 
 ```typescript
 // src/shared/lib/workspace-utils.ts
@@ -32,11 +32,11 @@ export const selectItemsToLaunch = (
 
 ヘッダーの起動ボタンは `App.tsx` で `getPresetItemNames(workspace, selectedPreset)` を呼び、結果を `handleLaunch` に渡します。
 
-| `selectedPreset` | 戻り値 | 起動対象 |
-|------------------|--------|---------|
-| `null` | `undefined` | 全アイテム |
-| 定義済みプリセット名 | そのプリセットの `itemNames`（空配列も保持） | プリセットのアイテム（空なら0件） |
-| 未定義のプリセット名（デフォルト "Launch All" を含む） | `undefined` | 全アイテム |
+| `selectedPreset`                                       | 戻り値                                       | 起動対象                          |
+| ------------------------------------------------------ | -------------------------------------------- | --------------------------------- |
+| `null`                                                 | `undefined`                                  | 全アイテム                        |
+| 定義済みプリセット名                                   | そのプリセットの `itemNames`（空配列も保持） | プリセットのアイテム（空なら0件） |
+| 未定義のプリセット名（デフォルト "Launch All" を含む） | `undefined`                                  | 全アイテム                        |
 
 ## PresetChips UI
 
@@ -98,12 +98,12 @@ graph TD
 
 ## 主要ファイル
 
-| ファイル | 役割 |
-|---------|------|
-| `src/shared/lib/workspace-utils.ts` | `getPresetItemNames()` プリセット解決と `selectItemsToLaunch()` フィルタリングロジック |
-| `src/renderer/components/workspace/PresetChips.tsx` | プリセット選択チップ UI |
-| `src/renderer/components/layout/MainPanel.tsx` | プリセットによるアイテムフィルタリングと表示 |
-| `src/renderer/components/workspace/LaunchButton.tsx` | 起動ボタン（idle/launching/done 状態管理） |
-| `src/renderer/components/workspace/LaunchItemCard.tsx` | 個別アイテムカード（ネイティブ `button`、一括起動中は無効化） |
-| `src/shared/types.ts` | `WorkspacePresetSchema`, `WorkspacePreset` 型定義 |
-| `src/renderer/App.tsx` | 起動ハンドラー `handleLaunch` の定義 |
+| ファイル                                               | 役割                                                                                   |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `src/shared/lib/workspace-utils.ts`                    | `getPresetItemNames()` プリセット解決と `selectItemsToLaunch()` フィルタリングロジック |
+| `src/renderer/components/workspace/PresetChips.tsx`    | プリセット選択チップ UI                                                                |
+| `src/renderer/components/layout/MainPanel.tsx`         | プリセットによるアイテムフィルタリングと表示                                           |
+| `src/renderer/components/workspace/LaunchButton.tsx`   | 起動ボタン（idle/launching/done 状態管理）                                             |
+| `src/renderer/components/workspace/LaunchItemCard.tsx` | 個別アイテムカード（ネイティブ `button`、一括起動中は無効化）                          |
+| `src/shared/types.ts`                                  | `WorkspacePresetSchema`, `WorkspacePreset` 型定義                                      |
+| `src/renderer/App.tsx`                                 | 起動ハンドラー `handleLaunch` の定義                                                   |

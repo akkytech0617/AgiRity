@@ -7,22 +7,27 @@
 ## 背景
 
 ### 現状
-- PR #21 の新規コード カバレッジ: 21.69% 
+
+- PR #21 の新規コード カバレッジ: 21.69%
 - SonarCloud Quality Gate 要件: ≥ 80%
 - **結果**: Quality Gate FAIL
 
 ### 原因分析
+
 PR #21 は大規模 UI リファクタリング：
+
 - **新規コンポーネント**: PresetCard, ToolCard, WorkspaceDetail 等
 - **UI/スタイル変更**: Tailwind CSS クラス、レイアウト修正
 - **データレイヤー**: WorkspaceList, WorkspaceSettings
 
 UI テストの困難性：
+
 - ✗ Tailwind CSS の正確さをユニットテストするのは非効率
 - ✗ ホバー効果、トランジション、配置はスナップショットやE2E向け
 - ✓ ビジネスロジック（イベント処理、状態管理）はテスト可能だが、全体の 30-40% のみ
 
 ### 業界標準
+
 - **Google/Meta**: UI層は Coverage から除外または低基準
 - **推奨比率**: ビジネスロジック 80-90% + UI層 20-40% = 総合 50-60%
 
@@ -39,6 +44,7 @@ UI テストの困難性：
 3. デフォルト Quality Gate を確認（通常は "Sonar way"）
 
 **確認項目:**
+
 ```
 Quality Gate: Sonar way（または他の名前）
 
@@ -59,6 +65,7 @@ Quality Gate: Sonar way（または他の名前）
 4. **保存** ボタンをクリック
 
 **確認:**
+
 - 削除直後は警告メッセージが表示される
 - "Coverage on New Code" 行が消えることを確認
 
@@ -67,15 +74,18 @@ Quality Gate: Sonar way（または他の名前）
 ### Step 3: PR #21 再スキャン
 
 **自動実行（推奨）:**
+
 - GitHub Actions 次回実行時に自動的に再スキャン
 - PR #21 のコメントが更新される（Quality Gate PASS になる）
 
 **手動実行：**
+
 1. SonarCloud PR #21 ページにアクセス
 2. 右上の **Re-analyze** ボタンをクリック
 3. 数分待機
 
 **確認:**
+
 - ✅ Quality Gate が PASS に変わる
 - 📊 "Coverage on New Code: 21.69%" は表示されるが、**FAIL 判定にならない**
 
@@ -93,18 +103,22 @@ Quality Gate: Sonar way（または他の名前）
 **確認者**: [名前（オプション）]
 
 ### 削除した条件
+
 - Coverage on New Code ≥ 80%
 
 ### 保持した条件
+
 - Reliability Rating ≥ A
 - Security Rating ≥ A
 - Maintainability Rating ≥ A
 
 ### PR #21 Quality Gate 結果
+
 - 実施前: ❌ FAIL (Coverage: 21.69%)
 - 実施後: ✅ PASS (Reliability Rating: A)
 
 ### 備考
+
 - カバレッジは引き続き計測・監視される
 - v1.0.0 本格運用フェーズで復活予定
 ```
@@ -113,13 +127,13 @@ Quality Gate: Sonar way（または他の名前）
 
 ## 影響範囲
 
-| 項目 | 変更 | 影響 |
-|------|------|------|
-| GitHub Actions CI | ❌ なし | テストはそのまま実行、artifact に coverage が保存 |
-| npm scripts | ❌ なし | `npm run test:coverage` は実行継続 |
-| PR #21 | ✅ あり | Quality Gate PASS → マージ可能 |
-| 新規 PR | ✅ あり | Coverage 条件なしで評価（他の基準は継続） |
-| 将来対応 | ➡️ 復活可能 | v1.0.0 時に 80% 要件を復活させることが可能 |
+| 項目              | 変更        | 影響                                              |
+| ----------------- | ----------- | ------------------------------------------------- |
+| GitHub Actions CI | ❌ なし     | テストはそのまま実行、artifact に coverage が保存 |
+| npm scripts       | ❌ なし     | `npm run test:coverage` は実行継続                |
+| PR #21            | ✅ あり     | Quality Gate PASS → マージ可能                    |
+| 新規 PR           | ✅ あり     | Coverage 条件なしで評価（他の基準は継続）         |
+| 将来対応          | ➡️ 復活可能 | v1.0.0 時に 80% 要件を復活させることが可能        |
 
 ---
 

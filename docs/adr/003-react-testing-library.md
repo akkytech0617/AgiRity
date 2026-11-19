@@ -59,11 +59,11 @@ export default defineConfig({
 
 ### テスト戦略
 
-| コンポーネントタイプ   | テストアプローチ                    | 例                   |
-| ---------------------- | ----------------------------------- | -------------------- |
-| **プレゼンテーション** | Props → レンダリング確認            | Layout               |
-| **インタラクティブ**   | ユーザーイベント → コールバック確認 | Header               |
-| **フォーム**           | 入力 → バリデーション → 送信        | AddItemModal         |
+| コンポーネントタイプ   | テストアプローチ                    | 例           |
+| ---------------------- | ----------------------------------- | ------------ |
+| **プレゼンテーション** | Props → レンダリング確認            | Layout       |
+| **インタラクティブ**   | ユーザーイベント → コールバック確認 | Header       |
+| **フォーム**           | 入力 → バリデーション → 送信        | AddItemModal |
 
 ### 初期テストカバレッジ
 
@@ -108,21 +108,25 @@ export default defineConfig({
 ## テスト実行方法
 
 ### 全テスト実行
+
 ```bash
 npm run test
 ```
 
 ### 特定のコンポーネントテストのみ実行
+
 ```bash
 npm run test -- tests/unit/renderer/components/Header.test.tsx tests/unit/renderer/components/Layout.test.tsx
 ```
 
 ### ウォッチモード
+
 ```bash
 npm run test:watch
 ```
 
 ### カバレッジ付き実行
+
 ```bash
 npm run test:coverage
 ```

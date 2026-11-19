@@ -81,24 +81,24 @@ src/
 
 ### 1. UIを変更したい場合
 
-| やりたいこと | 編集ファイル |
-|-------------|-------------|
-| 全体レイアウト変更（Header + Content） | `src/renderer/components/Layout.tsx` |
-| ブラウザライクなタブバー・メニュー | `src/renderer/components/Header.tsx` |
+| やりたいこと                             | 編集ファイル                                  |
+| ---------------------------------------- | --------------------------------------------- |
+| 全体レイアウト変更（Header + Content）   | `src/renderer/components/Layout.tsx`          |
+| ブラウザライクなタブバー・メニュー       | `src/renderer/components/Header.tsx`          |
 | ワークスペース詳細（ヘッダー + 2カラム） | `src/renderer/components/WorkspaceDetail.tsx` |
-| 新規ワークスペース作成画面 | `src/renderer/components/CreateWorkspace.tsx` |
-| アイテム編集UI | `src/renderer/components/ItemEditor.tsx` |
-| ビュータイプ・状態管理・遷移 | `src/renderer/App.tsx` |
+| 新規ワークスペース作成画面               | `src/renderer/components/CreateWorkspace.tsx` |
+| アイテム編集UI                           | `src/renderer/components/ItemEditor.tsx`      |
+| ビュータイプ・状態管理・遷移             | `src/renderer/App.tsx`                        |
 
 ### 2. バックエンドのロジック変更
 
-| やりたいこと | 編集ファイル |
-|-------------|-------------|
-| アプリ起動方法の変更 | `src/main/services/LauncherService.ts` |
-| 設定の読み書き | `src/main/services/ConfigService.ts` |
+| やりたいこと            | 編集ファイル                                    |
+| ----------------------- | ----------------------------------------------- |
+| アプリ起動方法の変更    | `src/main/services/LauncherService.ts`          |
+| 設定の読み書き          | `src/main/services/ConfigService.ts`            |
 | 新しいIPCチャンネル追加 | `src/main/ipc/index.ts` + `src/shared/types.ts` |
-| シェルコマンド実行方法 | `src/main/adapters/ShellAdapter.ts` |
-| ファイル操作 | `src/main/adapters/FileSystemAdapter.ts` |
+| シェルコマンド実行方法  | `src/main/adapters/ShellAdapter.ts`             |
+| ファイル操作            | `src/main/adapters/FileSystemAdapter.ts`        |
 
 ### 3. 新機能追加のパターン
 
@@ -113,11 +113,11 @@ src/
 
 ### 4. データモデル変更
 
-| やりたいこと | 編集ファイル |
-|-------------|-------------|
-| Workspaceの項目追加 | `src/shared/types.ts` (WorkspaceSchema) |
-| WorkspaceItemの項目追加 | `src/shared/types.ts` (WorkspaceItemSchema) |
-| 新しいIPC型の追加 | `src/shared/types.ts` (IPC_CHANNELS, インターフェース) |
+| やりたいこと            | 編集ファイル                                           |
+| ----------------------- | ------------------------------------------------------ |
+| Workspaceの項目追加     | `src/shared/types.ts` (WorkspaceSchema)                |
+| WorkspaceItemの項目追加 | `src/shared/types.ts` (WorkspaceItemSchema)            |
+| 新しいIPC型の追加       | `src/shared/types.ts` (IPC_CHANNELS, インターフェース) |
 
 ---
 
@@ -231,12 +231,12 @@ Content: WorkspaceDetail（またはその他ビュー）
 
 ```typescript
 type View =
-  | { type: 'workspace'; id: string }           // ワークスペース詳細
-  | { type: 'workspace-settings'; id: string }  // ワークスペース編集
-  | { type: 'create-workspace' }                // 新規作成
-  | { type: 'tools' }                           // ツール登録（Phase 2）
-  | { type: 'mcp' }                             // MCPサーバー設定（Phase 2）
-  | { type: 'settings' };                       // アプリ設定
+  | { type: 'workspace'; id: string } // ワークスペース詳細
+  | { type: 'workspace-settings'; id: string } // ワークスペース編集
+  | { type: 'create-workspace' } // 新規作成
+  | { type: 'tools' } // ツール登録（Phase 2）
+  | { type: 'mcp' } // MCPサーバー設定（Phase 2）
+  | { type: 'settings' }; // アプリ設定
 ```
 
 ---
