@@ -1,17 +1,8 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noEmit": true,
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "lib": ["ES2025"],
+    "jsx": "preserve"
   },
   "include": ["vite.config.ts", "src/main/**/*.ts", "src/shared/**/*.ts", "tests/**/*.ts"]
 }
