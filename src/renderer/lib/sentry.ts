@@ -31,7 +31,6 @@ export function initSentryRenderer(): void {
     environment: isDevelopment() ? 'development' : 'production',
     release: import.meta.env.VITE_APP_VERSION as string | undefined,
     debug: false,
-    enableLogs: true,
   });
 }
 

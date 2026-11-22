@@ -32,7 +32,6 @@ export function initSentryMain(): void {
     release: process.env.npm_package_version,
     debug: false,
     tracesSampleRate: isDevelopment() ? 1 : 0.1,
-    enableLogs: true,
   });
 }
 

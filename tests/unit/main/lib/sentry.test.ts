@@ -57,7 +57,6 @@ describe('Sentry Main Process', () => {
           dsn: 'https://test@sentry.io/123',
           environment: 'development',
           debug: false,
-          enableLogs: true,
         })
       );
     });

@@ -35,7 +35,6 @@
   "dependencies": {
     "@heroui/react": "^3.2.7",
     "@heroui/styles": "^3.2.7",
-    "@sentry/electron": "^7.20.2",
     "clsx": "^2.1.1",
     "electron-log": "^5.4.4",
     "electron-updater": "^6.8.12",
@@ -48,6 +47,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
     "@playwright/test": "^1.65.1",
+    "@sentry/electron": "^8.4.0",
     "@tailwindcss/postcss": "^4.3.5",
     "@testing-library/jest-dom": "^6.10.0",
     "@testing-library/react": "^16.3.3",
